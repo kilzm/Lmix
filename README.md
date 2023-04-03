@@ -9,3 +9,8 @@ cd nix-with-modules
 nix build .#[packageName]
 ./result/bin/[packageName]
 ```
+
+To show available packages
+```
+nix flake show
+```
