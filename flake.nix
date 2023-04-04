@@ -8,15 +8,16 @@
   outputs = { self, nixpkgs, flake-utils }:
     let
       system = "x86_64-linux";
-      overlay = import ./.;
+      overlay = import ./overlay.nix;
       overlays = {
         default = overlay;
       };
       pkgs = import nixpkgs {
         inherit system;
-        overlays = [overlay];
+        overlays = [ overlay ];
       };
-    in {
-      packages.${system} = import ./. pkgs pkgs;
+    in
+    {
+      packages.${system} = overlay pkgs pkgs;
     };
 }

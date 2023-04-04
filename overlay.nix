@@ -1,5 +1,5 @@
 final: prev: {
-  hello_2_12_1 = prev.hello.overrideAttrs (finalAttrs: previousAttrs: rec {
+  hello_2_12_1 = prev.hello.overrideAttrs (old: rec {
     version = "2.12.1";
     src = prev.fetchurl {
       url = "mirror://gnu/hello/hello-${version}.tar.gz";
@@ -7,7 +7,7 @@ final: prev: {
     };
   });
 
-  hello_2_9 = prev.hello.overrideAttrs (finalAttrs: previousAttrs: rec {
+  hello_2_9 = prev.hello.overrideAttrs (old: rec {
     version = "2.9";
     src = prev.fetchurl {
       url = "mirror://gnu/hello/hello-${version}.tar.gz";
