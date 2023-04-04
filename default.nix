@@ -1,5 +1,7 @@
-import <nixpkgs> rec {
-  system = "x86_64-linux";
+let
   overlay = import ./overlay.nix;
-  overlays = [ overlay ];
-}
+in
+  import <nixpkgs> {
+    system = "x86_64-linux";
+    overlays = [ overlay ];
+  }

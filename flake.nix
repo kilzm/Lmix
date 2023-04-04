@@ -9,15 +9,10 @@
     let
       system = "x86_64-linux";
       overlay = import ./overlay.nix;
-      overlays = {
-        default = overlay;
-      };
       pkgs = import nixpkgs {
         inherit system;
-        overlays = [ overlay ];
       };
-    in
-    {
+    in {
       packages.${system} = overlay pkgs pkgs;
     };
 }
