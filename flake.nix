@@ -5,7 +5,7 @@
     nixpkgs.url = github:nixos/nixpkgs?ref=nixos-22.11;
   };
 
-  outputs = { self, nixpkgs, flake-utils }:
+  outputs = { self, nixpkgs }:
     let
       system = "x86_64-linux";
       overlay = import ./overlay.nix;
