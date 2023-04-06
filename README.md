@@ -3,14 +3,17 @@ A nix overlay that integrates with lmod environment modules.
 
 ## Usage
 
-To build a package defined in overlay.nix
+Build a package defined in overlays
 ```
 cd nix-with-modules
-nix build .#[packageName]
-./result/bin/[packageName]
+nix build .#package-name
+```
+or
+```
+nix build github:kilzm/nix-with-modules#package-name
 ```
 
-To show available packages
-```
-nix flake show
+Show available packages
+```bash
+nix flake show [--legacy]
 ```
