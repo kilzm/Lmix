@@ -14,5 +14,6 @@
       };
     in {
       packages.${system} = overlay pkgs pkgs;
+      legacyPackages.${system} = nixpkgs.legacyPackages.${system};
     };
 }
