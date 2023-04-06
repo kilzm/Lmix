@@ -1,17 +1,9 @@
-final: prev: {
-  hello_2_12_1 = prev.hello.overrideAttrs (old: rec {
-    version = "2.12.1";
-    src = prev.fetchurl {
-      url = "mirror://gnu/hello/hello-${version}.tar.gz";
-      sha256 = "sha256-jZkUKv2SV28wsM18tCqNxoCZmLxdYH2Idh9RLibH2yA=";
-    };
-  });
-
-  hello_2_9 = prev.hello.overrideAttrs (old: rec {
-    version = "2.9";
-    src = prev.fetchurl {
-      url = "mirror://gnu/hello/hello-${version}.tar.gz";
-      sha256 = "sha256-7Lt6IhQZbFf/k0CqcUWOFVmr049tjRaWZoRpNd8ZHqc=";
-    };
-  });
-}
+final: prev:
+  let
+    overlays = [
+      (import ./overlays/misc-overlay.nix)
+      (import ./overlays/julia-overlay.nix)
+    ];
+    overlay = with prev.lib; foldl' composeExtensions (_: _: {}) overlays;
+  in
+     overlay final prev

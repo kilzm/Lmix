@@ -8,11 +8,7 @@
   outputs = { self, nixpkgs }:
     let
       system = "x86_64-linux";
-      overlays = [
-        (import ./overlay.nix)
-        (import ./julia-overlay.nix)
-      ];
-      overlay = with nixpkgs.lib; (foldl' composeExtensions (_: _: {}) overlays);
+      overlay = import ./overlay.nix;
       pkgs = import nixpkgs {
         inherit system;
       };
