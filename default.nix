@@ -1,7 +1,10 @@
 let
-  overlay = import ./overlay.nix;
+  system = "x86_64-linux";
+  overlays = [
+    (import ./overlay.nix)
+    (import ./julia-overlay.nix)
+  ];
 in
   import <nixpkgs> {
-    system = "x86_64-linux";
-    overlays = [ overlay ];
+    inherit system overlays;
   }
