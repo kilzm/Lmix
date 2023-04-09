@@ -21,7 +21,7 @@ stdenv.mkDerivation rec {
 
   postInstall = ''
     mkdir $out/bin
-    ln -s $out/libexec/${pname}/mpi*/* $out/bin
+    ln -s $out/libexec/${pname}/mpi/*/* $out/bin
   '';
 
 }
