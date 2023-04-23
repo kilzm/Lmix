@@ -1,38 +1,44 @@
-final: prev: rec {
-  
-  # hello 
-  hello_2_12_1 = prev.hello.overrideAttrs (old: rec {
+final: prev: 
+with prev.lib; rec {
+  ## hello - mirror://gnu/hello/hello-${version}.tar.gz
+  hello = prev.hello;
+
+  hello_2_12_1 = hello.overrideAttrs (old: rec {
     version = "2.12.1";
     src = prev.fetchurl {
-      url = "mirror://gnu/${old.pname}/${old.pname}-${version}.tar.gz";
+      url = "mirror://gnu/hello/hello-${version}.tar.gz";
       sha256 = "sha256-jZkUKv2SV28wsM18tCqNxoCZmLxdYH2Idh9RLibH2yA=";
     };
   });
 
-  hello_2_9 = prev.hello.overrideAttrs (old: rec {
+  hello_2_9 = hello.overrideAttrs (old: rec {
     version = "2.9";
     src = prev.fetchurl {
-      url = "mirror://gnu/${old.pname}/${old.pname}-${version}.tar.gz";
+      url = "mirror://gnu/hello/hello-${version}.tar.gz";
       sha256 = "sha256-7Lt6IhQZbFf/k0CqcUWOFVmr049tjRaWZoRpNd8ZHqc=";
     };
   });
   
-  # julia
-  julia_1_8_5 = prev.julia_18-bin;
+  ## julia - https://github.com/JuliaLang/julia/releases/download/v${version}/julia-${version}-full.tar.gz
+  julia = prev.julia_18;
+
+  julia_1_8_5 = prev.julia_18;
     
   julia_1_9_0 = prev.callPackage ./pkgs/julia/1.9.0-rc2-bin.nix { };
 
-  # openmpi
-  openmpi_4_1_5 = prev.openmpi.overrideAttrs (old: rec { 
+  ## openmpi - https://www.open-mpi.org/software/ompi/v${major version}.${minor version}/downloads/openmpi-${version}.tar.bz2
+  openmpi = prev.openmpi;
+
+  openmpi_4_1_5 = openmpi.overrideAttrs (old: rec { 
     version = "4.1.5";
 
-    src = with prev.lib.versions; prev.fetchurl {
-      url = "https://www.open-mpi.org/software/ompi/v${major version}.${minor version}/downloads/${old.pname}-${version}.tar.bz2";
+    src = prev.fetchurl {
+      url = "https://www.open-mpi.org/software/ompi/v${versions.major version}.${versions.minor version}/downloads/openmpi-${version}.tar.bz2";
       sha256 = "sha256-pkCYa8JXOJ3TeYhv2uYmTIz6VryYtxzjrj372M5h2+M=";
     };
   });
 
-  # osu-micro-benchmark
+  ## osu-micro-benchmarks - mvapich.cse.ohio-state.edu/download/mvapich/osu-micro-benchmarks-${version}.tar.gz
   osu-micro-benchmarks = prev.callPackage ./pkgs/osu-micro-benchmarks { 
     mpi = openmpi_4_1_5;
   };
@@ -42,7 +48,7 @@ final: prev: rec {
   osu-micro-benchmarks_5_4 = osu-micro-benchmarks.overrideAttrs (old: rec {
     version = "5.4";
     src = prev.fetchurl {
-      url = "mvapich.cse.ohio-state.edu/download/mvapich/${old.pname}-${version}.tar.gz";
+      url = "mvapich.cse.ohio-state.edu/download/mvapich/osu-micro-benchmarks-${version}.tar.gz";
       sha256 = "sha256-4cp2LhOgcgWlm1mthehc4Pgmtw92/VVc5VaO+x8qjzM=";
     };
   });
@@ -50,7 +56,7 @@ final: prev: rec {
   osu-micro-benchmarks_6_1 = osu-micro-benchmarks.overrideAttrs (old: rec {
     version = "6.1";
     src = prev.fetchurl {
-      url = "mvapich.cse.ohio-state.edu/download/mvapich/${old.pname}-${version}.tar.gz";
+      url = "mvapich.cse.ohio-state.edu/download/mvapich/osu-micro-benchmarks-${version}.tar.gz";
       sha256 = "sha256-7MztyGgmT3XbTZUpr3kAVBmid1ETx/ro9OSoQ0Ni5Kc=";
     };
   });
