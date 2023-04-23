@@ -3,9 +3,10 @@
 
   inputs = {
     nixpkgs.url = github:nixos/nixpkgs?ref=nixos-22.11;
+    nurl.url = github:nix-community/nurl;
   };
 
-  outputs = { self, nixpkgs }:
+  outputs = { self, nixpkgs, nurl }:
     let
       system = "x86_64-linux";
       overlay = import ./overlay.nix;
@@ -14,6 +15,11 @@
       };
     in {
       packages.${system} = overlay pkgs pkgs;
+      devShell.${system} = pkgs.mkShell rec {
+        buildInputs = [
+          nurl.packages.${system}.default
+        ];
+      };
       legacyPackages.${system} = nixpkgs.legacyPackages.${system};
     };
 }
