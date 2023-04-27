@@ -11,14 +11,21 @@ cat > $modfile << EOF
 
 local pkgName = myModuleName()
 local version = myModuleVersion()
+
 EOF
 
-addPath () {
-  echo "local pkg = pathJoin(\"$1\", \"bin\")" >> $modfile
-  echo "prepend_path(\"PATH\", pkg)" >> $modfile
+addPaths () {
+  if [[ -d $1/bin ]] ; then
+    echo "local pkg = pathJoin(\"$1\", \"bin\")" >> $modfile
+    echo -e "prepend_path(\"PATH\", pkg)\n" >> $modfile
+  fi
+  if [[ -d $1/share/man ]] ; then
+    echo "local man = pathJoin(\"$1\", \"share\", \"man\")" >> $modfile
+    echo -e "prepend_path(\"MANPATH\", man)\n" >> $modfile
+  fi
 }
 
 for i in $buildInputs;
 do
-  addPath $i
+  addPaths $i
 done
