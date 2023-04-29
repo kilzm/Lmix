@@ -1,4 +1,5 @@
 #!/usr/bin/bash
+# set -x
 
 printhelp () {
   echo "Autogenerate package overrides."
@@ -6,22 +7,28 @@ printhelp () {
 }
 
 geturl () {
-  local url=$(nix eval --impure --expr "let version=\"$2\"; in with (import <nixpkgs/lib>).versions; \"$1\"")
-  echo ${url//\"/}
+  if ! url=$(nix eval --impure --expr "let version=\"$2\"; in with (import <nixpkgs/lib>).versions; \"$1\"" 2>/dev/null); then
+    exit 1
+  else 
+    echo ${url//\"/}
+  fi
 }
 
 getsha256 () {
-  local sha256=$(nix-prefetch-url $1 2>/dev/null)
-  echo "$sha256"
+  if ! sha256=$(nix-prefetch-url $1 2>/dev/null); then
+    exit 1
+  else
+    echo "$sha256"
+  fi
 }
 
 printoverride () { # pname, version, url, sha256
   cat << EOF
   $1_${2//'.'/'_'} = $1.overrideAttrs(old: rec {
-    version = "$2"
+    version = "$2";
     src = prev.fetchurl {
-      url = "$3"
-      sha256 = "$4"
+      url = "$3";
+      sha256 = "$4";
     };
   });
 EOF
@@ -48,14 +55,20 @@ done < $overlayfile
 
 
 if [[ -z "${urls_dict[$pname]+1}" ]]; then
-  echo "error: package does not exist"
+  echo "error: package does not exist: $pname"
   exit 1
 fi
 
 interp_url=${urls_dict[$pname]}
 
 
-url=$(geturl "$interp_url" "$version")
-sha256=$(getsha256 $url)
+if ! url=$(geturl "$interp_url" "$version"); then
+  echo "error: version format is not valid: $version"
+  exit 1
+fi
+if ! sha256=$(getsha256 $url); then
+  echo "error: version does not exist: $version"
+  exit 1
+fi
 
 printoverride $pname $version "$interp_url" $sha256
