@@ -1,6 +1,6 @@
 #!/bin/sh
 
-prepareIntel() {
+sandboxTrue() {
   sed -i 's/sandbox = false/sandbox = true/g' /etc/nix/nix.conf
 }
 
