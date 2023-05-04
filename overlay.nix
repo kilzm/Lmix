@@ -61,6 +61,13 @@ with prev.lib; rec {
     };
   });
 
+  # intel
+  oneapi = prev.callPackage ./pkgs/intel/oneapi { };
+
+  intel-compilers = prev.callPackage ./pkgs/intel/compilers { 
+    oneapi = oneapi;
+  };
+
   # modules
   modules = prev.buildEnv {
     name = "modules";
@@ -72,6 +79,15 @@ with prev.lib; rec {
       openmpi_4_1_5     
       osu-micro-benchmarks_5_6_2
       osu-micro-benchmarks_6_1
+    ]);
+  };
+
+  modules-intel = prev.buildEnv {
+    name = "modules-intel";
+    paths = map (pkg: prev.callPackage ./modules {
+      inherit pkg;
+    }) (with final; [
+      intel-compilers
     ]);
   };
 }
