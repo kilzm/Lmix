@@ -18,7 +18,6 @@ stdenv.mkDerivation rec {
     "dpcpp-cl"
   ];
 
-
   installPhase = ''
     echo "oneapi: $compdir"
     mkdir -p $out/bin
@@ -32,8 +31,7 @@ stdenv.mkDerivation rec {
   '';
 
   meta = {
-    description = "Intel OneAPI Basekit + HPCKit - Compilers";
-    maintainers = [ lib.maintainers.bzizou ];
+    description = "Intel OneAPI C/C++ and Fortran Compilers";
     platforms = lib.platforms.linux;
     license = lib.licenses.unfree;
   };

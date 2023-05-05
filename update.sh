@@ -5,7 +5,6 @@ sandboxTrue() {
 }
 
 sandboxFalse() {
-
   sed -i 's/sandbox = true/sandbox = false/g' /etc/nix/nix.conf
 }
 
