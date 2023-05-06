@@ -62,10 +62,14 @@ with prev.lib; rec {
   });
 
   # intel
-  oneapi = prev.callPackage ./pkgs/intel/oneapi { };
+  intel-oneapi_2022_2_0 = prev.callPackage ./pkgs/intel/oneapi { };
 
-  intel-compilers = prev.callPackage ./pkgs/intel/compilers { 
-    oneapi = oneapi;
+  intel-compilers_2022_1_0 = prev.callPackage ./pkgs/intel/compilers { 
+    oneapi = intel-oneapi_2022_2_0;
+  };
+
+  intel-classic-compilers_2021_6_0 = prev.callPackage ./pkgs/intel/classic-compilers {
+    oneapi = intel-oneapi_2022_2_0;
   };
 
   # modules
@@ -87,7 +91,8 @@ with prev.lib; rec {
     paths = map (pkg: prev.callPackage ./modules {
       inherit pkg;
     }) (with final; [
-      intel-compilers
+      intel-compilers_2022_1_0
+      intel-classic-compilers_2021_6_0
     ]);
   };
 }
