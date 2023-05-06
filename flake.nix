@@ -13,7 +13,9 @@
       pkgs = import nixpkgs {
         inherit system;
       };
-    in {
+    in
+    {
+      formatter.${system} = nixpkgs.legacyPackages.${system}.nixpkgs-fmt;
       packages.${system} = overlay pkgs pkgs;
       devShell.${system} = pkgs.mkShell rec {
         buildInputs = [

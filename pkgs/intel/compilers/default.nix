@@ -3,7 +3,7 @@
 stdenv.mkDerivation rec {
   pname = "intel-compilers";
   version = "2022.1.0";
-    
+
   phases = [ "installPhase" ];
 
   propagatedBuildInputs = [ oneapi ];
