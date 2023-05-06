@@ -80,6 +80,11 @@ with prev.lib; rec {
     withOpenMP = true;
   };
 
+  fftw_3_3_10_intel21_ompi_4_1_5 = prev.callPackage ./pkgs/fftw {
+    stdenv = intel21Stdenv;
+    mpi = openmpi_4_1_5;
+  };
+
   # intel
   intel-oneapi_2022_2_0 = prev.callPackage ./pkgs/intel/oneapi { };
 
@@ -90,6 +95,18 @@ with prev.lib; rec {
   intel-classic-compilers_2021_6_0 = prev.callPackage ./pkgs/intel/classic-compilers {
     oneapi = intel-oneapi_2022_2_0;
   };
+
+  intel21-wrapped = prev.wrapCCWith rec {
+    cc = intel-classic-compilers_2021_6_0;
+    extraBuildCommands = ''
+      wrap icc $wrapper $ccPath/icc
+      wrap icpc $wrapper $ccPath/icpc
+      export named_cc=icc
+      export named_cxx=icpc
+    '';
+  };
+
+  intel21Stdenv = prev.overrideCC prev.stdenv intel21-wrapped;
 
   # modules
   modules = prev.buildEnv {
@@ -134,6 +151,15 @@ with prev.lib; rec {
       (with final; [
         intel-compilers_2022_1_0
         intel-classic-compilers_2021_6_0
+      ])
+      ++ map
+      (pkg: prev.callPackage ./modules {
+        inherit pkg;
+        compiler = "intel";
+        compilerVer = 21;
+      })
+      (with final; [
+        fftw_3_3_10_intel21_ompi_4_1_5
       ]);
   };
 }
