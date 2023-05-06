@@ -31,7 +31,6 @@ with prev.lib; rec {
 
   openmpi_4_1_5 = openmpi.overrideAttrs (old: rec {
     version = "4.1.5";
-
     src = prev.fetchurl {
       url = "https://www.open-mpi.org/software/ompi/v${versions.major version}.${versions.minor version}/downloads/openmpi-${version}.tar.bz2";
       sha256 = "sha256-pkCYa8JXOJ3TeYhv2uYmTIz6VryYtxzjrj372M5h2+M=";
@@ -63,14 +62,20 @@ with prev.lib; rec {
 
   ## fftw - ftp://ftp.fftw.org/pub/fftw/fftw-${version}.tar.gz
   fftw = prev.callPackage ./pkgs/fftw {
-    mpi = openmpi_4_1_5;  
-  };
-
-  fftw_3_3_10_ompi_4_1_5 = prev.callPackage ./pkgs/fftw {
     mpi = openmpi_4_1_5;
   };
 
-  fftw_3_3_10_ompi_4_1_5_openmp = prev.callPackage ./pkgs/fftw {
+  fftw-module = prev.callPackage ./modules {
+    pkg = fftw;
+  };
+
+  fftw_3_3_10_gcc11_ompi_4_1_5 = prev.callPackage ./pkgs/fftw {
+    stdenv = prev.gcc11Stdenv;
+    mpi = openmpi_4_1_5;
+  };
+
+  fftw_3_3_10_gcc12_ompi_4_1_5_openmp = prev.callPackage ./pkgs/fftw {
+    stdenv = prev.gcc12Stdenv;
     mpi = openmpi_4_1_5;
     withOpenMP = true;
   };
@@ -99,7 +104,24 @@ with prev.lib; rec {
         openmpi_4_1_5
         osu-micro-benchmarks_5_6_2
         osu-micro-benchmarks_6_1
-        fftw_3_3_10_ompi_4_1_5_openmp
+      ])
+      ++ map
+      (pkg: prev.callPackage ./modules {
+        inherit pkg;
+        compiler = "gcc";
+        compilerVer = 11;
+      })
+      (with final; [
+        fftw_3_3_10_gcc11_ompi_4_1_5
+      ])
+      ++ map
+      (pkg: prev.callPackage ./modules {
+        inherit pkg;
+        compiler = "gcc";
+        compilerVer = 12;
+      })
+      (with final; [
+        fftw_3_3_10_gcc12_ompi_4_1_5_openmp
       ]);
   };
 

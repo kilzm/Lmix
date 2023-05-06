@@ -17,6 +17,7 @@ with lib;
 assert lib.elem precision [ "single" "double" "long-double" "quad-precision" ];
 
 stdenv.mkDerivation rec {
+  inherit mpi withOpenMP;
   pname = "fftw";
   version = "3.3.10";
 

@@ -1,6 +1,7 @@
 { stdenv, mpi, fetchurl }:
 
 stdenv.mkDerivation rec {
+  inherit mpi;
   pname = "osu-micro-benchmarks";
   version = "5.6.2";
 
