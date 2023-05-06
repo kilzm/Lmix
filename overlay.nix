@@ -1,4 +1,4 @@
-final: prev: 
+final: prev:
 with prev.lib; rec {
   ## hello - mirror://gnu/hello/hello-${version}.tar.gz
   hello = prev.hello;
@@ -18,18 +18,18 @@ with prev.lib; rec {
       sha256 = "sha256-7Lt6IhQZbFf/k0CqcUWOFVmr049tjRaWZoRpNd8ZHqc=";
     };
   });
-  
+
   ## julia - https://github.com/JuliaLang/julia/releases/download/v${version}/julia-${version}-full.tar.gz
   julia = prev.julia_18;
 
   julia_1_8_5 = prev.julia_18;
-    
+
   julia_1_9_0 = prev.callPackage ./pkgs/julia/1.9.0-rc2-bin.nix { };
 
   ## openmpi - https://www.open-mpi.org/software/ompi/v${major version}.${minor version}/downloads/openmpi-${version}.tar.bz2
   openmpi = prev.openmpi;
 
-  openmpi_4_1_5 = openmpi.overrideAttrs (old: rec { 
+  openmpi_4_1_5 = openmpi.overrideAttrs (old: rec {
     version = "4.1.5";
 
     src = prev.fetchurl {
@@ -39,7 +39,7 @@ with prev.lib; rec {
   });
 
   ## osu-micro-benchmarks - mvapich.cse.ohio-state.edu/download/mvapich/osu-micro-benchmarks-${version}.tar.gz
-  osu-micro-benchmarks = prev.callPackage ./pkgs/osu-micro-benchmarks { 
+  osu-micro-benchmarks = prev.callPackage ./pkgs/osu-micro-benchmarks {
     mpi = openmpi_4_1_5;
   };
 
@@ -61,10 +61,24 @@ with prev.lib; rec {
     };
   });
 
+  ## fftw - ftp://ftp.fftw.org/pub/fftw/fftw-${version}.tar.gz
+  fftw = prev.callPackage ./pkgs/fftw {
+    mpi = openmpi_4_1_5;  
+  };
+
+  fftw_3_3_10_ompi_4_1_5 = prev.callPackage ./pkgs/fftw {
+    mpi = openmpi_4_1_5;
+  };
+
+  fftw_3_3_10_ompi_4_1_5_openmp = prev.callPackage ./pkgs/fftw {
+    mpi = openmpi_4_1_5;
+    withOpenMP = true;
+  };
+
   # intel
   intel-oneapi_2022_2_0 = prev.callPackage ./pkgs/intel/oneapi { };
 
-  intel-compilers_2022_1_0 = prev.callPackage ./pkgs/intel/compilers { 
+  intel-compilers_2022_1_0 = prev.callPackage ./pkgs/intel/compilers {
     oneapi = intel-oneapi_2022_2_0;
   };
 
@@ -75,24 +89,29 @@ with prev.lib; rec {
   # modules
   modules = prev.buildEnv {
     name = "modules";
-    paths = map (pkg: prev.callPackage ./modules {
-      inherit pkg;
-    }) (with final; [
-      julia_1_9_0
-      julia_1_8_5
-      openmpi_4_1_5     
-      osu-micro-benchmarks_5_6_2
-      osu-micro-benchmarks_6_1
-    ]);
+    paths = map
+      (pkg: prev.callPackage ./modules {
+        inherit pkg;
+      })
+      (with final; [
+        julia_1_9_0
+        julia_1_8_5
+        openmpi_4_1_5
+        osu-micro-benchmarks_5_6_2
+        osu-micro-benchmarks_6_1
+        fftw_3_3_10_ompi_4_1_5_openmp
+      ]);
   };
 
   modules-intel = prev.buildEnv {
     name = "modules-intel";
-    paths = map (pkg: prev.callPackage ./modules {
-      inherit pkg;
-    }) (with final; [
-      intel-compilers_2022_1_0
-      intel-classic-compilers_2021_6_0
-    ]);
+    paths = map
+      (pkg: prev.callPackage ./modules {
+        inherit pkg;
+      })
+      (with final; [
+        intel-compilers_2022_1_0
+        intel-classic-compilers_2021_6_0
+      ]);
   };
 }
