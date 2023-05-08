@@ -4,20 +4,25 @@
   inputs = {
     nixpkgs.url = github:nixos/nixpkgs?ref=nixos-22.11;
     nurl.url = github:nix-community/nurl;
+    utils.url = github:numtide/flake-utils;
   };
 
-  outputs = { self, nixpkgs, nurl }:
+  outputs = inputs@{ self, nixpkgs, nurl, utils }:
     let
       system = "x86_64-linux";
-      overlay = import ./overlay.nix;
-      pkgs = import nixpkgs {
-        inherit system;
+      config = {
+        allowUnfree = true;
+        allowInsecure = true;
       };
+      pkgs = import nixpkgs {
+        inherit system config;
+      };
+      overlay = import ./overlay.nix;
     in
     {
-      formatter.${system} = nixpkgs.legacyPackages.${system}.nixpkgs-fmt;
+      formatter.${system} = pkgs.nixpkgs-fmt;
       packages.${system} = overlay pkgs pkgs;
-      devShell.${system} = pkgs.mkShell rec {
+      devShells.${system}.default = pkgs.mkShell rec {
         buildInputs = [
           nurl.packages.${system}.default
         ];
