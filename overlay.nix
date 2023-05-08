@@ -1,4 +1,29 @@
 final: prev:
+let
+  wrapICCWith =
+    { cc
+    , bintools ? prev.bintools
+    , libc ? prev.glibc
+    , ...
+    } @extraArgs:
+    prev.callPackage ./pkgs/intel/build-support/cc-wrapper (
+      let
+        self = {
+          nativeTools = prev.targetPlatform == prev.hostPlatform && prev.stdenv.cc.nativeTools or false;
+          nativeLibc = prev.targetPlatform == prev.hostPlatform && prev.stdenv.cc.nativeLibc or false;
+          nativePrefix = prev.stdenv.cc.nativePrefix or "";
+          noLibc = !self.nativeLibc && (self.libc == null);
+
+          isGNU = false;
+          isClang = false;
+          isIntel = true;
+
+          inherit cc bintools libc;
+        } // extraArgs;
+      in
+      self
+    );
+in
 with prev.lib; rec {
   ## hello - mirror://gnu/hello/hello-${version}.tar.gz
   hello = prev.hello;
@@ -65,10 +90,6 @@ with prev.lib; rec {
     mpi = openmpi_4_1_5;
   };
 
-  fftw-module = prev.callPackage ./modules {
-    pkg = fftw;
-  };
-
   fftw_3_3_10_gcc11_ompi_4_1_5 = prev.callPackage ./pkgs/fftw {
     stdenv = prev.gcc11Stdenv;
     mpi = openmpi_4_1_5;
@@ -80,9 +101,9 @@ with prev.lib; rec {
     withOpenMP = true;
   };
 
-  fftw_3_3_10_intel21_ompi_4_1_5 = prev.callPackage ./pkgs/fftw {
+  fftw_3_3_10_intel21 = prev.callPackage ./pkgs/fftw {
     stdenv = intel21Stdenv;
-    mpi = openmpi_4_1_5;
+    mpi = null;
   };
 
   # intel
@@ -96,17 +117,14 @@ with prev.lib; rec {
     oneapi = intel-oneapi_2022_2_0;
   };
 
-  intel21-wrapped = prev.wrapCCWith rec {
-    cc = intel-classic-compilers_2021_6_0;
-    extraBuildCommands = ''
-      wrap icc $wrapper $ccPath/icc
-      wrap icpc $wrapper $ccPath/icpc
-      export named_cc=icc
-      export named_cxx=icpc
-    '';
-  };
 
-  intel21Stdenv = prev.overrideCC prev.stdenv intel21-wrapped;
+  intel21Stdenv =
+    let
+      intel21-wrapped = wrapICCWith rec {
+        cc = intel-classic-compilers_2021_6_0;
+      };
+    in
+    prev.overrideCC prev.stdenv intel21-wrapped;
 
   # modules
   modules = prev.buildEnv {
@@ -122,7 +140,7 @@ with prev.lib; rec {
         osu-micro-benchmarks_5_6_2
         osu-micro-benchmarks_6_1
       ])
-      ++ map
+    ++ map
       (pkg: prev.callPackage ./modules {
         inherit pkg;
         compiler = "gcc";
@@ -131,7 +149,7 @@ with prev.lib; rec {
       (with final; [
         fftw_3_3_10_gcc11_ompi_4_1_5
       ])
-      ++ map
+    ++ map
       (pkg: prev.callPackage ./modules {
         inherit pkg;
         compiler = "gcc";
@@ -152,14 +170,14 @@ with prev.lib; rec {
         intel-compilers_2022_1_0
         intel-classic-compilers_2021_6_0
       ])
-      ++ map
+    ++ map
       (pkg: prev.callPackage ./modules {
         inherit pkg;
         compiler = "intel";
         compilerVer = 21;
       })
       (with final; [
-        fftw_3_3_10_intel21_ompi_4_1_5
+        fftw_3_3_10_intel21
       ]);
   };
 }

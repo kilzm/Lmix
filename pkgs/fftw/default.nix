@@ -2,10 +2,9 @@
 , lib
 , fetchurl
 , perl
-, gfortran
 , precision ? "double"
-, mpi ? null
 , withOpenMP ? false
+, mpi ? null
 , enableAvx ? stdenv.hostPlatform.avxSupport
 , enableAvx2 ? stdenv.hostPlatform.avx2Support
 , enableAvx412 ? stdenv.hostPlatform.avx512Support
@@ -17,7 +16,6 @@ with lib;
 assert lib.elem precision [ "single" "double" "long-double" "quad-precision" ];
 
 stdenv.mkDerivation rec {
-  inherit mpi withOpenMP;
   pname = "fftw";
   version = "3.3.10";
 
@@ -25,8 +23,6 @@ stdenv.mkDerivation rec {
     url = "ftp://ftp.fftw.org/pub/fftw/fftw-${version}.tar.gz";
     sha256 = "sha256-VskyVJhSzdz6/as4ILAgDHdCZ1vpIXnlnmIVs0DiZGc=";
   };
-
-  nativeBuildInputs = [ gfortran ];
 
   buildInputs = [ mpi ];
 
@@ -44,6 +40,10 @@ stdenv.mkDerivation rec {
   ++ optional enableFma "--enable-fma";
 
   enableParallelBuilding = true;
+
+  passthru = {
+    inherit mpi withOpenMP;
+  };
 
   meta = {
     description = "Fastest Fourier Transform in the West library";
