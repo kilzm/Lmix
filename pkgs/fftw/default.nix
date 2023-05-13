@@ -27,6 +27,7 @@ stdenv.mkDerivation rec {
   buildInputs = [ mpi ];
 
   configureFlags = [
+    "--enable-static"
     "--enable-shared"
     "--enable-threads"
   ]

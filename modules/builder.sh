@@ -48,6 +48,10 @@ addPaths () {
 addPkgVariables () {
   # PAC_BASE - base nix store path
   echo -e "setenv(\"${pacName}_BASE\", \"${PAC_BASE}\")" >> $modfile
+  if [[ -n "$PAC_BIN" ]] ; then
+    # PAC_BIN - bin directory
+    echo -e "setenv(\"${pacName}_BIN\", \"${PAC_BIN}\")" >> $modfile
+  fi
   # PAC_LIBDIR - library directory
   if [[ -n "$PAC_LIBDIR" ]] ; then
     echo -e "setenv(\"${pacName}_LIBDIR\", \"${PAC_LIBDIR}\")" >> $modfile

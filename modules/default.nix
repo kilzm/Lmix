@@ -43,19 +43,17 @@ stdenv.mkDerivation rec {
   hasIncs = builtins.pathExists "${pkg}/include";
   hasBin = builtins.pathExists "${pkg}/bin";
 
-  pacName = if cpacName == "" then builtins.replaceStrings ["-"] ["_"] (lib.strings.toUpper pkgName) else cpacName;
+  pacName = 
+    if cpacName == "" 
+      then builtins.replaceStrings ["-"] ["_"] (lib.strings.toUpper pkgName) 
+      else cpacName;
 
   # from lrz documentation
   PAC_BASE = "${pkg}";
   PAC_LIBDIR = if hasLibs then "${PAC_BASE}/lib" else "";
-  PAC_LIB =
-    let
-      pathStatic = "${PAC_LIBDIR}/lib${libName}.a";
-      pathLibtools = "${PAC_LIBDIR}/lib${libName}.la";
-    in
-    if builtins.pathExists pathStatic then pathStatic
-    else if builtins.pathExists pathLibtools then pathLibtools
-    else "";
+  PAC_LIB = 
+    let path = "${PAC_LIBDIR}/lib${libName}.a"; 
+    in if builtins.pathExists path then path else "";
   PAC_SHLIB =
     let path = "${PAC_LIBDIR}/lib${libName}.so";
     in if builtins.pathExists path then "-L${PAC_LIBDIR} -l${libName}" else "";
