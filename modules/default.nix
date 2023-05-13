@@ -1,6 +1,7 @@
 { stdenv
 , lib
 , pkg
+, pkgName ? pkg.pname
 , compiler ? ""
 , compilerVer ? 0
 , libName ? pkg.name
@@ -20,7 +21,6 @@ assert compiler == ""
 stdenv.mkDerivation rec {
   builder = ./builder.sh;
 
-  pkgName = pkg.pname;
   pname = "module-${pkgName}";
   version = pkg.version;
 
@@ -43,16 +43,16 @@ stdenv.mkDerivation rec {
   hasIncs = builtins.pathExists "${pkg}/include";
   hasBin = builtins.pathExists "${pkg}/bin";
 
-  pacName = 
-    if cpacName == "" 
-      then builtins.replaceStrings ["-"] ["_"] (lib.strings.toUpper pkgName) 
-      else cpacName;
+  pacName =
+    if cpacName == ""
+    then builtins.replaceStrings [ "-" ] [ "_" ] (lib.strings.toUpper pkgName)
+    else cpacName;
 
   # from lrz documentation
   PAC_BASE = "${pkg}";
   PAC_LIBDIR = if hasLibs then "${PAC_BASE}/lib" else "";
-  PAC_LIB = 
-    let path = "${PAC_LIBDIR}/lib${libName}.a"; 
+  PAC_LIB =
+    let path = "${PAC_LIBDIR}/lib${libName}.a";
     in if builtins.pathExists path then path else "";
   PAC_SHLIB =
     let path = "${PAC_LIBDIR}/lib${libName}.so";

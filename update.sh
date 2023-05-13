@@ -6,6 +6,8 @@ rm -f $modpath/*
 
 nix profile install .#modules --profile $modpath/modules-nix
 
+nix profile install .#modules-nixpkgs --profile $modpath/modules-nix
+
 export NIXPKGS_ALLOW_UNFREE=1 # intel software uses unfree license (EULA)
 export NIXPKGS_ALLOW_INSECURE=1 # oneapi needs qt515.full to build which has insecure component qt-webtoolkit
  # oneapi only builds with sandboxing disabled

@@ -90,7 +90,9 @@ addPkgVariables () {
   fi
   # extra variables e.g. PAC_DOC, PAC_MPI_LIB, PAC_WWW don't have default value
   for kvpair in "$extraPkgVariables" ; do
-    modSetEnv "${pacName}_${kvpair%%=*}" "${kvpair#*=}"
+    if [[ -n "$kvpair" ]] ; then
+      modSetEnv "${pacName}_${kvpair%%=*}" "${kvpair#*=}"
+    fi
   done
 }
 

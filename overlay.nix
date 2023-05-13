@@ -52,9 +52,13 @@ with prev.lib; rec {
   julia_1_9_0 = prev.callPackage ./pkgs/julia/1.9.0-rc2-bin.nix { };
 
   ## openmpi - https://www.open-mpi.org/software/ompi/v${major version}.${minor version}/downloads/openmpi-${version}.tar.bz2
-  openmpi = prev.openmpi;
+  openmpi = prev.callPackage ./pkgs/openmpi/default.nix { };
 
-  openmpi_4_1_5 = openmpi.overrideAttrs (old: rec {
+  openmpi_4_1_4_gcc11 = prev.callPackage ./pkgs/openmpi/default.nix {
+    stdenv = prev.gcc11Stdenv;
+  };
+
+  openmpi_4_1_5_gcc11 = openmpi_4_1_4_gcc11.overrideAttrs (old: rec {
     version = "4.1.5";
     src = prev.fetchurl {
       url = "https://www.open-mpi.org/software/ompi/v${versions.major version}.${versions.minor version}/downloads/openmpi-${version}.tar.bz2";
@@ -64,7 +68,7 @@ with prev.lib; rec {
 
   ## osu-micro-benchmarks - mvapich.cse.ohio-state.edu/download/mvapich/osu-micro-benchmarks-${version}.tar.gz
   osu-micro-benchmarks = prev.callPackage ./pkgs/osu-micro-benchmarks {
-    mpi = openmpi_4_1_5;
+    mpi = openmpi_4_1_5_gcc11;
   };
 
   osu-micro-benchmarks_5_6_2 = osu-micro-benchmarks;
@@ -87,17 +91,17 @@ with prev.lib; rec {
 
   ## fftw - ftp://ftp.fftw.org/pub/fftw/fftw-${version}.tar.gz
   fftw = prev.callPackage ./pkgs/fftw {
-    mpi = openmpi_4_1_5;
+    mpi = openmpi_4_1_5_gcc11;
   };
 
   fftw_3_3_10_gcc11_ompi_4_1_5 = prev.callPackage ./pkgs/fftw {
     stdenv = prev.gcc11Stdenv;
-    mpi = openmpi_4_1_5;
+    mpi = openmpi_4_1_5_gcc11;
   };
 
   fftw_3_3_10_gcc12_ompi_4_1_5_openmp = prev.callPackage ./pkgs/fftw {
     stdenv = prev.gcc12Stdenv;
-    mpi = openmpi_4_1_5;
+    mpi = openmpi_4_1_5_gcc11;
     withOpenMP = true;
   };
 
@@ -127,6 +131,22 @@ with prev.lib; rec {
     prev.overrideCC prev.stdenv intel21-wrapped;
 
   # modules
+  modules-nixpkgs = prev.buildEnv {
+    name = "modules-nixpkgs";
+    paths = map
+      (pkg: prev.callPackage ./modules/gcc {
+        inherit pkg;
+      })
+      (with prev; [
+        gcc7
+        gcc8
+        gcc9
+        gcc10
+        gcc11
+        gcc12
+      ]);
+  };
+
   modules = prev.buildEnv {
     name = "modules";
     paths = map
@@ -136,7 +156,6 @@ with prev.lib; rec {
       (with final; [
         julia_1_9_0
         julia_1_8_5
-        openmpi_4_1_5
         osu-micro-benchmarks_5_6_2
         osu-micro-benchmarks_6_1
       ])
@@ -148,6 +167,8 @@ with prev.lib; rec {
       })
       (with final; [
         fftw_3_3_10_gcc11_ompi_4_1_5
+        openmpi_4_1_4_gcc11
+        openmpi_4_1_5_gcc11
       ])
     ++ map
       (pkg: prev.callPackage ./modules/fftw {
