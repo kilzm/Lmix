@@ -29,7 +29,7 @@ addPaths () {
   fi
   # MANPATH
   if [[ -d $1/share/man ]] ; then
-    modPrependPath MANPATH "$1/share/man"
+    modPrependPath "MANPATH" "$1/share/man"
   fi
   # PKG_CONFIG_PATH
   if [[ -d $1/lib/pkgconfig ]] ; then
@@ -71,14 +71,26 @@ addPkgVariables () {
     if [[ -n "$PAC_SHLIB" ]] ; then
       modSetEnv "${pacName}_SHLIB" "${PAC_SHLIB}"
     fi
+    if [[ -n "$PAC_PTHREADS_LIB" ]] ; then
+      modSetEnv "${pacName}_PTHREADS_LIB" "${PAC_PTHREADS_LIB}"
+    fi
+    if [[ -n "$PAC_PTHREADS_SHLIB" ]] ; then
+      modSetEnv "${pacName}_PTHREADS_SHLIB" "${PAC_PTHREADS_SHLIB}"
+    fi
+    if [[ -n "$PAC_MPI_LIB" ]] ; then
+      modSetEnv "${pacName}_MPI_LIB" "${PAC_MPI_LIB}"
+    fi
+    if [[ -n "$PAC_MPI_SHLIB" ]] ; then
+      modSetEnv "${pacName}_MPI_SHLIB" "${PAC_MPI_SHLIB}"
+    fi
   fi
   # PAC_INC - include directory
   if [[ -n "$PAC_INC" ]] ; then
     modSetEnv "${pacName}_INC" "${PAC_INC}"
   fi
   # extra variables e.g. PAC_DOC, PAC_MPI_LIB, PAC_WWW don't have default value
-  for vv in $extraPkgVariables ; do
-    modSetEnv "${pacName}_${vv%%=*}" "${vv#*=}"
+  for kvpair in "$extraPkgVariables" ; do
+    modSetEnv "${pacName}_${kvpair%%=*}" "${kvpair#*=}"
   done
 }
 
@@ -93,6 +105,8 @@ addPkgVariables
 
 echo >> $modfile
 
-for vv in $extraEnvVariables ; do
-  modSetEnv "${vv%%=*}" "${vv#*=}"
+for kvpair in "$extraEnvVariables" ; do
+  if [[ -n "$kvpair" ]] ; then
+    modSetEnv "${kvpair%%=*}" "${kvpair#*=}"
+  fi
 done

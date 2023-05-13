@@ -57,6 +57,20 @@ stdenv.mkDerivation rec {
   PAC_SHLIB =
     let path = "${PAC_LIBDIR}/lib${libName}.so";
     in if builtins.pathExists path then "-L${PAC_LIBDIR} -l${libName}" else "";
+  PAC_PTHREADS_LIB =
+    let path = "${PAC_LIBDIR}/lib${libName}_threads.a";
+    in if builtins.pathExists path then path else "";
+  PAC_PTHREADS_SHLIB =
+    let path = "${PAC_LIBDIR}/lib${libName}_threads.so";
+    in if builtins.pathExists path then path else "";
+  PAC_MPI_LIB =
+    let path = "${PAC_LIBDIR}/lib${libName}_mpi.a";
+    in if builtins.pathExists path then path else "";
+  PAC_MPI_SHLIB =
+    let path = "${PAC_LIBDIR}/lib${libName}_mpi.so";
+    in if builtins.pathExists path then path else "";
   PAC_INC = if hasIncs then "-I${PAC_BASE}/include" else "";
   PAC_BIN = if hasBin then "${PAC_BASE}/bin" else "";
+
+  inherit extraPkgVariables extraEnvVariables;
 }
