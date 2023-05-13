@@ -4,7 +4,7 @@
 , compiler ? ""
 , compilerVer ? 0
 , libName ? pkg.name
-, pacName ? lib.strings.toUpper pkg.name
+, cpacName ? ""
 , addLDLibPath ? false
 , extraPkgVariables ? [ ]
 , extraEnvVariables ? [ ]
@@ -39,11 +39,11 @@ stdenv.mkDerivation rec {
     + strings.optionalString withOpenMP "-openmp"
     + ".lua";
 
-  pacName = strings.toUpper pkgName;
-
   hasLibs = builtins.pathExists "${pkg}/lib";
   hasIncs = builtins.pathExists "${pkg}/include";
   hasBin = builtins.pathExists "${pkg}/bin";
+
+  pacName = if cpacName == "" then builtins.replaceStrings ["-"] ["_"] (lib.strings.toUpper pkgName) else cpacName;
 
   # from lrz documentation
   PAC_BASE = "${pkg}";
