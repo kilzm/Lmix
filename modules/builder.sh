@@ -45,11 +45,43 @@ addPaths () {
   fi
 }
 
+addPkgVariables () {
+  # PAC_BASE - base nix store path
+  echo -e "setenv(\"${pacName}_BASE\", \"${PAC_BASE}\")" >> $modfile
+  # PAC_LIBDIR - library directory
+  if [[ -n "$PAC_LIBDIR" ]] ; then
+    echo -e "setenv(\"${pacName}_LIBDIR\", \"${PAC_LIBDIR}\")" >> $modfile
+    # PAC_LIB - setting for static linking
+    if [[ -n "$PAC_LIB" ]] ; then
+      echo -e "setenv(\"${pacName}_LIB\", \"${PAC_LIB}\")" >> $modfile
+    fi
+    # PAC_SHLIB - setting for dynamic linking
+    if [[ -n "$PAC_SHLIB" ]] ; then
+      echo -e "setenv(\"${pacName}_SHLIB\", \"${PAC_SHLIB}\")" >> $modfile
+    fi
+  fi
+  # PAC_INC - include directory
+  if [[ -n "$PAC_INC" ]] ; then
+    echo -e "setenv(\"${pacName}_INC\", \"${PAC_INC}\")" >> $modfile
+  fi
+  # extra variables e.g. PAC_DOC, PAC_MPI_LIB, PAC_WWW don't have default value
+  for vv in $extraPkgVariables ; do
+    echo -e "setenv(\"${vv%%=*}\", \"vv#*=\")" >> $modfile
+  done
+
+}
+
 for i in $buildInputs;
 do
   addPaths $i
 done
 
-for vv in $setEnv ; do
+echo >> $modfile
+
+addPkgVariables
+
+echo >> $modfile
+
+for vv in $extraEnvVariables ; do
   echo -e "setenv(\"${vv%%=*}\", \"vv#*=\")" >> $modfile
 done

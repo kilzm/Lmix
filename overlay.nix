@@ -141,7 +141,7 @@ with prev.lib; rec {
         osu-micro-benchmarks_6_1
       ])
     ++ map
-      (pkg: prev.callPackage ./modules {
+      (pkg: prev.callPackage ./modules/fftw {
         inherit pkg;
         compiler = "gcc";
         compilerVer = 11;
@@ -150,7 +150,7 @@ with prev.lib; rec {
         fftw_3_3_10_gcc11_ompi_4_1_5
       ])
     ++ map
-      (pkg: prev.callPackage ./modules {
+      (pkg: prev.callPackage ./modules/fftw {
         inherit pkg;
         compiler = "gcc";
         compilerVer = 12;
@@ -171,7 +171,7 @@ with prev.lib; rec {
         intel-classic-compilers_2021_6_0
       ])
     ++ map
-      (pkg: prev.callPackage ./modules {
+      (pkg: prev.callPackage ./modules/fftw {
         inherit pkg;
         compiler = "intel";
         compilerVer = 21;

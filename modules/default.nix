@@ -3,9 +3,12 @@
 , pkg
 , compiler ? ""
 , compilerVer ? 0
+, libName ? pkg.name
+, pacName ? lib.strings.toUpper pkg.name
 , addLDLibPath ? false
+, extraPkgVariables ? [ ]
+, extraEnvVariables ? [ ]
 }:
-
 
 with lib;
 
@@ -21,6 +24,8 @@ stdenv.mkDerivation rec {
   pname = "module-${pkgName}";
   version = pkg.version;
 
+  buildInputs = [ pkg ];
+
   hasMpi = builtins.hasAttr "mpi" pkg && pkg.mpi != null;
   ompi = hasMpi && pkg.mpi.pname == "openmpi";
   impi = hasMpi && pkg.mpi.pname == "intelmpi";
@@ -34,5 +39,26 @@ stdenv.mkDerivation rec {
     + strings.optionalString withOpenMP "-openmp"
     + ".lua";
 
-  buildInputs = [ pkg ];
+  pacName = strings.toUpper pkgName;
+
+  hasLibs = builtins.pathExists "${pkg}/lib";
+  hasIncs = builtins.pathExists "${pkg}/include";
+  hasBin = builtins.pathExists "${pkg}/bin";
+
+  # from lrz documentation
+  PAC_BASE = "${pkg}";
+  PAC_LIBDIR = if hasLibs then "${PAC_BASE}/lib" else "";
+  PAC_LIB =
+    let
+      pathStatic = "${PAC_LIBDIR}/lib${libName}.a";
+      pathLibtools = "${PAC_LIBDIR}/lib${libName}.la";
+    in
+    if builtins.pathExists pathStatic then pathStatic
+    else if builtins.pathExists pathLibtools then pathLibtools
+    else "";
+  PAC_SHLIB =
+    let path = "${PAC_LIBDIR}/lib${libName}.so";
+    in if builtins.pathExists path then "-L${PAC_LIBDIR} -l${libName}" else "";
+  PAC_INC = if hasIncs then "-I${PAC_BASE}/include" else "";
+  PAC_BIN = if hasBin then "${PAC_BASE}/bin" else "";
 }
