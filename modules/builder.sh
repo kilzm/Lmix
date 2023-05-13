@@ -14,65 +14,72 @@ local version = myModuleVersion()
 
 EOF
 
+modPrependPath () {
+  echo -e "prepend_path(\"$1\", \"$2\")" >> $modfile
+}
+
+modSetEnv () {
+  echo -e "setenv(\"$1\", \"$2\")" >> $modfile
+}
+
 addPaths () {
   # PATH
   if [[ -d $1/bin ]] ; then
-    echo -e "prepend_path(\"PATH\", \"$1/bin\")" >> $modfile
+    modPrependPath "PATH" "$1/bin"
   fi
   # MANPATH
   if [[ -d $1/share/man ]] ; then
-    echo -e "prepend_path(\"MANPATH\", \"$1/share/man\")" >> $modfile
+    modPrependPath MANPATH "$1/share/man"
   fi
   # PKG_CONFIG_PATH
   if [[ -d $1/lib/pkgconfig ]] ; then
-    echo -e "prepend_path(\"PKG_CONFIG_PATH\", \"$1/lib/pkgconfig\")" >> $modfile
+    modPrependPath "PKG_CONFIG_PATH" "$1/lib/pkgconfig"
   fi
   if [[ -d $1/share/pkgconfig ]] ; then
-    echo -e "prepend_path(\"PKG_CONFIG_PATH\", \"$1/share/pkgconfig\")" >> $modfile
+    modPrependPath "PKG_CONFIG_PATH" "$1/share/pkgconfig"
   fi
   # CMAKE_SYSTEM_PREFIX_PATH
-  if [[ -f $1/lib/cmake ]] ; then
-    echo -e "prepend_path(\"CMAKE_SYSTEM_PREFIX_PATH\", \"$1/lib/cmake\")" >> $modfile
+  if [[ -d $1/lib/cmake ]] ; then
+    modPrependPath "CMAKE_SYSTEM_PREFIX_PATH" "$1/lib/cmake"
   fi
   # PERL5LIB
   if [[ -d $1/lib/perl5/site_perl ]] ; then
-    echo -e "prepend_path(\"PERL5LIB\", \"$1/lib/perl5/site_perl\")" >> $modfile
+    modPrependPath "PERL5LIB" "$1/lib/perl5/site_perl"
   fi
   # LD_LIBRARY_PATH
   libs=($1/lib/lib*.so)
   if [[ $addLDLibPath && -n $libs ]] ; then
-    echo -e "prepend_path(\"LD_LIBRARY_PATH\", \"$1/lib\")" >> $modfile
+    modPrependPath "LD_LIBRARY_PATH" "$1/lib"
   fi
 }
 
 addPkgVariables () {
   # PAC_BASE - base nix store path
-  echo -e "setenv(\"${pacName}_BASE\", \"${PAC_BASE}\")" >> $modfile
+  modSetEnv "${pacName}_BASE" "${PAC_BASE}"
   if [[ -n "$PAC_BIN" ]] ; then
     # PAC_BIN - bin directory
-    echo -e "setenv(\"${pacName}_BIN\", \"${PAC_BIN}\")" >> $modfile
+    modSetEnv "${pacName}_BIN" "${PAC_BIN}"
   fi
   # PAC_LIBDIR - library directory
   if [[ -n "$PAC_LIBDIR" ]] ; then
-    echo -e "setenv(\"${pacName}_LIBDIR\", \"${PAC_LIBDIR}\")" >> $modfile
+    modSetEnv "${pacName}_LIBDIR" "${PAC_LIBDIR}"
     # PAC_LIB - setting for static linking
     if [[ -n "$PAC_LIB" ]] ; then
-      echo -e "setenv(\"${pacName}_LIB\", \"${PAC_LIB}\")" >> $modfile
+      modSetEnv "${pacName}_LIB" "${PAC_LIB}"
     fi
     # PAC_SHLIB - setting for dynamic linking
     if [[ -n "$PAC_SHLIB" ]] ; then
-      echo -e "setenv(\"${pacName}_SHLIB\", \"${PAC_SHLIB}\")" >> $modfile
+      modSetEnv "${pacName}_SHLIB" "${PAC_SHLIB}"
     fi
   fi
   # PAC_INC - include directory
   if [[ -n "$PAC_INC" ]] ; then
-    echo -e "setenv(\"${pacName}_INC\", \"${PAC_INC}\")" >> $modfile
+    modSetEnv "${pacName}_INC" "${PAC_INC}"
   fi
   # extra variables e.g. PAC_DOC, PAC_MPI_LIB, PAC_WWW don't have default value
   for vv in $extraPkgVariables ; do
-    echo -e "setenv(\"${vv%%=*}\", \"vv#*=\")" >> $modfile
+    modSetEnv "${pacName}_${vv%%=*}" "${vv#*=}"
   done
-
 }
 
 for i in $buildInputs;
@@ -87,5 +94,5 @@ addPkgVariables
 echo >> $modfile
 
 for vv in $extraEnvVariables ; do
-  echo -e "setenv(\"${vv%%=*}\", \"vv#*=\")" >> $modfile
+  modSetEnv "${vv%%=*}" "${vv#*=}"
 done
