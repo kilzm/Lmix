@@ -88,11 +88,10 @@ addPkgVariables () {
   if [[ -n "$PAC_INC" ]] ; then
     modSetEnv "${pacName}_INC" "${PAC_INC}"
   fi
-  # extra variables e.g. PAC_DOC, PAC_MPI_LIB, PAC_WWW don't have default value
-  for kvpair in "$extraPkgVariables" ; do
-    if [[ -n "$kvpair" ]] ; then
-      modSetEnv "${pacName}_${kvpair%%=*}" "${kvpair#*=}"
-    fi
+  keys=$(jq -r 'keys[]' <<< "$extraPkgVariables")
+  for key in $keys ; do
+    val=$(jq --arg key "$key" --raw-output '.[$key]' <<< "$extraPkgVariables")
+    modSetEnv "${pacName}_$key" "$val"
   done
 }
 
@@ -107,8 +106,8 @@ addPkgVariables
 
 echo >> $modfile
 
-for kvpair in "$extraEnvVariables" ; do
-  if [[ -n "$kvpair" ]] ; then
-    modSetEnv "${kvpair%%=*}" "${kvpair#*=}"
-  fi
+keys=$(jq -r 'keys[]' <<< "$extraEnvVariables")
+for key in $keys ; do
+  val=$(jq --arg key "$key" --raw-output '.[$key]' <<< "$extraEnvVariables")
+  modSetEnv "$key" "$val"
 done

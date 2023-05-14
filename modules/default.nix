@@ -5,10 +5,11 @@
 , compiler ? ""
 , compilerVer ? 0
 , libName ? pkg.name
-, cpacName ? ""
+, customPacName ? ""
 , addLDLibPath ? false
-, extraPkgVariables ? [ ]
-, extraEnvVariables ? [ ]
+, extraPkgVariables ? ""
+, extraEnvVariables ? ""
+, jq
 }:
 
 with lib;
@@ -25,6 +26,8 @@ stdenv.mkDerivation rec {
   pname = "module-${pkgName}";
   version = pkg.version;
 
+  nativeBuildInputs = [ jq ];
+  
   buildInputs = [ pkg ];
 
   hasMpi = builtins.hasAttr "mpi" pkg && pkg.mpi != null;
@@ -45,9 +48,9 @@ stdenv.mkDerivation rec {
   hasBin = builtins.pathExists "${pkg}/bin";
 
   pacName =
-    if cpacName == ""
+    if customPacName == ""
     then builtins.replaceStrings [ "-" ] [ "_" ] (toUpper pkgName)
-    else cpacName;
+    else customPacName;
 
   # from lrz documentation
   PAC_BASE = "${pkg}";

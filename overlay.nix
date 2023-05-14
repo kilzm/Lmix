@@ -160,6 +160,16 @@ with prev.lib; rec {
         osu-micro-benchmarks_6_1
       ])
     ++ map
+      (pkg: prev.callPackage ./modules/openmpi {
+        inherit pkg;
+        compiler = "gcc";
+        compilerVer = 11;
+      })
+      (with final; [
+        openmpi_4_1_4_gcc11
+        openmpi_4_1_5_gcc11
+      ])
+    ++ map
       (pkg: prev.callPackage ./modules/fftw {
         inherit pkg;
         compiler = "gcc";
@@ -167,8 +177,6 @@ with prev.lib; rec {
       })
       (with final; [
         fftw_3_3_10_gcc11_ompi_4_1_5
-        openmpi_4_1_4_gcc11
-        openmpi_4_1_5_gcc11
       ])
     ++ map
       (pkg: prev.callPackage ./modules/fftw {
