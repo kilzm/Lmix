@@ -28,6 +28,7 @@ stdenv.mkDerivation rec {
 
   nativeBuildInputs = [ jq ];
   
+  hasMpi = builtins.hasAttr "mpi" pkg && pkg.mpi != null;
   ompi = hasMpi && pkg.mpi.pname == "openmpi";
   impi = hasMpi && pkg.mpi.pname == "intelmpi";
   withOpenMP = builtins.hasAttr "withOpenMP" pkg && pkg.withOpenMP;

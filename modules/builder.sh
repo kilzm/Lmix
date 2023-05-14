@@ -95,11 +95,6 @@ addPkgVariables () {
   done
 }
 
-# for i in $buildInputs;
-# do
-#   addPaths $i
-# done
-#
 addPaths "$PAC_BASE"
 
 echo >> $modfile
