@@ -144,6 +144,22 @@ with prev.lib; rec {
         gcc10
         gcc11
         gcc12
+      ])
+      ++ map
+      (pkg: prev.callPackage ./modules {
+          inherit pkg;
+      })
+      (with prev; [
+        samtools
+        ffmpeg
+        git
+        valgrind
+        llvm
+        ruby
+        python2
+        python37
+        python39
+        python311
       ]);
   };
 
