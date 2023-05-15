@@ -6,9 +6,13 @@
 , compilerVer ? 0
 , libName ? pkg.name
 , customPacName ? ""
-, addLDLibPath ? false
 , extraPkgVariables ? ""
 , extraEnvVariables ? ""
+, pkgLib ? true
+, pkgInc ? true
+, incPath ? "include"
+, libPath ? "lib"
+, addLDLibPath ? false
 , jq
 }:
 
@@ -53,33 +57,33 @@ stdenv.mkDerivation rec {
   # from lrz documentation
   PAC_BASE = "${pkg}";
 
-  PAC_LIBDIR = optionalString hasLibs "${PAC_BASE}/lib";
+  PAC_LIBDIR = optionalString (pkgLib && hasLibs) "${PAC_BASE}/${libPath}";
 
   PAC_LIB = 
     let path = "${PAC_LIBDIR}/lib${libName}.a"; 
-    in optionalString (builtins.pathExists path) path;
+    in optionalString (pkgLib && builtins.pathExists path) path;
 
   PAC_SHLIB =
     let path = "${PAC_LIBDIR}/lib${libName}.so";
-    in optionalString (builtins.pathExists path) "-L${PAC_LIBDIR} -l${libName}";
+    in optionalString (pkgLib && builtins.pathExists path) "-L${PAC_LIBDIR} -l${libName}";
 
   PAC_PTHREADS_LIB =
     let path = "${PAC_LIBDIR}/lib${libName}_threads.a";
-    in optionalString (builtins.pathExists path) path;
+    in optionalString (pkgLib && builtins.pathExists path) path;
 
   PAC_PTHREADS_SHLIB =
     let path = "${PAC_LIBDIR}/lib${libName}_threads.so";
-    in optionalString (builtins.pathExists path) "-L${PAC_LIBDIR} -l${libName}_threads";
+    in optionalString (pkgLib && builtins.pathExists path) "-L${PAC_LIBDIR} -l${libName}_threads";
 
   PAC_MPI_LIB =
     let path = "${PAC_LIBDIR}/lib${libName}_mpi.a";
-    in optionalString (builtins.pathExists path) path;
+    in optionalString (pkgLib && builtins.pathExists path) path;
 
   PAC_MPI_SHLIB =
     let path = "${PAC_LIBDIR}/lib${libName}_mpi.so";
-    in optionalString (builtins.pathExists path) "${PAC_LIBDIR} -l${libName}_mpi";
+    in optionalString (pkgLib && builtins.pathExists path) "${PAC_LIBDIR} -l${libName}_mpi";
 
-  PAC_INC = optionalString hasIncs "-I${PAC_BASE}/include";
+  PAC_INC = optionalString (pkgInc && hasIncs) "-I${PAC_BASE}/${incPath}";
 
   PAC_BIN = optionalString hasBin "${PAC_BASE}/bin";
 

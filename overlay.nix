@@ -155,7 +155,19 @@ with prev.lib; rec {
         git
         valgrind
         llvm
+      ])
+      ++ map
+      (pkg: prev.callPackage ./modules/ruby {
+          inherit pkg;
+      })
+      (with prev; [
         ruby
+      ])
+      ++ map
+      (pkg: prev.callPackage ./modules/python {
+          inherit pkg;
+      })
+      (with prev; [
         python2
         python37
         python39
