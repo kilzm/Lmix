@@ -31,7 +31,7 @@ stdenv.mkDerivation rec {
   version = pkg.version;
 
   nativeBuildInputs = [ jq ];
-  
+
   hasMpi = builtins.hasAttr "mpi" pkg && pkg.mpi != null;
   ompi = hasMpi && pkg.mpi.pname == "openmpi";
   impi = hasMpi && pkg.mpi.pname == "intelmpi";
@@ -59,8 +59,8 @@ stdenv.mkDerivation rec {
 
   PAC_LIBDIR = optionalString (pkgLib && hasLibs) "${PAC_BASE}/${libPath}";
 
-  PAC_LIB = 
-    let path = "${PAC_LIBDIR}/lib${libName}.a"; 
+  PAC_LIB =
+    let path = "${PAC_LIBDIR}/lib${libName}.a";
     in optionalString (pkgLib && builtins.pathExists path) path;
 
   PAC_SHLIB =

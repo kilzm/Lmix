@@ -11,7 +11,7 @@ import ../default.nix (args // rec {
   pkgName = "python";
 
   incPath = "include/${libName}";
-  
+
   extraPkgVariables = builtins.toJSON {
     WWW = "https://doku.lrz.de/display/PUBLIC/Python+for+HPC";
   };

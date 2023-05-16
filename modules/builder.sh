@@ -34,8 +34,7 @@ addPaths () {
   # PKG_CONFIG_PATH
   if [[ -d $1/lib/pkgconfig ]] ; then
     modPrependPath "PKG_CONFIG_PATH" "$1/lib/pkgconfig"
-  fi
-  if [[ -d $1/share/pkgconfig ]] ; then
+  elif [[ -d $1/share/pkgconfig ]] ; then
     modPrependPath "PKG_CONFIG_PATH" "$1/share/pkgconfig"
   fi
   # CMAKE_SYSTEM_PREFIX_PATH
