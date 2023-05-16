@@ -23,6 +23,15 @@ let
       in
       self
     );
+
+
+  defaultModules = pkgs: map (pkg: prev.callPackage ./modules { inherit pkg; }) pkgs;
+
+  namedModules = name: pkgs: map (pkg: prev.callPackage ./modules/${name} { inherit pkg; }) pkgs;
+
+  namedCCModules = name: compiler: compilerVer: pkgs: 
+    map (pkg: prev.callPackage ./modules/${name} { inherit pkg compiler compilerVer; }) pkgs;
+
 in
 with prev.lib; rec {
   ## hello - mirror://gnu/hello/hello-${version}.tar.gz
@@ -133,41 +142,22 @@ with prev.lib; rec {
   # modules
   modules-nixpkgs = prev.buildEnv {
     name = "modules-nixpkgs";
-    paths = map
-      (pkg: prev.callPackage ./modules/gcc {
-        inherit pkg;
-      })
-      (with prev; [
+    paths = defaultModules (with prev; [
+        samtools
+        ffmpeg
+        git
+        valgrind
+        llvm
+      ]) ++ namedModules "gcc" (with prev; [
         gcc7
         gcc8
         gcc9
         gcc10
         gcc11
         gcc12
-      ])
-      ++ map
-      (pkg: prev.callPackage ./modules {
-          inherit pkg;
-      })
-      (with prev; [
-        samtools
-        ffmpeg
-        git
-        valgrind
-        llvm
-      ])
-      ++ map
-      (pkg: prev.callPackage ./modules/ruby {
-          inherit pkg;
-      })
-      (with prev; [
-        ruby
-      ])
-      ++ map
-      (pkg: prev.callPackage ./modules/python {
-          inherit pkg;
-      })
-      (with prev; [
+      ]) ++ namedModules "ruby" (with prev; [
+        ruby 
+      ]) ++ namedModules "python" (with prev; [
         python2
         python37
         python39
@@ -177,63 +167,27 @@ with prev.lib; rec {
 
   modules = prev.buildEnv {
     name = "modules";
-    paths = map
-      (pkg: prev.callPackage ./modules {
-        inherit pkg;
-      })
-      (with final; [
+    paths = defaultModules (with final; [
         julia_1_9_0
         julia_1_8_5
         osu-micro-benchmarks_5_6_2
         osu-micro-benchmarks_6_1
-      ])
-    ++ map
-      (pkg: prev.callPackage ./modules/openmpi {
-        inherit pkg;
-        compiler = "gcc";
-        compilerVer = 11;
-      })
-      (with final; [
+      ]) ++ namedCCModules "openmpi" "gcc" 11 (with final; [
         openmpi_4_1_4_gcc11
         openmpi_4_1_5_gcc11
-      ])
-    ++ map
-      (pkg: prev.callPackage ./modules/fftw {
-        inherit pkg;
-        compiler = "gcc";
-        compilerVer = 11;
-      })
-      (with final; [
+      ]) ++ namedCCModules "fftw" "gcc" 11 (with final; [
         fftw_3_3_10_gcc11_ompi_4_1_5
-      ])
-    ++ map
-      (pkg: prev.callPackage ./modules/fftw {
-        inherit pkg;
-        compiler = "gcc";
-        compilerVer = 12;
-      })
-      (with final; [
+      ]) ++ namedCCModules "fftw" "gcc" 12 (with final; [
         fftw_3_3_10_gcc12_ompi_4_1_5_openmp
       ]);
   };
 
   modules-intel = prev.buildEnv {
     name = "modules-intel";
-    paths = map
-      (pkg: prev.callPackage ./modules {
-        inherit pkg;
-      })
-      (with final; [
+    paths = defaultModules (with final; [
         intel-compilers_2022_1_0
         intel-classic-compilers_2021_6_0
-      ])
-    ++ map
-      (pkg: prev.callPackage ./modules/fftw {
-        inherit pkg;
-        compiler = "intel";
-        compilerVer = 21;
-      })
-      (with final; [
+      ]) ++ namedCCModules "fftw" "intel" 21 (with final; [
         fftw_3_3_10_intel21
       ]);
   };
