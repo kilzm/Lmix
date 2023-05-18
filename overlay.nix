@@ -29,7 +29,7 @@ let
 
   namedModules = name: pkgs: map (pkg: prev.callPackage (./modules/${name}) { inherit pkg; }) pkgs;
 
-  namedCCModules = name: compiler: compilerVer: pkgs: 
+  namedCCModules = name: compiler: compilerVer: pkgs:
     map (pkg: prev.callPackage ./modules/${name} { inherit pkg compiler compilerVer; }) pkgs;
 
 in
@@ -124,7 +124,7 @@ with prev.lib; rec {
   # begin oneapi-2022.2.0
   intel-oneapi_2022_2_0 = prev.callPackage ./pkgs/intel/oneapi { };
 
-  intel-tbb_2021_6_0 = prev.callPackage ./pkgs/intel/oneapi-tbb { 
+  intel-tbb_2021_6_0 = prev.callPackage ./pkgs/intel/oneapi-tbb {
     oneapi = intel-oneapi_2022_2_0;
     version = "2021.6.0";
   };
@@ -153,22 +153,29 @@ with prev.lib; rec {
   # modules
   modules-nixpkgs = prev.buildEnv {
     name = "modules-nixpkgs";
-    paths = defaultModules (with prev; [
+    paths = defaultModules
+      (with prev; [
         samtools
         ffmpeg
         git
         valgrind
         llvm
-      ]) ++ namedModules "gcc" (with prev; [
+      ])
+    ++ namedModules "gcc"
+      (with prev; [
         gcc7
         gcc8
         gcc9
         gcc10
         gcc11
         gcc12
-      ]) ++ namedModules "ruby" (with prev; [
-        ruby 
-      ]) ++ namedModules "python" (with prev; [
+      ])
+    ++ namedModules "ruby"
+      (with prev; [
+        ruby
+      ])
+    ++ namedModules "python"
+      (with prev; [
         python2
         python37
         python39
@@ -178,29 +185,40 @@ with prev.lib; rec {
 
   modules = prev.buildEnv {
     name = "modules";
-    paths = defaultModules (with final; [
+    paths = defaultModules
+      (with final; [
         julia_1_9_0
         julia_1_8_5
         osu-micro-benchmarks_5_6_2
         osu-micro-benchmarks_6_1
-      ]) ++ namedCCModules "openmpi" "gcc" 11 (with final; [
+      ])
+    ++ namedCCModules "openmpi" "gcc" 11
+      (with final; [
         openmpi_4_1_4_gcc11
         openmpi_4_1_5_gcc11
-      ]) ++ namedCCModules "fftw" "gcc" 11 (with final; [
+      ])
+    ++ namedCCModules "fftw" "gcc" 11
+      (with final; [
         fftw_3_3_10_gcc11_ompi_4_1_5
-      ]) ++ namedCCModules "fftw" "gcc" 12 (with final; [
+      ])
+    ++ namedCCModules "fftw" "gcc" 12
+      (with final; [
         fftw_3_3_10_gcc12_ompi_4_1_5_openmp
       ]);
   };
 
   modules-intel = prev.buildEnv {
     name = "modules-intel";
-    paths = defaultModules (with final; [
-      ]) ++ namedModules "intel/oneapi-compilers" (with final; [
+    paths = namedModules "intel/oneapi-compilers"
+      (with final; [
         intel-compilers_2022_1_0
-      ]) ++ namedModules "intel/oneapi-tbb" (with final; [
+      ])
+    ++ namedModules "intel/oneapi-tbb"
+      (with final; [
         intel-tbb_2021_6_0
-      ]) ++ namedCCModules "fftw" "intel" 21 (with final; [
+      ])
+    ++ namedCCModules "fftw" "intel" 21
+      (with final; [
         fftw_3_3_10_intel21
       ]);
   };
