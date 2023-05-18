@@ -27,7 +27,7 @@ let
 
   defaultModules = pkgs: map (pkg: prev.callPackage ./modules { inherit pkg; }) pkgs;
 
-  namedModules = name: pkgs: map (pkg: prev.callPackage ./modules/${name} { inherit pkg; }) pkgs;
+  namedModules = name: pkgs: map (pkg: prev.callPackage (./modules/${name}) { inherit pkg; }) pkgs;
 
   namedCCModules = name: compiler: compilerVer: pkgs: 
     map (pkg: prev.callPackage ./modules/${name} { inherit pkg compiler compilerVer; }) pkgs;
@@ -120,24 +120,35 @@ with prev.lib; rec {
   };
 
   # intel
+
+  # begin oneapi-2022.2.0
   intel-oneapi_2022_2_0 = prev.callPackage ./pkgs/intel/oneapi { };
 
-  intel-compilers_2022_1_0 = prev.callPackage ./pkgs/intel/compilers {
+  intel-tbb_2021_6_0 = prev.callPackage ./pkgs/intel/oneapi-tbb { 
     oneapi = intel-oneapi_2022_2_0;
+    version = "2021.6.0";
   };
 
-  intel-classic-compilers_2021_6_0 = prev.callPackage ./pkgs/intel/classic-compilers {
+  intel-compilers_2022_1_0 = prev.callPackage ./pkgs/intel/oneapi-compilers {
     oneapi = intel-oneapi_2022_2_0;
+    tbb = intel-tbb_2021_6_0;
+    version = "2022.1.0";
   };
 
+  intel-classic-compilers_2021_6_0 = prev.callPackage ./pkgs/intel/oneapi-classic-compilers {
+    oneapi = intel-oneapi_2022_2_0;
+  };
 
   intel21Stdenv =
     let
       intel21-wrapped = wrapICCWith rec {
-        cc = intel-classic-compilers_2021_6_0;
+        cc = prev.callPackage ./pkgs/intel/oneapi-classic-compilers {
+          oneapi = intel-oneapi_2022_2_0;
+        };
       };
     in
     prev.overrideCC prev.stdenv intel21-wrapped;
+  # end oneapi-2022.2.0
 
   # modules
   modules-nixpkgs = prev.buildEnv {
@@ -185,8 +196,10 @@ with prev.lib; rec {
   modules-intel = prev.buildEnv {
     name = "modules-intel";
     paths = defaultModules (with final; [
+      ]) ++ namedModules "intel/oneapi-compilers" (with final; [
         intel-compilers_2022_1_0
-        intel-classic-compilers_2021_6_0
+      ]) ++ namedModules "intel/oneapi-tbb" (with final; [
+        intel-tbb_2021_6_0
       ]) ++ namedCCModules "fftw" "intel" 21 (with final; [
         fftw_3_3_10_intel21
       ]);

@@ -15,16 +15,7 @@ stdenv.mkDerivation rec {
   installPhase = ''
     mkdir -p $out/bin
     mkdir -p $out/nix-support
-    mkdir -p $out/share/man
-    compilers=$(find $compdir/linux/bin/intel64 -type f -executable -exec basename {} \;)
-    echo $compilers
-    for c in $compilers;
-    do
-      ln -s $compdir/linux/bin/intel64/$c $out/bin/$c
-    done
-
-    ln -s $compdir/linux/doc $out/share
-    ln -s $compdir/documentation/en/man/common/man1 $out/share/man
+    ln -s $compdir/linux/bin/intel64/* $out/bin
 
     for c in ifort xiar xild; do
       wrapProgramBinary $out/bin/$c --add-flags "-gcc-name=${gcc}/bin/gcc"

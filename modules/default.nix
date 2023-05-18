@@ -8,6 +8,7 @@
 , customPacName ? ""
 , extraPkgVariables ? ""
 , extraEnvVariables ? ""
+, inheritModulefile ? ""
 , pkgLib ? true
 , pkgInc ? true
 , incPath ? "include"
@@ -87,5 +88,5 @@ stdenv.mkDerivation rec {
 
   PAC_BIN = optionalString hasBin "${PAC_BASE}/bin";
 
-  inherit extraPkgVariables extraEnvVariables;
+  inherit extraPkgVariables extraEnvVariables inheritModulefile;
 }

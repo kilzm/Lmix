@@ -50,6 +50,12 @@ addPaths () {
   if [[ $addLDLibPath && -n $libs ]] ; then
     modPrependPath "LD_LIBRARY_PATH" "$1/lib"
   fi
+
+  keys=$(jq -r 'keys[]' <<< "$extraPaths")
+  for key in $keys ; do
+    val=$(jq --arg key "$key" --raw-output '.[$key]' <<< "$extraPaths")
+    modPrependPath "$key" "$val"
+  done
 }
 
 addPkgVariables () {
@@ -93,6 +99,12 @@ addPkgVariables () {
     modSetEnv "${pacName}_$key" "$val"
   done
 }
+
+if [[ -n "$inheritModulefile" ]]; then
+  modname="$(basename $inheritModulefile)" >> $modfile
+  modPrependPath "MODULEPATH" "$(dirname $inheritModulefile)"
+  echo -e "load(\"$modname\")" >> $modfile
+fi
 
 addPaths "$PAC_BASE"
 

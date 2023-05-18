@@ -1,7 +1,7 @@
 { stdenv, lib, oneapi }:
 
 stdenv.mkDerivation rec {
-  pname = "intel-compilers";
+  pname = "intel-oneapi-llvm-compilers";
   version = "2022.1.0";
 
   phases = [ "installPhase" ];
@@ -20,13 +20,11 @@ stdenv.mkDerivation rec {
 
   installPhase = ''
     mkdir -p $out/bin
-    mkdir -p $out/share/man
+
     for c in $compilers;
     do
       ln -s $compdir/linux/bin/$c $out/bin/$c
     done
-    ln -s $compdir/linux/doc $out/share
-    ln -s $compdir/documentation/en/man/common/man1 $out/share/man
   '';
 
   meta = {
