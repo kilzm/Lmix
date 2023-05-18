@@ -8,7 +8,10 @@
 , customPacName ? ""
 , extraPkgVariables ? ""
 , extraEnvVariables ? ""
-, inheritModulefile ? ""
+, customModfilePath ? ""
+, customScriptPath ? ""
+, dependencies ? []
+, excludes ? []
 , pkgLib ? true
 , pkgInc ? true
 , incPath ? "include"
@@ -27,6 +30,10 @@ assert compiler == ""
 
 stdenv.mkDerivation rec {
   builder = ./builder.sh;
+
+  inherit extraPkgVariables extraEnvVariables;
+  inherit customModfilePath customScriptPath;
+  inherit dependencies excludes addLDLibPath;
 
   pname = "module-${pkgName}";
   version = pkg.version;
@@ -87,6 +94,4 @@ stdenv.mkDerivation rec {
   PAC_INC = optionalString (pkgInc && hasIncs) "-I${PAC_BASE}/${incPath}";
 
   PAC_BIN = optionalString hasBin "${PAC_BASE}/bin";
-
-  inherit extraPkgVariables extraEnvVariables inheritModulefile;
 }

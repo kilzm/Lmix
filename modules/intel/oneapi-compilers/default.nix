@@ -7,7 +7,15 @@
 } @args:
 
 import ../../default.nix (args // {
-  inheritModulefile = "${pkg}/modulefiles/compiler";
+  customScriptPath = "${pkg}/env/vars.sh";
+
+  dependencies = [
+    "intel-oneapi-tbb"
+  ];
+
+  excludes = [
+    "LIBDIR"
+  ];
 
   extraPkgVariables = builtins.toJSON {
     BIN = "${pkg}/linux/bin";

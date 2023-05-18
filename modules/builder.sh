@@ -14,8 +14,15 @@ local version = myModuleVersion()
 
 EOF
 
+
 modPrependPath () {
   echo -e "prepend_path(\"$1\", \"$2\")" >> $modfile
+}
+
+modPrependPathIfExists () {
+  if [[ -d "$2" && " $excludes " != *" $1 "* ]] ; then
+      modPrependPath $1 $2
+  fi
 }
 
 modSetEnv () {
@@ -23,29 +30,13 @@ modSetEnv () {
 }
 
 addPaths () {
-  # PATH
-  if [[ -d $1/bin ]] ; then
-    modPrependPath "PATH" "$1/bin"
-  fi
-  # MANPATH
-  if [[ -d $1/share/man ]] ; then
-    modPrependPath "MANPATH" "$1/share/man"
-  fi
-  # PKG_CONFIG_PATH
-  if [[ -d $1/lib/pkgconfig ]] ; then
-    modPrependPath "PKG_CONFIG_PATH" "$1/lib/pkgconfig"
-  elif [[ -d $1/share/pkgconfig ]] ; then
-    modPrependPath "PKG_CONFIG_PATH" "$1/share/pkgconfig"
-  fi
-  # CMAKE_SYSTEM_PREFIX_PATH
-  if [[ -d $1/lib/cmake ]] ; then
-    modPrependPath "CMAKE_SYSTEM_PREFIX_PATH" "$1/lib/cmake"
-  fi
-  # PERL5LIB
-  if [[ -d $1/lib/perl5/site_perl ]] ; then
-    modPrependPath "PERL5LIB" "$1/lib/perl5/site_perl"
-  fi
-  # LD_LIBRARY_PATH
+  modPrependPathIfExists "PATH" "$1/bin"
+  modPrependPathIfExists "MANPATH" "$1/share/man"
+  modPrependPathIfExists "PKG_CONFIG_PATH" "$1/lib/pkgconfig"
+  modPrependPathIfExists "PKG_CONFIG_PATH" "$1/share/pkgconfig"
+  modPrependPathIfExists "CMAKE_SYSTEM_PREFIX_PATH" "$1/lib/cmake"
+  modPrependPathIfExists "PERL5LIB" "$1/lib/perl5/site_perl"
+
   libs=($1/lib/lib*.so)
   if [[ $addLDLibPath && -n $libs ]] ; then
     modPrependPath "LD_LIBRARY_PATH" "$1/lib"
@@ -66,10 +57,10 @@ addPkgVariables () {
     modSetEnv "${pacName}_BIN" "${PAC_BIN}"
   fi
   # PAC_LIBDIR - library directory
-  if [[ -n "$PAC_LIBDIR" ]] ; then
+  if [[ -n "$PAC_LIBDIR" && " $excludes " != *" LIBDIR "* ]]; then
     modSetEnv "${pacName}_LIBDIR" "${PAC_LIBDIR}"
     # PAC_LIB - setting for static linking
-    if [[ -n "$PAC_LIB" ]] ; then
+    if [[ -n "$PAC_LIB" && " $excludes " != *" LIB "* ]] ; then
       modSetEnv "${pacName}_LIB" "${PAC_LIB}"
     fi
     # PAC_SHLIB - setting for dynamic linking
@@ -90,7 +81,7 @@ addPkgVariables () {
     fi
   fi
   # PAC_INC - include directory
-  if [[ -n "$PAC_INC" ]] ; then
+  if [[ -n "$PAC_INC" && " $excludes " != *" INC "* ]] ; then
     modSetEnv "${pacName}_INC" "${PAC_INC}"
   fi
   keys=$(jq -r 'keys[]' <<< "$extraPkgVariables")
@@ -100,10 +91,21 @@ addPkgVariables () {
   done
 }
 
-if [[ -n "$inheritModulefile" ]]; then
-  modname="$(basename $inheritModulefile)" >> $modfile
-  modPrependPath "MODULEPATH" "$(dirname $inheritModulefile)"
+if [[ -n "$customModfilePath" ]]; then
+  moddir="$(dirname $customModfilePath)"
+  modname="$(basename $customModfilePath)"
+  modPrependPath "MODULEPATH" "$moddir"
   echo -e "load(\"$modname\")" >> $modfile
+fi
+
+if [[ -n "$customScriptPath" ]]; then
+  echo -e "source_sh(\"bash\", \"$customScriptPath\")" >> $modfile
+fi
+
+if [[ -n "$dependencies" ]] ; then
+  for module in $dependencies ; do
+    echo -e "depends_on(\"$module\")" >> $modfile
+  done
 fi
 
 addPaths "$PAC_BASE"

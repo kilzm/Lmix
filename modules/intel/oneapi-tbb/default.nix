@@ -10,5 +10,11 @@ import ../../default.nix (args // {
   libPath = "lib/intel64/gcc4.8";
   libName = "tbb";
 
-  inheritModulefile = "${pkg}/modulefiles/tbb";
+  customScriptPath = "${pkg}/env/vars.sh";
+
+  excludes = [
+    "PATH"
+    "MANPATH"
+    "PKG_CONFIG_PATH"
+  ];
 })
