@@ -2,21 +2,54 @@
 , lib
 , pkg
 , pkgName ? pkg.pname
+
+# these will be set in the overlay if the specific compiler and version are relevant to the module like in fftw
 , compiler ? ""
 , compilerVer ? 0
-, libName ? pkg.name
+
+# modify this when the library files are not called "lib<pkgName>.a"/"lib<pkgName>.so" 
+, libName ? pkg.pname
+
+# specify a custom prefix for the package variables e.g. PACNAME_BASE
+# if empty the prefix will be the package name uppercase with '_' instead of '-'
 , customPacName ? ""
+
+# specify extra package variables in JSON format which is supported by builtins.toJSON <attrset>
+# the package prefix will be added so defining e.g. WWW = "..." is sufficient
 , extraPkgVariables ? ""
+
+# specify extra environment variables in JSON format
 , extraEnvVariables ? ""
+
+# if the compiled package provide a premade modulefile it can be loaded here
+# supports both TCL and lua/LMod modules
 , customModfilePath ? ""
+
+# if the compiled package provides premade script to set the env it can be sourced here
 , customScriptPath ? ""
+
+# specify which other modules the module depends on
 , dependencies ? []
+
+# exclude environment/package variables that would otherwise be automatically created
+# sometimes PAC_LIBDIR might be unnecessary or adding to PATH is handled by sourced script
 , excludes ? []
+
+# false will ignore all package variables for lib
 , pkgLib ? true
+
+# false will ignore the PAC_INC variable
 , pkgInc ? true
+
+# default is the standard for packages but some might ignore these
+# e.g. set libPath = "lib/intel64"
 , incPath ? "include"
 , libPath ? "lib"
+
+# specify if the libdir should be added to the LD_LIBRARY_PATH
 , addLDLibPath ? false
+
+# json parser
 , jq
 }:
 

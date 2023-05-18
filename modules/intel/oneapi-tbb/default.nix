@@ -13,8 +13,6 @@ import ../../default.nix (args // {
   customScriptPath = "${pkg}/env/vars.sh";
 
   excludes = [
-    "PATH"
-    "MANPATH"
-    "PKG_CONFIG_PATH"
+    "PKG_CONFIG_PATH" # is set by the shell script
   ];
 })
