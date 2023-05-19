@@ -1,5 +1,6 @@
 { stdenv
 , lib
+, buildEnv
 , pkg
 , pkgName ? pkg.pname
 
@@ -61,6 +62,15 @@ assert compiler == ""
   || compiler == "gcc" && 7 <= compilerVer && compilerVer <= 13
   || compiler == "intel" && 19 <= compilerVer && compilerVer <= 23;
 
+let
+  monoPkg =
+    if builtins.length pkg.outputs > 1
+      then buildEnv {
+        name = pkg.name;
+        paths = map (out: pkg.${out}) pkg.outputs; 
+      } else pkg;
+in
+
 stdenv.mkDerivation rec {
   builder = ./builder.sh;
 
@@ -70,6 +80,8 @@ stdenv.mkDerivation rec {
 
   pname = "module-${pkgName}";
   version = pkg.version;
+
+  buildInputs = [ monoPkg ]; 
 
   nativeBuildInputs = [ jq ];
 

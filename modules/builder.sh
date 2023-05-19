@@ -12,6 +12,8 @@ cat > $modfile << EOF
 local pkgName = myModuleName()
 local version = myModuleVersion()
 
+depends_on("glibc", "binutils")
+
 EOF
 
 
@@ -108,7 +110,10 @@ if [[ -n "$dependencies" ]] ; then
   done
 fi
 
-addPaths "$PAC_BASE"
+for i in "$buildInputs" ; do
+  addPaths $i
+done
+
 
 echo >> $modfile
 

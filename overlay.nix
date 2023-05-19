@@ -124,6 +124,8 @@ with prev.lib; rec {
   # begin oneapi-2022.2.0
   intel-oneapi_2022_2_0 = prev.callPackage ./pkgs/intel/oneapi { };
 
+  oneapi = intel-oneapi_2022_2_0;
+
   intel-tbb_2021_6_0 = prev.callPackage ./pkgs/intel/oneapi-tbb {
     oneapi = intel-oneapi_2022_2_0;
     version = "2021.6.0";
@@ -137,6 +139,18 @@ with prev.lib; rec {
 
   intel-classic-compilers_2021_6_0 = prev.callPackage ./pkgs/intel/oneapi-classic-compilers {
     oneapi = intel-oneapi_2022_2_0;
+  };
+
+  intel-oneapi-mpi_2021_6_0_gcc11 = prev.callPackage ./pkgs/intel/oneapi-mpi {
+    oneapi = intel-oneapi_2022_2_0;
+    version = "2021.6.0";
+    stdenv = prev.gcc11Stdenv;
+  };
+
+  intel-oneapi-mpi_2021_6_0_intel21 = prev.callPackage ./pkgs/intel/oneapi-mpi {
+    oneapi = intel-oneapi_2022_2_0;
+    version = "2021.6.0";
+    stdenv = intel21Stdenv;
   };
 
   intel21Stdenv =
@@ -160,6 +174,11 @@ with prev.lib; rec {
         git
         valgrind
         llvm
+        glibc
+      ])
+    ++ namedModules "binutils"
+      (with prev; [
+        binutils
       ])
     ++ namedModules "gcc"
       (with prev; [
@@ -216,6 +235,14 @@ with prev.lib; rec {
     ++ namedModules "intel/oneapi-tbb"
       (with final; [
         intel-tbb_2021_6_0
+      ])
+    ++ namedCCModules "intel/oneapi-mpi" "gcc" 12
+      (with final; [
+        intel-oneapi-mpi_2021_6_0_gcc11
+      ])
+    ++ namedCCModules "intel/oneapi-mpi" "intel" 21
+      (with final; [
+        intel-oneapi-mpi_2021_6_0_intel21
       ])
     ++ namedCCModules "fftw" "intel" 21
       (with final; [
