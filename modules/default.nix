@@ -76,7 +76,8 @@ in
 
 stdenv.mkDerivation rec {
   builder = ./builder.sh;
-
+  
+  inherit pkgName attrName;
   inherit extraPkgVariables extraEnvVariables;
   inherit customModfilePath customScriptPath;
   inherit dependencies excludes addLDLibPath;
@@ -109,11 +110,11 @@ stdenv.mkDerivation rec {
   hasLibs = builtins.pathExists "${pkg}/lib";
   hasIncs = builtins.pathExists "${pkg}/include";
   hasBin = builtins.pathExists "${pkg}/bin";
+  
+  pkgNameUpper = builtins.replaceStrings [ "-" ] [ "_" ] (toUpper pkgName);
 
   pacName =
-    if customPacName == ""
-    then builtins.replaceStrings [ "-" ] [ "_" ] (toUpper pkgName)
-    else customPacName;
+    if customPacName == "" then pkgNameUpper else customPacName;
 
   # from lrz documentation
   PAC_BASE = "${pkg}";
@@ -147,7 +148,4 @@ stdenv.mkDerivation rec {
   PAC_INC = optionalString (pkgInc && hasIncs) "-I${PAC_BASE}/${incPath}";
 
   PAC_BIN = optionalString hasBin "${PAC_BASE}/bin";
-
-  # for nix flakes from modules
-  PAC_NIX_MODULES_ATTR = attrName;
 }
