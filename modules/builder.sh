@@ -12,7 +12,7 @@ cat > $modfile << EOF
 local pkgName = myModuleName()
 local version = myModuleVersion()
 
-depends_on("glibc", "binutils")
+depends_on("nix-stdenv")
 
 EOF
 

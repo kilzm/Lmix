@@ -2,14 +2,14 @@
 , lib
 , buildEnv
 , pkg
-, pkgName ? pkg.pname
+, pkgName ? if builtins.hasAttr "pname" pkg then pkg.pname else pkg.name
 
 # these will be set in the overlay if the specific compiler and version are relevant to the module like in fftw
 , compiler ? ""
 , compilerVer ? 0
 
 # modify this when the library files are not called "lib<pkgName>.a"/"lib<pkgName>.so" 
-, libName ? pkg.pname
+, libName ? pkgName
 
 # specify a custom prefix for the package variables e.g. PACNAME_BASE
 # if empty the prefix will be the package name uppercase with '_' instead of '-'
@@ -79,7 +79,7 @@ stdenv.mkDerivation rec {
   inherit dependencies excludes addLDLibPath;
 
   pname = "module-${pkgName}";
-  version = pkg.version;
+  version = if builtins.hasAttr "version" pkg then pkg.version else "";
 
   buildInputs = [ monoPkg ]; 
 
@@ -90,13 +90,18 @@ stdenv.mkDerivation rec {
   impi = hasMpi && pkg.mpi.pname == "intelmpi";
   withOpenMP = builtins.hasAttr "withOpenMP" pkg && pkg.withOpenMP;
 
-  modName =
+  modName = 
+  if 
+    version != "" 
+  then
     "${pkgName}/${version}"
     + strings.optionalString (compiler != "") "-${compiler}${builtins.toString compilerVer}"
     + strings.optionalString ompi "-ompi"
     + strings.optionalString impi "-impi"
     + strings.optionalString withOpenMP "-openmp"
-    + ".lua";
+    + ".lua"
+  else
+    "${pkgName}.lua";
 
   hasLibs = builtins.pathExists "${pkg}/lib";
   hasIncs = builtins.pathExists "${pkg}/include";

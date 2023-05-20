@@ -164,24 +164,32 @@ with prev.lib; rec {
     prev.overrideCC prev.stdenv intel21-wrapped;
   # end oneapi-2022.2.0
 
+  nix-stdenv = prev.buildEnv {
+    name = "nix-stdenv";
+    paths = (with prev; [
+      glibc
+      coreutils
+      binutils
+      bzip2
+      bashInteractive
+      gcc
+    ]);
+  };
+
   # modules
   modules-nixpkgs = prev.buildEnv {
     name = "modules-nixpkgs";
     paths = defaultModules
-      (with prev; [
+      (with final; [
+        nix-stdenv
         samtools
         ffmpeg
         git
         valgrind
         llvm
-        glibc
-      ])
-    ++ namedModules "binutils"
-      (with prev; [
-        binutils
       ])
     ++ namedModules "gcc"
-      (with prev; [
+      (with final; [
         gcc7
         gcc8
         gcc9
@@ -190,11 +198,11 @@ with prev.lib; rec {
         gcc12
       ])
     ++ namedModules "ruby"
-      (with prev; [
+      (with final; [
         ruby
       ])
     ++ namedModules "python"
-      (with prev; [
+      (with final; [
         python2
         python37
         python39
