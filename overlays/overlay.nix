@@ -6,7 +6,7 @@ let
     , libc ? prev.glibc
     , ...
     } @extraArgs:
-    prev.callPackage ./pkgs/intel/build-support/cc-wrapper (
+    prev.callPackage ../pkgs/intel/build-support/cc-wrapper (
       let
         self = {
           nativeTools = prev.targetPlatform == prev.hostPlatform && prev.stdenv.cc.nativeTools or false;
@@ -23,14 +23,6 @@ let
       in
       self
     );
-
-
-  defaultModules = pkgs: map (pkg: prev.callPackage ./modules { inherit pkg; }) pkgs;
-
-  namedModules = name: pkgs: map (pkg: prev.callPackage (./modules/${name}) { inherit pkg; }) pkgs;
-
-  namedCCModules = name: compiler: compilerVer: pkgs:
-    map (pkg: prev.callPackage ./modules/${name} { inherit pkg compiler compilerVer; }) pkgs;
 
 in
 with prev.lib; rec {
@@ -58,12 +50,12 @@ with prev.lib; rec {
 
   julia_1_8_5 = prev.julia_18;
 
-  julia_1_9_0 = prev.callPackage ./pkgs/julia/1.9.0-rc2-bin.nix { };
+  julia_1_9_0 = prev.callPackage ../pkgs/julia/1.9.0-rc2-bin.nix { };
 
   ## openmpi - https://www.open-mpi.org/software/ompi/v${major version}.${minor version}/downloads/openmpi-${version}.tar.bz2
-  openmpi = prev.callPackage ./pkgs/openmpi/default.nix { };
+  openmpi = prev.callPackage ../pkgs/openmpi/default.nix { };
 
-  openmpi_4_1_4_gcc11 = prev.callPackage ./pkgs/openmpi/default.nix {
+  openmpi_4_1_4_gcc11 = prev.callPackage ../pkgs/openmpi/default.nix {
     stdenv = prev.gcc11Stdenv;
   };
 
@@ -76,7 +68,7 @@ with prev.lib; rec {
   });
 
   ## osu-micro-benchmarks - mvapich.cse.ohio-state.edu/download/mvapich/osu-micro-benchmarks-${version}.tar.gz
-  osu-micro-benchmarks = prev.callPackage ./pkgs/osu-micro-benchmarks {
+  osu-micro-benchmarks = prev.callPackage ../pkgs/osu-micro-benchmarks {
     mpi = openmpi_4_1_5_gcc11;
   };
 
@@ -99,22 +91,22 @@ with prev.lib; rec {
   });
 
   ## fftw - ftp://ftp.fftw.org/pub/fftw/fftw-${version}.tar.gz
-  fftw = prev.callPackage ./pkgs/fftw {
+  fftw = prev.callPackage ../pkgs/fftw {
     mpi = openmpi_4_1_5_gcc11;
   };
 
-  fftw_3_3_10_gcc11_ompi_4_1_5 = prev.callPackage ./pkgs/fftw {
+  fftw_3_3_10_gcc11_ompi_4_1_5 = prev.callPackage ../pkgs/fftw {
     stdenv = prev.gcc11Stdenv;
     mpi = openmpi_4_1_5_gcc11;
   };
 
-  fftw_3_3_10_gcc12_ompi_4_1_5_openmp = prev.callPackage ./pkgs/fftw {
+  fftw_3_3_10_gcc12_ompi_4_1_5_openmp = prev.callPackage ../pkgs/fftw {
     stdenv = prev.gcc12Stdenv;
     mpi = openmpi_4_1_5_gcc11;
     withOpenMP = true;
   };
 
-  fftw_3_3_10_intel21 = prev.callPackage ./pkgs/fftw {
+  fftw_3_3_10_intel21 = prev.callPackage ../pkgs/fftw {
     stdenv = intel21Stdenv;
     mpi = null;
   };
@@ -122,32 +114,32 @@ with prev.lib; rec {
   # intel
 
   # begin oneapi-2022.2.0
-  intel-oneapi_2022_2_0 = prev.callPackage ./pkgs/intel/oneapi { };
+  intel-oneapi_2022_2_0 = prev.callPackage ../pkgs/intel/oneapi { };
 
   oneapi = intel-oneapi_2022_2_0;
 
-  intel-tbb_2021_6_0 = prev.callPackage ./pkgs/intel/oneapi-tbb {
+  intel-tbb_2021_6_0 = prev.callPackage ../pkgs/intel/oneapi-tbb {
     oneapi = intel-oneapi_2022_2_0;
     version = "2021.6.0";
   };
 
-  intel-compilers_2022_1_0 = prev.callPackage ./pkgs/intel/oneapi-compilers {
+  intel-compilers_2022_1_0 = prev.callPackage ../pkgs/intel/oneapi-compilers {
     oneapi = intel-oneapi_2022_2_0;
     tbb = intel-tbb_2021_6_0;
     version = "2022.1.0";
   };
 
-  intel-classic-compilers_2021_6_0 = prev.callPackage ./pkgs/intel/oneapi-classic-compilers {
+  intel-classic-compilers_2021_6_0 = prev.callPackage ../pkgs/intel/oneapi-classic-compilers {
     oneapi = intel-oneapi_2022_2_0;
   };
 
-  intel-oneapi-mpi_2021_6_0_gcc11 = prev.callPackage ./pkgs/intel/oneapi-mpi {
+  intel-oneapi-mpi_2021_6_0_gcc11 = prev.callPackage ../pkgs/intel/oneapi-mpi {
     oneapi = intel-oneapi_2022_2_0;
     version = "2021.6.0";
     stdenv = prev.gcc11Stdenv;
   };
 
-  intel-oneapi-mpi_2021_6_0_intel21 = prev.callPackage ./pkgs/intel/oneapi-mpi {
+  intel-oneapi-mpi_2021_6_0_intel21 = prev.callPackage ../pkgs/intel/oneapi-mpi {
     oneapi = intel-oneapi_2022_2_0;
     version = "2021.6.0";
     stdenv = intel21Stdenv;
@@ -156,7 +148,7 @@ with prev.lib; rec {
   intel21Stdenv =
     let
       intel21-wrapped = wrapICCWith rec {
-        cc = prev.callPackage ./pkgs/intel/oneapi-classic-compilers {
+        cc = prev.callPackage ../pkgs/intel/oneapi-classic-compilers {
           oneapi = intel-oneapi_2022_2_0;
         };
       };
@@ -164,6 +156,7 @@ with prev.lib; rec {
     prev.overrideCC prev.stdenv intel21-wrapped;
   # end oneapi-2022.2.0
 
+  # default environment when working with nix-generated modules
   nix-stdenv = prev.buildEnv {
     name = "nix-stdenv";
     paths = (with prev; [
@@ -174,87 +167,5 @@ with prev.lib; rec {
       bashInteractive
       gcc
     ]);
-  };
-
-  # modules
-  modules-nixpkgs = prev.buildEnv {
-    name = "modules-nixpkgs";
-    paths = defaultModules
-      (with final; [
-        nix-stdenv
-        samtools
-        ffmpeg
-        git
-        valgrind
-        llvm
-      ])
-    ++ namedModules "gcc"
-      (with final; [
-        gcc7
-        gcc8
-        gcc9
-        gcc10
-        gcc11
-        gcc12
-      ])
-    ++ namedModules "ruby"
-      (with final; [
-        ruby
-      ])
-    ++ namedModules "python"
-      (with final; [
-        python2
-        python37
-        python39
-        python311
-      ]);
-  };
-
-  modules = prev.buildEnv {
-    name = "modules";
-    paths = defaultModules
-      (with final; [
-        julia_1_9_0
-        julia_1_8_5
-        osu-micro-benchmarks_5_6_2
-        osu-micro-benchmarks_6_1
-      ])
-    ++ namedCCModules "openmpi" "gcc" 11
-      (with final; [
-        openmpi_4_1_4_gcc11
-        openmpi_4_1_5_gcc11
-      ])
-    ++ namedCCModules "fftw" "gcc" 11
-      (with final; [
-        fftw_3_3_10_gcc11_ompi_4_1_5
-      ])
-    ++ namedCCModules "fftw" "gcc" 12
-      (with final; [
-        fftw_3_3_10_gcc12_ompi_4_1_5_openmp
-      ]);
-  };
-
-  modules-intel = prev.buildEnv {
-    name = "modules-intel";
-    paths = namedModules "intel/oneapi-compilers"
-      (with final; [
-        intel-compilers_2022_1_0
-      ])
-    ++ namedModules "intel/oneapi-tbb"
-      (with final; [
-        intel-tbb_2021_6_0
-      ])
-    ++ namedCCModules "intel/oneapi-mpi" "gcc" 12
-      (with final; [
-        intel-oneapi-mpi_2021_6_0_gcc11
-      ])
-    ++ namedCCModules "intel/oneapi-mpi" "intel" 21
-      (with final; [
-        intel-oneapi-mpi_2021_6_0_intel21
-      ])
-    ++ namedCCModules "fftw" "intel" 21
-      (with final; [
-        fftw_3_3_10_intel21
-      ]);
   };
 }

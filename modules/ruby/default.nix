@@ -2,6 +2,7 @@
 , lib
 , buildEnv
 , pkg
+, attrName
 , compiler ? ""
 , compilerVer ? 0
 , jq

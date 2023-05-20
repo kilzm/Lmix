@@ -9,17 +9,21 @@
 
   outputs = inputs@{ self, nixpkgs, nurl, utils }:
     let
+      inherit (nixpkgs.lib)
+        composeExtensions;
+
       system = "x86_64-linux";
       config = {
         allowUnfree = true;
         allowInsecure = true;
       };
+      overlay = import ./default.nix;
       pkgs = import nixpkgs {
         inherit system config;
       };
-      overlay = import ./overlay.nix;
     in
     {
+      inherit overlay;
       formatter.${system} = pkgs.nixpkgs-fmt;
       packages.${system} = overlay pkgs pkgs;
       devShells.${system}.default = pkgs.mkShell rec {

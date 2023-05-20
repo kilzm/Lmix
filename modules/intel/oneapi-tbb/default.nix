@@ -1,7 +1,8 @@
 { stdenv
 , lib
-, pkg
 , buildEnv
+, attrName
+, pkg
 , compiler ? ""
 , compilerVer ? 0
 , jq

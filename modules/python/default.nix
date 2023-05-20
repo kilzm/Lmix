@@ -1,6 +1,7 @@
 { stdenv
 , lib
 , buildEnv
+, attrName
 , pkg
 , compiler ? ""
 , compilerVer ? 0

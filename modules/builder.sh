@@ -52,6 +52,7 @@ addPaths () {
 }
 
 addPkgVariables () {
+  modSetEnv "${pacName}_NIX_MODULES_ATTR" "${PAC_NIX_MODULES_ATTR}"
   # PAC_BASE - base nix store path
   modSetEnv "${pacName}_BASE" "${PAC_BASE}"
   if [[ -n "$PAC_BIN" ]] ; then

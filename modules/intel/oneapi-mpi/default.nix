@@ -1,6 +1,7 @@
 { stdenv
 , lib
 , buildEnv
+, attrName
 , pkg
 , compiler ? ""
 , compilerVer ? 0
@@ -9,7 +10,7 @@
 
 with lib;
 with lib.strings;
-let 
+let
   isGCC = compiler == "gcc";
   isIntel = compiler == "intel";
   cc = ""
@@ -22,8 +23,8 @@ in
 import ../../default.nix (args // {
   libName = "mpi";
   libPath = "lib/release";
-  
-  dependencies = []
+
+  dependencies = [ ]
     ++ optional isGCC "gcc/${builtins.toString compilerVer}";
 
   extraEnvVariables = builtins.toJSON {

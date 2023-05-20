@@ -1,56 +1,57 @@
 { stdenv
 , lib
 , buildEnv
+, attrName
 , pkg
 , pkgName ? if builtins.hasAttr "pname" pkg then pkg.pname else pkg.name
 
-# these will be set in the overlay if the specific compiler and version are relevant to the module like in fftw
+  # these will be set in the overlay if the specific compiler and version are relevant to the module like in fftw
 , compiler ? ""
 , compilerVer ? 0
 
-# modify this when the library files are not called "lib<pkgName>.a"/"lib<pkgName>.so" 
+  # modify this when the library files are not called "lib<pkgName>.a"/"lib<pkgName>.so" 
 , libName ? pkgName
 
-# specify a custom prefix for the package variables e.g. PACNAME_BASE
-# if empty the prefix will be the package name uppercase with '_' instead of '-'
+  # specify a custom prefix for the package variables e.g. PACNAME_BASE
+  # if empty the prefix will be the package name uppercase with '_' instead of '-'
 , customPacName ? ""
 
-# specify extra package variables in JSON format which is supported by builtins.toJSON <attrset>
-# the package prefix will be added so defining e.g. WWW = "..." is sufficient
+  # specify extra package variables in JSON format which is supported by builtins.toJSON <attrset>
+  # the package prefix will be added so defining e.g. WWW = "..." is sufficient
 , extraPkgVariables ? ""
 
-# specify extra environment variables in JSON format
+  # specify extra environment variables in JSON format
 , extraEnvVariables ? ""
 
-# if the compiled package provide a premade modulefile it can be loaded here
-# supports both TCL and lua/LMod modules
+  # if the compiled package provide a premade modulefile it can be loaded here
+  # supports both TCL and lua/LMod modules
 , customModfilePath ? ""
 
-# if the compiled package provides premade script to set the env it can be sourced here
+  # if the compiled package provides premade script to set the env it can be sourced here
 , customScriptPath ? ""
 
-# specify which other modules the module depends on
-, dependencies ? []
+  # specify which other modules the module depends on
+, dependencies ? [ ]
 
-# exclude environment/package variables that would otherwise be automatically created
-# sometimes PAC_LIBDIR might be unnecessary or adding to PATH is handled by sourced script
-, excludes ? []
+  # exclude environment/package variables that would otherwise be automatically created
+  # sometimes PAC_LIBDIR might be unnecessary or adding to PATH is handled by sourced script
+, excludes ? [ ]
 
-# false will ignore all package variables for lib
+  # false will ignore all package variables for lib
 , pkgLib ? true
 
-# false will ignore the PAC_INC variable
+  # false will ignore the PAC_INC variable
 , pkgInc ? true
 
-# default is the standard for packages but some might ignore these
-# e.g. set libPath = "lib/intel64"
+  # default is the standard for packages but some might ignore these
+  # e.g. set libPath = "lib/intel64"
 , incPath ? "include"
 , libPath ? "lib"
 
-# specify if the libdir should be added to the LD_LIBRARY_PATH
+  # specify if the libdir should be added to the LD_LIBRARY_PATH
 , addLDLibPath ? false
 
-# json parser
+  # json parser
 , jq
 }:
 
@@ -65,10 +66,12 @@ assert compiler == ""
 let
   monoPkg =
     if builtins.length pkg.outputs > 1
-      then buildEnv {
-        name = pkg.name;
-        paths = map (out: pkg.${out}) pkg.outputs; 
-      } else pkg;
+    then
+      buildEnv
+        {
+          name = pkg.name;
+          paths = map (out: pkg.${out}) pkg.outputs;
+        } else pkg;
 in
 
 stdenv.mkDerivation rec {
@@ -81,7 +84,7 @@ stdenv.mkDerivation rec {
   pname = "module-${pkgName}";
   version = if builtins.hasAttr "version" pkg then pkg.version else "";
 
-  buildInputs = [ monoPkg ]; 
+  buildInputs = [ monoPkg ];
 
   nativeBuildInputs = [ jq ];
 
@@ -90,18 +93,18 @@ stdenv.mkDerivation rec {
   impi = hasMpi && pkg.mpi.pname == "intelmpi";
   withOpenMP = builtins.hasAttr "withOpenMP" pkg && pkg.withOpenMP;
 
-  modName = 
-  if 
-    version != "" 
-  then
-    "${pkgName}/${version}"
-    + strings.optionalString (compiler != "") "-${compiler}${builtins.toString compilerVer}"
-    + strings.optionalString ompi "-ompi"
-    + strings.optionalString impi "-impi"
-    + strings.optionalString withOpenMP "-openmp"
-    + ".lua"
-  else
-    "${pkgName}.lua";
+  modName =
+    if
+      version != ""
+    then
+      "${pkgName}/${version}"
+      + strings.optionalString (compiler != "") "-${compiler}${builtins.toString compilerVer}"
+      + strings.optionalString ompi "-ompi"
+      + strings.optionalString impi "-impi"
+      + strings.optionalString withOpenMP "-openmp"
+      + ".lua"
+    else
+      "${pkgName}.lua";
 
   hasLibs = builtins.pathExists "${pkg}/lib";
   hasIncs = builtins.pathExists "${pkg}/include";
@@ -144,4 +147,7 @@ stdenv.mkDerivation rec {
   PAC_INC = optionalString (pkgInc && hasIncs) "-I${PAC_BASE}/${incPath}";
 
   PAC_BIN = optionalString hasBin "${PAC_BASE}/bin";
+
+  # for nix flakes from modules
+  PAC_NIX_MODULES_ATTR = attrName;
 }

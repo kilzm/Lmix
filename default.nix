@@ -1,7 +1,2 @@
-let
-  system = "x86_64-linux";
-  overlays = [ (import ./overlay.nix) ];
-in
-import <nixpkgs> {
-  inherit system overlays;
-}
+final: prev:
+prev.lib.composeExtensions (import ./overlays/overlay.nix) (import ./overlays/module-overlay.nix) final prev
