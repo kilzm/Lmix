@@ -16,20 +16,28 @@
           "qtwebkit-5.212.0-alpha4"
         ];
       };
-      overlay = import ./default.nix;
+
+      hpc-ovl = import ./overlays/overlay.nix;
+      mod-ovl = import ./default.nix;
       pkgs = import nixpkgs {
         inherit system config;
+        overlays = [ mod-ovl ];
       };
     in
     {
-      inherit overlay;
+      overlays = {
+        hpc = hpc-ovl;
+        mod = mod-ovl;
+        default = self.overlays.hpc;
+      };
+
       formatter.${system} = pkgs.nixpkgs-fmt;
-      packages.${system} = overlay pkgs pkgs;
+      packages.${system} = pkgs.nwm-mods;
       devShells.${system}.default = pkgs.mkShell rec {
         buildInputs = [
           nurl.packages.${system}.default
         ];
       };
-      legacyPackages.${system} = nixpkgs.legacyPackages.${system};
+      legacyPackages.${system} = pkgs;
     };
 }

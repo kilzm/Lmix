@@ -3,7 +3,7 @@ let
   wrapICCWith =
     { cc
     , bintools ? prev.bintools
-    , libc ? prev.glibc
+    , libc ? bintools.libc
     , ...
     } @extraArgs:
     prev.callPackage ../pkgs/intel/build-support/cc-wrapper (
@@ -91,9 +91,9 @@ with prev.lib; rec {
   });
 
   ## fftw - ftp://ftp.fftw.org/pub/fftw/fftw-${version}.tar.gz
-  fftw = prev.callPackage ../pkgs/fftw {
-    mpi = openmpi_4_1_5_gcc11;
-  };
+  # fftw = prev.callPackage ../pkgs/fftw {
+  #   mpi = openmpi_4_1_5_gcc11;
+  # };
 
   fftw_3_3_10_gcc11_ompi_4_1_5 = prev.callPackage ../pkgs/fftw {
     stdenv = prev.gcc11Stdenv;
@@ -159,7 +159,7 @@ with prev.lib; rec {
   # default environment when working with nix-generated modules
   nix-stdenv = prev.buildEnv {
     name = "nix-stdenv";
-    paths = (with prev; [
+    paths = (with final; [
       glibc
       coreutils
       binutils
