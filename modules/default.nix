@@ -76,7 +76,7 @@ in
 
 stdenv.mkDerivation rec {
   builder = ./builder.sh;
-  
+
   inherit pkgName attrName;
   inherit extraPkgVariables extraEnvVariables;
   inherit customModfilePath customScriptPath;
@@ -110,7 +110,7 @@ stdenv.mkDerivation rec {
   hasLibs = builtins.pathExists "${pkg}/lib";
   hasIncs = builtins.pathExists "${pkg}/include";
   hasBin = builtins.pathExists "${pkg}/bin";
-  
+
   pkgNameUpper = builtins.replaceStrings [ "-" ] [ "_" ] (toUpper pkgName);
 
   pacName =
