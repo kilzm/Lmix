@@ -32,7 +32,7 @@
       };
 
       formatter.${system} = pkgs.nixpkgs-fmt;
-      packages.${system} = pkgs.nwm-mods;
+      packages.${system} = pkgs.nwm-mods // pkgs.nwm-pkgs;
       devShells.${system}.default = pkgs.mkShell rec {
         buildInputs = [
           nurl.packages.${system}.default

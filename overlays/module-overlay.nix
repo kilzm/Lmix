@@ -1,9 +1,14 @@
 final: prev:
 let
+  getPkg = name:
+    if builtins.hasAttr name prev.nwm-pkgs
+      then prev.nwm-pkgs.${name}
+      else prev.${name};
+
   defaultModules = attrNames:
     map
       (attrName: prev.callPackage ../modules {
-        pkg = final.${attrName};
+        pkg = getPkg attrName;
         inherit attrName;
       })
       attrNames;
@@ -11,7 +16,7 @@ let
   namedModules = name: attrNames:
     map
       (attrName: prev.callPackage ../modules/${name} {
-        pkg = final.${attrName};
+        pkg = getPkg attrName;
         inherit attrName;
       })
       attrNames;
@@ -19,7 +24,7 @@ let
   namedCCModules = name: compiler: compilerVer: attrNames:
     map
       (attrName: prev.callPackage ../modules/${name} {
-        pkg = final.${attrName};
+        pkg = getPkg attrName;
         inherit attrName compiler compilerVer;
       })
       attrNames;
@@ -27,7 +32,7 @@ in
 {
   nwm-mods = {
     # modules
-    modules-nixpkgs = prev.buildEnv {
+    _modules-nixpkgs = prev.buildEnv {
       name = "modules-nixpkgs";
       paths = defaultModules [
         "nix-stdenv"
@@ -56,7 +61,7 @@ in
       ];
     };
 
-    modules = prev.buildEnv {
+    _modules = prev.buildEnv {
       name = "modules";
       paths = defaultModules [
         "julia_1_9_0"
@@ -76,7 +81,7 @@ in
       ];
     };
 
-    modules-intel = prev.buildEnv {
+    _modules-intel = prev.buildEnv {
       name = "modules-intel";
       paths = namedModules "intel/oneapi-compilers" [
         "intel-compilers_2022_1_0"
