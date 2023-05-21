@@ -9,13 +9,12 @@
 
   outputs = inputs@{ self, nixpkgs, nurl, utils }:
     let
-      inherit (nixpkgs.lib)
-        composeExtensions;
-
       system = "x86_64-linux";
       config = {
         allowUnfree = true;
-        allowInsecure = true;
+        permittedInsecurePackages = [
+          "qtwebkit-5.212.0-alpha4"
+        ];
       };
       overlay = import ./default.nix;
       pkgs = import nixpkgs {
