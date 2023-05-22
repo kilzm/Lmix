@@ -25,6 +25,8 @@
       };
     in
     {
+      inherit config;
+
       overlays = {
         hpc = hpc-ovl;
         mod = mod-ovl;
@@ -32,12 +34,20 @@
       };
 
       formatter.${system} = pkgs.nixpkgs-fmt;
+
       packages.${system} = pkgs.nwm-mods // pkgs.nwm-pkgs;
+
+      legacyPackages.${system} = pkgs;
+
       devShells.${system}.default = pkgs.mkShell rec {
         buildInputs = [
           nurl.packages.${system}.default
         ];
       };
-      legacyPackages.${system} = pkgs;
+
+      templates.default = {
+        path = ./template;
+        description = "Flake that uses nix-with-modules overlay";
+      };
     };
 }
