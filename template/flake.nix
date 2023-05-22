@@ -2,7 +2,7 @@
   description = "Flake that uses nix-with-modules overlay";
   
   inputs = {
-    nix-with-modules.url = git+file:/home/kilianm/nix-with-modules?shallow=1;
+    nix-with-modules.url = github:kilzm/nix-with-modules;
     nixpkgs.url = github:nixos/nixpkgs?ref=nixos-22.11;
   };
 
