@@ -9,7 +9,7 @@ Clone the repository and run the update script: `./update.sh`. This will build a
 
 ### Building individual packages
 Running `$ nix flake show` gives an overview of custom packages defined in this overlay. To build one use:
-```bash
+```
 $ nix build .#<name>
 ```
 The attributes prefixed with `_modules` are environments including many packages and the corresponding modulefiles.
@@ -21,7 +21,7 @@ Put this into `~/.config/nixpkgs/overlays.nix`:
 [ (import (builtins.fetchTarball "https://github.com/kilzm/nix-with-modules/archive/master.tar.gz")) ]
 ```
 Then you can build packages defined in the overlay using
-```bash
+```
 $ nix-build -A nwm-pkgs.<name>
 ```
 
@@ -57,7 +57,7 @@ A neat feature of flakes is that you can use them as inputs in other flakes. Thi
 ```
 All packages put inside the buildInputs list will be made availible in the devShell.
 An easy way to get started is running this command which will put the above flake template into your current directory.
-```bash
+```
 $ nix flake init --template github:kilzm/nix-with-modules
 ```
 Once the packages are configured run `$ nix develop` to start a shell session with all the listed packages in `PATH`.
