@@ -161,12 +161,23 @@ in
     nix-stdenv = prev.buildEnv {
       name = "nix-stdenv";
       paths = (with final; [
+        gcc
         glibc
         coreutils
         binutils
+        findutils
+        diffutils
+        gnused
+        gnugrep
+        gawk
+        gnutar
+        gzip
         bzip2
+        gnumake
         bashInteractive
-        gcc
+        patch
+        xz
+        file
       ]);
     };
   };

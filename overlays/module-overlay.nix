@@ -2,8 +2,8 @@ final: prev:
 let
   getPkg = name:
     if builtins.hasAttr name prev.nwm-pkgs
-      then prev.nwm-pkgs.${name}
-      else prev.${name};
+    then prev.nwm-pkgs.${name}
+    else prev.${name};
 
   defaultModules = attrNames:
     map
