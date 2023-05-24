@@ -17,6 +17,10 @@
     in
     {
       devShells.${system}.default = pkgs.mkShell rec {
+        shellHook = ''
+          echo 'Unloading modules all modules for dev shell usage'
+          module purge
+        '';
         buildInputs = with pkgs; with pkgs.nwm-pkgs; [
           # required packages go here
         ];

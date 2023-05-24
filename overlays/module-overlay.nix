@@ -99,5 +99,7 @@ in
         "fftw_3_3_10_intel21"
       ];
     };
+
+    lmod2flake = prev.callPackage ../lmod2flake { };
   };
 }
