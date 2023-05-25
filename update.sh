@@ -2,7 +2,7 @@
 
 # requires MODULEPATH set to /opt/modulefiles/modules-nix/modules
 modpath=/opt/modulefiles
-rm -f $modpath/*
+rm -f --preserve-root $modpath/*
 
 # oneapi only builds with sandboxing disabled
 nix build .#intel-oneapi_2022_2_0 --no-sandbox --no-link
