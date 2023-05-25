@@ -53,9 +53,16 @@
         ];
       };
 
-      templates.default = {
-        path = ./template;
-        description = "Flake that uses nix-with-modules overlay";
+      templates = {
+        default = {
+          path = ./template/default;
+          description = "Flake that uses nix-with-modules overlay";
+        };
+
+        no-build-inputs = {
+          path = ./template/no-build-inputs;
+          description = "No buildInputs attribute for devShell";
+        };
       };
     };
 }
