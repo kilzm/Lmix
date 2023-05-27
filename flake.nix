@@ -9,6 +9,7 @@
 
   outputs = inputs@{ self, nixpkgs, nurl, utils }:
     let
+      inherit (nixpkgs) lib;
       system = "x86_64-linux";
       config = {
         allowUnfree = true;
@@ -16,13 +17,13 @@
           "qtwebkit-5.212.0-alpha4"
         ];
       };
-
-      hpc-ovl = import ./overlays/overlay.nix;
-      mod-ovl = import ./default.nix;
       pkgs = import nixpkgs {
         inherit system config;
         overlays = [ mod-ovl ];
       };
+
+      hpc-ovl = import ./overlays/overlay.nix;
+      mod-ovl = import ./default.nix;
     in
     {
       overlays = {
