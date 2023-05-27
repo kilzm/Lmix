@@ -22,7 +22,7 @@ Put this into `~/.config/nixpkgs/overlays.nix`:
 ```
 Then you can build packages defined in the overlay using
 ```
-$ nix-build -A nwm-pkgs.<name>
+$ nix build --impure nixpkgs#nwm-pkgs.<name>
 ```
 
 
@@ -32,27 +32,24 @@ A neat feature of flakes is that you can use them as inputs in other flakes. Thi
 {
   description = "Flake that uses nix-with-modules overlay";
 
-  inputs = {
-    nix-with-modules.url = github:kilzm/nix-with-modules;
-    nixpkgs.url = github:nixos/nixpkgs?ref=nixos-22.11;
-  };
+  inputs.nix-with-modules.url = github:kilzm/nix-with-modules;
 
-  outputs = { self, nixpkgs, nix-with-modules }:
+  outputs = { self, nix-with-modules }:
     let
       system = "x86_64-linux";
-      config = nix-with-modules.config;
-      pkgs = import nixpkgs {
-        inherit system config;
-        overlays = [ nix-with-modules.overlays.default ];
-      };
+      pkgs = nix-with-modules.legacyPackages.${system};
     in
     {
       devShells.${system}.default = pkgs.mkShell rec {
-        buildInputs = with pkgs; with pkgs.nwm-pkgs; [
+        buildInputs = with pkgs; [
           # required packages go here
         ];
       };
     };
+
+  nixConfig = {
+    bash-prompt-prefix = ''\033[0;36m\[(nix develop)\033[0m '';
+  };
 }
 ```
 All packages put inside the buildInputs list will be made availible in the devShell.
@@ -61,3 +58,11 @@ An easy way to get started is running this command which will put the above flak
 $ nix flake init --template github:kilzm/nix-with-modules
 ```
 Once the packages are configured run `$ nix develop` to start a shell session with all the listed packages in `PATH`.
+
+## lmod2flake
+
+Flakes like the one above can be created automatically.
+```
+$ nix run github:kilzm/nix-with-modules -- <path>
+```
+This will create a flake.nix in the specified directory. The buildInputs for mkShell will be derived from loaded modules.
