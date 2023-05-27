@@ -27,7 +27,18 @@ files = [
     {file = "colorama-0.4.6.tar.gz", hash = "sha256:08695f5cb7ed6e0531a20572697297273c47b8cae5a63ffc6d6ed5c201be6e44"},
 ]
 
+[[package]]
+name = "lmodule"
+version = "0.4.0"
+description = "Lmod Module API"
+category = "main"
+optional = false
+python-versions = ">=3.6, <4"
+files = [
+    {file = "lmodule-0.4.0-py3-none-any.whl", hash = "sha256:ba1e3317a25fcc0be9676a7a1b27c3fb6b20757d013de0d6fe7965cc23eb0d16"},
+]
+
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "01990e000d88cfaa98a455c2a115ec3a8d463984021c9437d05f8f6dbc3427a7"
+content-hash = "42db7617f26ecb54942e984aaddc9bb51fa2270e1460cfe2fcfe4a09c2d3c560"
