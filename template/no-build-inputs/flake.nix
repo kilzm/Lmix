@@ -11,8 +11,14 @@
       pkgs = nix-with-modules.legacyPackages.${system};
     in
     {
-      devShells.${system}.default = pkgs.mkShell rec {
+      devShells.${system}.default = pkgs.mkShell rec { 
+
       };
     };
+
+  nixConfig = {
+    bash-prompt-prefix = ''\033[0;36m\[(nix develop)\033[0m '';
+  };
+
 }
 

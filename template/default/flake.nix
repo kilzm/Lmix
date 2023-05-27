@@ -17,5 +17,9 @@
         ];
       };
     };
+
+  nixConfig = {
+    bash-prompt-prefix = ''\033[0;36m\[(nix develop)\033[0m '';
+  };
 }
 
