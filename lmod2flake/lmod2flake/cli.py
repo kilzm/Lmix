@@ -2,7 +2,7 @@ import click
 import subprocess
 import os
 from pathlib import Path
-from lmod2flake.modulecmd import ModuleCmd
+from lmod.spider import Spider
 
 def exit_err(msg: str, context):
     click.echo(click.style('error: ', fg='red') + msg, err=True)
@@ -64,15 +64,15 @@ def modules_to_flake(ctx, directory):
     except subprocess.CalledProcessError as e:
         exit_err(f"'nix shell' failed with code {e.returncode}: {e.stderr}", ctx)
 
+
+NIX_MODULES_PATH = "/opt/modulefiles/modules-nix/modules"
 def get_build_inputs():
-    ml = ModuleCmd()
-    modules = [mod for mod in ml.list() if mod != 'nix-stdenv']
+    spider = Spider(NIX_MODULES_PATH)
+    modules = [module for module in spider.get_names() if module != 'nix-stdenv']
     inputs = [ "buildInputs = with pkgs; [" ]
     for module in modules:
         env_var = f"NIXWM_ATTRNAME_{module.split('/')[0].upper().replace('-','_')}"
-        if env_var not in os.environ:
-            print(f"attribute name for {module} not found")
-            continue
-        inputs.append(os.environ[env_var])
+        if env_var in os.environ:
+            inputs.append(os.environ[env_var])
     inputs.append("];")
     return inputs
