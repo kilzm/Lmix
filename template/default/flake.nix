@@ -3,25 +3,16 @@
 
   inputs = {
     nix-with-modules.url = github:kilzm/nix-with-modules;
-    nixpkgs.url = github:nixos/nixpkgs?ref=nixos-22.11;
   };
 
   outputs = { self, nixpkgs, nix-with-modules }:
     let
       system = "x86_64-linux";
-      config = nix-with-modules.config;
-      pkgs = import nixpkgs {
-        inherit system config;
-        overlays = [ nix-with-modules.overlays.default ];
-      };
+      pkgs = nix-with-modules.legacyPackages.${system};
     in
     {
       devShells.${system}.default = pkgs.mkShell rec {
-        shellHook = ''
-          echo 'Unloading modules all modules for dev shell usage'
-          module purge
-        '';
-        buildInputs = with pkgs; with pkgs.nwm-pkgs; [
+        buildInputs = with pkgs; [
           # required packages go here
         ];
       };

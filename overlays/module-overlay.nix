@@ -1,14 +1,25 @@
 final: prev:
 let
-  getPkg = name:
-    if builtins.hasAttr name prev.nwm-pkgs
-    then prev.nwm-pkgs.${name}
-    else prev.${name};
-
+  defaultModulesNixpkgs = attrNames:
+    map
+      (attrName: prev.callPackage ../modules {
+        pkg = prev.${attrName};
+        inherit attrName;
+      })
+      attrNames;
+  
   defaultModules = attrNames:
     map
       (attrName: prev.callPackage ../modules {
-        pkg = getPkg attrName;
+        pkg = prev.nwm-pkgs.${attrName};
+        attrName = "nwm-pkgs.${attrName}";
+      })
+      attrNames;
+
+  namedModulesNixpkgs = name: attrNames:
+    map
+      (attrName: prev.callPackage ../modules/${name} {
+        pkg = prev.${attrName};
         inherit attrName;
       })
       attrNames;
@@ -16,16 +27,17 @@ let
   namedModules = name: attrNames:
     map
       (attrName: prev.callPackage ../modules/${name} {
-        pkg = getPkg attrName;
-        inherit attrName;
+        pkg = prev.nwm-pkgs.${attrName};
+        attrName = "nwm-pkgs.${attrName}";
       })
       attrNames;
 
   namedCCModules = name: compiler: compilerVer: attrNames:
     map
       (attrName: prev.callPackage ../modules/${name} {
-        pkg = getPkg attrName;
-        inherit attrName compiler compilerVer;
+        pkg = prev.nwm-pkgs.${attrName};
+        attrName = "nwm-pkgs.${attrName}";
+        inherit compiler compilerVer;
       })
       attrNames;
 in
@@ -34,15 +46,14 @@ in
     # modules
     _modules-nixpkgs = prev.buildEnv {
       name = "modules-nixpkgs";
-      paths = defaultModules [
-        "nix-stdenv"
+      paths = defaultModulesNixpkgs [
         "samtools"
         "ffmpeg"
         "git"
         "valgrind"
         "llvm"
       ]
-      ++ namedModules "gcc" [
+      ++ namedModulesNixpkgs "gcc" [
         "gcc7"
         "gcc8"
         "gcc9"
@@ -50,10 +61,10 @@ in
         "gcc11"
         "gcc12"
       ]
-      ++ namedModules "ruby" [
+      ++ namedModulesNixpkgs "ruby" [
         "ruby"
       ]
-      ++ namedModules "python" [
+      ++ namedModulesNixpkgs "python" [
         "python2"
         "python37"
         "python39"
@@ -64,6 +75,7 @@ in
     _modules = prev.buildEnv {
       name = "modules";
       paths = defaultModules [
+        "nix-stdenv"
         "julia_1_9_0"
         "julia_1_8_5"
         "osu-micro-benchmarks_5_6_2"
@@ -78,12 +90,8 @@ in
       ]
       ++ namedCCModules "fftw" "gcc" 12 [
         "fftw_3_3_10_gcc12_ompi_4_1_5_openmp"
-      ];
-    };
-
-    _modules-intel = prev.buildEnv {
-      name = "modules-intel";
-      paths = namedModules "intel/oneapi-compilers" [
+      ]
+      ++ namedModules "intel/oneapi-compilers" [
         "intel-compilers_2022_1_0"
       ]
       ++ namedModules "intel/oneapi-tbb" [

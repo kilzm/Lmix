@@ -25,8 +25,6 @@
       };
     in
     {
-      inherit config;
-
       overlays = {
         hpc = hpc-ovl;
         mod = mod-ovl;
