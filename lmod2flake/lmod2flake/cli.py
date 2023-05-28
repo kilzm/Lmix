@@ -13,7 +13,8 @@ NIX_WITH_MODUES_FLAKE = "github:kilzm/nix-with-modules"
 @click.command()
 @click.pass_context
 @click.argument("directory", required=True)
-def modules_to_flake(ctx, directory):
+@click.option("-b", "--build-tools", multiple=True, type=click.Choice(['pkg-config', 'cmake', 'autotools']))
+def modules_to_flake(ctx, directory, build_tools):
     """Generate a nix flake with a devShell derived from loaded modules"""
     path = Path(directory)
     flake_path = Path(directory) / "flake.nix"
@@ -45,7 +46,7 @@ def modules_to_flake(ctx, directory):
     with flake_path.open(mode='r') as flake:
         flake_lines = list(map (str.strip, flake.read().splitlines()))
         ds_idx = next(i for i, l in enumerate(flake_lines) if l.startswith(DEVSHELL_LINE)) + 1
-        flake_lines[ds_idx:ds_idx] = get_build_inputs()
+        flake_lines[ds_idx:ds_idx] = get_build_inputs() + get_native_build_inputs(build_tools)
         
     with flake_path.open(mode='w') as flake:
         flake.write('\n'.join(flake_lines))
@@ -71,8 +72,23 @@ def get_build_inputs():
     modules = [module for module in spider.get_names() if module != 'nix-stdenv']
     inputs = [ "buildInputs = with pkgs; [" ]
     for module in modules:
-        env_var = f"NIXWM_ATTRNAME_{module.split('/')[0].upper().replace('-','_')}"
+        env_var = f"NIXWM_ATTRNAME_{module.upper().replace('-','_')}"
         if env_var in os.environ:
             inputs.append(os.environ[env_var])
+    inputs.append("];")
+    return inputs
+
+def get_native_build_inputs(build_tools: tuple):
+    if build_tools == (): return []
+    inputs = [ "nativeBuildInputs = with pkgs; [" ]
+    for tool in list(build_tools):
+        match(tool):
+            case "cmake":
+                inputs.append("cmake")
+            case "pkg-config":
+                inputs.append("pkg-config")
+            case "autotools":
+                inputs.extend(["autoconf", "automake", "libtool"])
+            case _: pass
     inputs.append("];")
     return inputs
