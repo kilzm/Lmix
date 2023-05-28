@@ -1,14 +1,5 @@
-{ stdenv
-, lib
-, buildEnv
-, attrName
-, pkg
-, compiler ? ""
-, compilerVer ? 0
-, jq
-} @args:
-
-import ../default.nix (args // {
+{ pkg, ... }:
+{
   libName = "mpi";
   customPacName = "MPI";
 
@@ -17,4 +8,4 @@ import ../default.nix (args // {
     F90_SHLIB = "-L${pkg}/lib -lmpi_mpifh";
     WWW = "https://doku.lrz.de/display/PUBLIC/OpenMPI";
   };
-})
+}

@@ -48,10 +48,10 @@ addPkgVariables () {
   fi
   # PAC_LIBDIR - library directory
   if [[ -d "$LIBDIR" && " $excludes " != *" LIBDIR "* ]]; then
-    modSetEnv "${pacName}_LIBDIR" "${PAC_LIBDIR}"
+    modSetEnv "${pacName}_LIBDIR" "$LIBDIR"
   fi
   # PAC_LIB - setting for static linking
-  if [[ -f "$LIBSTATC" && " $excludes " != *" LIB "* ]] ; then
+  if [[ -f "$LIBSTATIC" && " $excludes " != *" LIB "* ]] ; then
     modSetEnv "${pacName}_LIB" "$LIBSTATIC"
   fi
   # PAC_SHLIB - setting for dynamic linking

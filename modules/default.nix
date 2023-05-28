@@ -5,9 +5,8 @@
 , pkg
 , pkgName ? if builtins.hasAttr "pname" pkg then pkg.pname else pkg.name
 
-  # these will be set in the overlay if the specific compiler and version are relevant to the module like in fftw
-, compiler ? ""
-, compilerVer ? 0
+  # this will be set in the overlay if the specific compiler and its version are relevant to the module like in fftw
+, cc ? ""
 
   # modify this when the library files are not called "lib<pkgName>.a"/"lib<pkgName>.so" 
 , libName ? pkgName
@@ -59,20 +58,16 @@
 with lib;
 with lib.strings;
 
-assert (builtins.typeOf compilerVer) == "int";
-assert compiler == ""
-  || compiler == "gcc" && 7 <= compilerVer && compilerVer <= 13
-  || compiler == "intel" && 19 <= compilerVer && compilerVer <= 23;
-
 let
   multiPackage = builtins.length pkg.outputs > 1;
   monoPkg =
     if multiPackage
     then
-      buildEnv {
-        name = pkg.name;
-        paths = map (out: pkg.${out}) pkg.outputs;
-      } 
+      buildEnv
+        {
+          name = pkg.name;
+          paths = map (out: pkg.${out}) pkg.outputs;
+        }
     else pkg;
 in
 
@@ -101,7 +96,7 @@ stdenv.mkDerivation rec {
       version != ""
     then
       "${pkgName}/${version}"
-      + strings.optionalString (compiler != "") "-${compiler}${builtins.toString compilerVer}"
+      + strings.optionalString (cc != "") "-${cc}"
       + strings.optionalString ompi "-ompi"
       + strings.optionalString impi "-impi"
       + strings.optionalString withOpenMP "-openmp"

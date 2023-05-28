@@ -1,14 +1,5 @@
-{ stdenv
-, lib
-, buildEnv
-, pkg
-, attrName
-, compiler ? ""
-, compilerVer ? 0
-, jq
-} @args:
-
-import ../default.nix (args // rec {
+{ pkg, ... }:
+{
   libName = "ruby-${pkg.version.majMinTiny}";
   incPath = "include/ruby-${pkg.version.majMin}.0";
-})
+}

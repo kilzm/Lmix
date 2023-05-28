@@ -1,110 +1,96 @@
 final: prev:
 let
-  defaultModulesNixpkgs = attrNames:
+  modulesFunc = attrPrefix: cc: name: mods:
     map
-      (attrName: prev.callPackage ../modules {
-        pkg = prev.${attrName};
-        inherit attrName;
-      })
-      attrNames;
-  
-  defaultModules = attrNames:
-    map
-      (attrName: prev.callPackage ../modules {
-        pkg = prev.nwm-pkgs.${attrName};
-        attrName = "nwm-pkgs.${attrName}";
-      })
-      attrNames;
+      (m:
+        let pkg = if attrPrefix == "" then prev.${m.name} else prev.${attrPrefix}.${m.name};
+        in prev.callPackage ../modules ({
+          attrName = m.name;
+          inherit pkg cc;
+        }
+        // (if builtins.hasAttr "extra" m then m.extra else { })
+        // (if name != "" then
+          (import ../modules/${name} {
+            lib = prev.lib;
+            inherit pkg cc;
+          })
+        else { })
+        )
+      )
+      mods;
 
-  namedModulesNixpkgs = name: attrNames:
-    map
-      (attrName: prev.callPackage ../modules/${name} {
-        pkg = prev.${attrName};
-        inherit attrName;
-      })
-      attrNames;
-
-  namedModules = name: attrNames:
-    map
-      (attrName: prev.callPackage ../modules/${name} {
-        pkg = prev.nwm-pkgs.${attrName};
-        attrName = "nwm-pkgs.${attrName}";
-      })
-      attrNames;
-
-  namedCCModules = name: compiler: compilerVer: attrNames:
-    map
-      (attrName: prev.callPackage ../modules/${name} {
-        pkg = prev.nwm-pkgs.${attrName};
-        attrName = "nwm-pkgs.${attrName}";
-        inherit compiler compilerVer;
-      })
-      attrNames;
+  defaultModulesNixpkgs = modulesFunc "" "" "";
+  defaultModules = modulesFunc "nwm-pkgs" "" "";
+  namedModulesNixpkgs = modulesFunc "" "";
+  namedModules = modulesFunc "nwm-pkgs" "";
+  namedCCModules = modulesFunc "nwm-pkgs";
 in
 {
+
   nwm-mods = {
     # modules
     _modules-nixpkgs = prev.buildEnv {
       name = "modules-nixpkgs";
       paths = defaultModulesNixpkgs [
-        "samtools"
-        "ffmpeg"
-        "git"
-        "valgrind"
-        "llvm"
+        { name = "ffmpeg"; }
+        { name = "git"; }
+        { name = "valgrind"; extra = { incPath = "include/valgrind"; }; }
+        { name = "llvm"; }
+        { name = "eigen"; extra = { incPath = "include/eigen3"; }; }
+        { name = "libmatheval"; extra = { libName = "matheval"; }; }
+        { name = "libxc"; extra = { libName = "xc"; }; }
+        { name = "libint"; extra = { libName = "int2"; }; }
+        { name = "blas"; }
+        { name = "lapack"; }
       ]
       ++ namedModulesNixpkgs "gcc" [
-        "gcc7"
-        "gcc8"
-        "gcc9"
-        "gcc10"
-        "gcc11"
-        "gcc12"
+        { name = "gcc7"; }
+        { name = "gcc8"; }
+        { name = "gcc9"; }
+        { name = "gcc10"; }
+        { name = "gcc11"; }
+        { name = "gcc12"; }
       ]
       ++ namedModulesNixpkgs "ruby" [
-        "ruby"
+        { name = "ruby"; }
       ]
       ++ namedModulesNixpkgs "python" [
-        "python2"
-        "python37"
-        "python39"
-        "python311"
+        { name = "python2"; }
+        { name = "python37"; }
+        { name = "python39"; }
+        { name = "python311"; }
       ];
     };
 
     _modules = prev.buildEnv {
       name = "modules";
       paths = defaultModules [
-        "nix-stdenv"
-        "julia_1_9_0"
-        "julia_1_8_5"
-        "osu-micro-benchmarks_5_6_2"
-        "osu-micro-benchmarks_6_1"
+        { name = "nix-stdenv"; }
+        { name = "julia_1_9_0"; }
+        { name = "julia_1_8_5"; }
+        { name = "osu-micro-benchmarks_5_6_2"; }
+        { name = "osu-micro-benchmarks_6_1"; }
       ]
-      ++ namedCCModules "openmpi" "gcc" 11 [
-        "openmpi_4_1_4_gcc11"
-        "openmpi_4_1_5_gcc11"
+      ++ namedModules "openmpi" [
+        { name = "openmpi_4_1_4_gcc11"; extra = { cc = "gcc11"; }; }
+        { name = "openmpi_4_1_5_gcc11"; extra = { cc = "gcc11"; }; }
       ]
-      ++ namedCCModules "fftw" "gcc" 11 [
-        "fftw_3_3_10_gcc11_ompi_4_1_5"
-      ]
-      ++ namedCCModules "fftw" "gcc" 12 [
-        "fftw_3_3_10_gcc12_ompi_4_1_5_openmp"
+      ++ namedModules "fftw" [
+        { name = "fftw_3_3_10_gcc11_ompi_4_1_5"; extra = { cc = "gcc11"; }; }
+        { name = "fftw_3_3_10_gcc12_ompi_4_1_5_openmp"; extra = { cc = "gcc12"; }; }
+        { name = "fftw_3_3_10_intel21"; extra = { cc = "intel21"; }; }
       ]
       ++ namedModules "intel/oneapi-compilers" [
-        "intel-compilers_2022_1_0"
+        { name = "intel-compilers_2022_1_0"; }
       ]
       ++ namedModules "intel/oneapi-tbb" [
-        "intel-tbb_2021_6_0"
+        { name = "intel-tbb_2021_6_0"; }
       ]
-      ++ namedCCModules "intel/oneapi-mpi" "gcc" 12 [
-        "intel-oneapi-mpi_2021_6_0_gcc11"
+      ++ namedModules "intel/oneapi-mpi" [
+        { name = "intel-oneapi-mpi_2021_6_0_gcc11"; extra = { cc = "gcc11"; }; }
       ]
-      ++ namedCCModules "intel/oneapi-mpi" "intel" 21 [
-        "intel-oneapi-mpi_2021_6_0_intel21"
-      ]
-      ++ namedCCModules "fftw" "intel" 21 [
-        "fftw_3_3_10_intel21"
+      ++ namedModules "intel/oneapi-mpi" [
+        { name = "intel-oneapi-mpi_2021_6_0_intel21"; extra = { cc = "intel21"; }; }
       ];
     };
 

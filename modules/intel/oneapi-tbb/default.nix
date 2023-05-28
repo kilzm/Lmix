@@ -1,14 +1,5 @@
-{ stdenv
-, lib
-, buildEnv
-, attrName
-, pkg
-, compiler ? ""
-, compilerVer ? 0
-, jq
-} @args:
-
-import ../../default.nix (args // {
+{ pkg, ... }:
+{
   libPath = "lib/intel64/gcc4.8";
   libName = "tbb";
 
@@ -17,4 +8,4 @@ import ../../default.nix (args // {
   excludes = [
     "PKG_CONFIG_PATH" # is set by the shell script
   ];
-})
+}

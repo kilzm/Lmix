@@ -1,14 +1,5 @@
-{ stdenv
-, lib
-, buildEnv
-, attrName
-, pkg
-, compiler ? ""
-, compilerVer ? 0
-, jq
-} @args:
-
-import ../../default.nix (args // {
+{ pkg, ... }:
+{
   customScriptPath = "${pkg}/env/vars.sh";
 
   dependencies = [
@@ -23,4 +14,4 @@ import ../../default.nix (args // {
     BIN = "${pkg}/linux/bin";
     BIN_INTEL64 = "${pkg}/linux/bin/intel64";
   };
-})
+}
