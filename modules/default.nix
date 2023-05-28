@@ -45,6 +45,7 @@
 
   # default is the standard for packages but some might ignore these
   # e.g. set libPath = "lib/intel64"
+, binPath ? "bin"
 , incPath ? "include"
 , libPath ? "lib"
 
@@ -64,20 +65,21 @@ assert compiler == ""
   || compiler == "intel" && 19 <= compilerVer && compilerVer <= 23;
 
 let
+  multiPackage = builtins.length pkg.outputs > 1;
   monoPkg =
-    if builtins.length pkg.outputs > 1
+    if multiPackage
     then
-      buildEnv
-        {
-          name = pkg.name;
-          paths = map (out: pkg.${out}) pkg.outputs;
-        } else pkg;
+      buildEnv {
+        name = pkg.name;
+        paths = map (out: pkg.${out}) pkg.outputs;
+      } 
+    else pkg;
 in
 
 stdenv.mkDerivation rec {
   builder = ./builder.sh;
 
-  inherit pkgName attrName;
+  inherit pkgName attrName libName;
   inherit extraPkgVariables extraEnvVariables;
   inherit customModfilePath customScriptPath;
   inherit dependencies excludes addLDLibPath;
@@ -107,45 +109,16 @@ stdenv.mkDerivation rec {
     else
       "${pkgName}.lua";
 
-  hasLibs = builtins.pathExists "${pkg}/lib";
-  hasIncs = builtins.pathExists "${pkg}/include";
-  hasBin = builtins.pathExists "${pkg}/bin";
 
   pkgNameUpper = builtins.replaceStrings [ "-" ] [ "_" ] (toUpper pkgName);
 
   pacName =
     if customPacName == "" then pkgNameUpper else customPacName;
 
-  # from lrz documentation
-  PAC_BASE = "${pkg}";
-
-  PAC_LIBDIR = optionalString (pkgLib && hasLibs) "${PAC_BASE}/${libPath}";
-
-  PAC_LIB =
-    let path = "${PAC_LIBDIR}/lib${libName}.a";
-    in optionalString (pkgLib && builtins.pathExists path) path;
-
-  PAC_SHLIB =
-    let path = "${PAC_LIBDIR}/lib${libName}.so";
-    in optionalString (pkgLib && builtins.pathExists path) "-L${PAC_LIBDIR} -l${libName}";
-
-  PAC_PTHREADS_LIB =
-    let path = "${PAC_LIBDIR}/lib${libName}_threads.a";
-    in optionalString (pkgLib && builtins.pathExists path) path;
-
-  PAC_PTHREADS_SHLIB =
-    let path = "${PAC_LIBDIR}/lib${libName}_threads.so";
-    in optionalString (pkgLib && builtins.pathExists path) "-L${PAC_LIBDIR} -l${libName}_threads";
-
-  PAC_MPI_LIB =
-    let path = "${PAC_LIBDIR}/lib${libName}_mpi.a";
-    in optionalString (pkgLib && builtins.pathExists path) path;
-
-  PAC_MPI_SHLIB =
-    let path = "${PAC_LIBDIR}/lib${libName}_mpi.so";
-    in optionalString (pkgLib && builtins.pathExists path) "${PAC_LIBDIR} -l${libName}_mpi";
-
-  PAC_INC = optionalString (pkgInc && hasIncs) "-I${PAC_BASE}/${incPath}";
-
-  PAC_BIN = optionalString hasBin "${PAC_BASE}/bin";
+  BASE = monoPkg;
+  BINDIR = "${BASE}/${binPath}";
+  INCDIR = "${BASE}/${incPath}";
+  LIBDIR = "${BASE}/${libPath}";
+  LIBSTATIC = "${LIBDIR}/lib${libName}.a";
+  LIBSHARED = "${LIBDIR}/lib${libName}.so";
 }

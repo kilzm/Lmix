@@ -41,39 +41,28 @@ addPaths () {
 
 addPkgVariables () {
   # PAC_BASE - base nix store path
-  modSetEnv "${pacName}_BASE" "${PAC_BASE}"
-  if [[ -n "$PAC_BIN" ]] ; then
-    # PAC_BIN - bin directory
-    modSetEnv "${pacName}_BIN" "${PAC_BIN}"
+  modSetEnv "${pacName}_BASE" "$BASE"
+  # PAC_BIN - bin directory
+  if [[ -d "$BINDIR" && " $excludes " != *" BIN "* ]] ; then
+    modSetEnv "${pacName}_BIN" "$BINDIR"
   fi
   # PAC_LIBDIR - library directory
-  if [[ -n "$PAC_LIBDIR" && " $excludes " != *" LIBDIR "* ]]; then
+  if [[ -d "$LIBDIR" && " $excludes " != *" LIBDIR "* ]]; then
     modSetEnv "${pacName}_LIBDIR" "${PAC_LIBDIR}"
-    # PAC_LIB - setting for static linking
-    if [[ -n "$PAC_LIB" && " $excludes " != *" LIB "* ]] ; then
-      modSetEnv "${pacName}_LIB" "${PAC_LIB}"
-    fi
-    # PAC_SHLIB - setting for dynamic linking
-    if [[ -n "$PAC_SHLIB" ]] ; then
-      modSetEnv "${pacName}_SHLIB" "${PAC_SHLIB}"
-    fi
-    if [[ -n "$PAC_PTHREADS_LIB" ]] ; then
-      modSetEnv "${pacName}_PTHREADS_LIB" "${PAC_PTHREADS_LIB}"
-    fi
-    if [[ -n "$PAC_PTHREADS_SHLIB" ]] ; then
-      modSetEnv "${pacName}_PTHREADS_SHLIB" "${PAC_PTHREADS_SHLIB}"
-    fi
-    if [[ -n "$PAC_MPI_LIB" ]] ; then
-      modSetEnv "${pacName}_MPI_LIB" "${PAC_MPI_LIB}"
-    fi
-    if [[ -n "$PAC_MPI_SHLIB" ]] ; then
-      modSetEnv "${pacName}_MPI_SHLIB" "${PAC_MPI_SHLIB}"
-    fi
+  fi
+  # PAC_LIB - setting for static linking
+  if [[ -f "$LIBSTATC" && " $excludes " != *" LIB "* ]] ; then
+    modSetEnv "${pacName}_LIB" "$LIBSTATIC"
+  fi
+  # PAC_SHLIB - setting for dynamic linking
+  if [[ -f "$LIBSHARED" && " $excludes " != *" LIB "* ]] ; then
+    modSetEnv "${pacName}_SHLIB" "-L$LIBSHARED -l$libName"
   fi
   # PAC_INC - include directory
-  if [[ -n "$PAC_INC" && " $excludes " != *" INC "* ]] ; then
-    modSetEnv "${pacName}_INC" "${PAC_INC}"
+  if [[ -d "$INCDIR" && " $excludes " != *" INC "* ]] ; then
+    modSetEnv "${pacName}_INC" "-I$INCDIR"
   fi
+
   keys=$(jq -r 'keys[]' <<< "$extraPkgVariables")
   for key in $keys ; do
     val=$(jq --arg key "$key" --raw-output '.[$key]' <<< "$extraPkgVariables")
