@@ -3,6 +3,7 @@ let
   modulesFunc = recSet: cc: name: mods:
     let
       inherit (prev.lib.attrsets) optionalAttrs;
+      inherit (prev.lib.strings) optionalString;
       inherit (builtins) removeAttrs;
       callModule = m:
         let
@@ -14,7 +15,10 @@ let
               inherit pkg cc;
             });
           extraAttrs = removeAttrs m [ "mod" ];
-          modAttrs = { inherit attrName pkg cc; } // extraAttrs // configAttrs;
+          modAttrs = {
+            attrName = optionalString (recSet != null) "${recSet}." + attrName;
+            inherit pkg cc;
+          } // extraAttrs // configAttrs;
         in
         prev.callPackage ../modules modAttrs;
     in

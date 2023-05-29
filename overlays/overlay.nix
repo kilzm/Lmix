@@ -38,7 +38,7 @@ in
       };
     });
 
-    hello_2_9 = hello.overrideAttrs (old: rec {
+    hello_2_9_intel21 = (hello.override { stdenv = intel21Stdenv; }).overrideAttrs (old: rec {
       version = "2.9";
       src = prev.fetchurl {
         url = "mirror://gnu/hello/hello-${version}.tar.gz";
