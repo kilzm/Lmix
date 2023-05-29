@@ -47,6 +47,12 @@ in
         { mod = "libint"; libName = "int2"; }
         { mod = "blas"; }
         { mod = "lapack"; }
+        { mod = "gfortran7"; pkgName = "gfortran"; }
+        { mod = "gfortran8"; pkgName = "gfortran"; }
+        { mod = "gfortran9"; pkgName = "gfortran"; }
+        { mod = "gfortran10"; pkgName = "gfortran"; }
+        { mod = "gfortran11"; pkgName = "gfortran"; }
+        { mod = "gfortran12"; pkgName = "gfortran"; }
       ]
       ++ namedModulesNixpkgs "gcc" [
         { mod = "gcc7"; }
