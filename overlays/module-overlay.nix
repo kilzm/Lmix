@@ -1,27 +1,28 @@
 final: prev:
 let
-  modulesFunc = attrPrefix: cc: name: mods:
-    map
-      (m:
-        let pkg = if attrPrefix == "" then prev.${m.name} else prev.${attrPrefix}.${m.name};
-        in prev.callPackage ../modules ({
-          attrName = m.name;
-          inherit pkg cc;
-        }
-        // (if builtins.hasAttr "extra" m then m.extra else { })
-        // (if name != "" then
-          (import ../modules/${name} {
-            lib = prev.lib;
-            inherit pkg cc;
-          })
-        else { })
-        )
-      )
-      mods;
+  modulesFunc = recSet: cc: name: mods:
+    let
+      inherit (prev.lib.attrsets) optionalAttrs;
+      inherit (builtins) removeAttrs;
+      callModule = m:
+        let
+          attrName = m.mod;
+          pkg = if recSet == null then prev.${attrName} else prev.${recSet}.${attrName};
+          configAttrs = optionalAttrs (name != null)
+            (import ../modules/${name} {
+              lib = prev.lib;
+              inherit pkg cc;
+            });
+          extraAttrs = removeAttrs m [ "mod" ];
+          modAttrs = { inherit attrName pkg cc; } // extraAttrs // configAttrs;
+        in
+        prev.callPackage ../modules modAttrs;
+    in
+    map callModule mods;
 
-  defaultModulesNixpkgs = modulesFunc "" "" "";
-  defaultModules = modulesFunc "nwm-pkgs" "" "";
-  namedModulesNixpkgs = modulesFunc "" "";
+  defaultModulesNixpkgs = modulesFunc null "" null;
+  defaultModules = modulesFunc "nwm-pkgs" "" null;
+  namedModulesNixpkgs = modulesFunc null "";
   namedModules = modulesFunc "nwm-pkgs" "";
   namedCCModules = modulesFunc "nwm-pkgs";
 in
@@ -32,65 +33,65 @@ in
     _modules-nixpkgs = prev.buildEnv {
       name = "modules-nixpkgs";
       paths = defaultModulesNixpkgs [
-        { name = "ffmpeg"; }
-        { name = "git"; }
-        { name = "valgrind"; extra = { incPath = "include/valgrind"; }; }
-        { name = "llvm"; }
-        { name = "eigen"; extra = { incPath = "include/eigen3"; }; }
-        { name = "libmatheval"; extra = { libName = "matheval"; }; }
-        { name = "libxc"; extra = { libName = "xc"; }; }
-        { name = "libint"; extra = { libName = "int2"; }; }
-        { name = "blas"; }
-        { name = "lapack"; }
+        { mod = "ffmpeg"; }
+        { mod = "git"; }
+        { mod = "valgrind"; incPath = "include/valgrind"; }
+        { mod = "llvm"; libName = "LLVM"; }
+        { mod = "eigen"; incPath = "include/eigen3"; }
+        { mod = "libmatheval"; libName = "matheval"; }
+        { mod = "libxc"; libName = "xc"; }
+        { mod = "libint"; libName = "int2"; }
+        { mod = "blas"; }
+        { mod = "lapack"; }
       ]
       ++ namedModulesNixpkgs "gcc" [
-        { name = "gcc7"; }
-        { name = "gcc8"; }
-        { name = "gcc9"; }
-        { name = "gcc10"; }
-        { name = "gcc11"; }
-        { name = "gcc12"; }
+        { mod = "gcc7"; }
+        { mod = "gcc8"; }
+        { mod = "gcc9"; }
+        { mod = "gcc10"; }
+        { mod = "gcc11"; }
+        { mod = "gcc12"; }
       ]
       ++ namedModulesNixpkgs "ruby" [
-        { name = "ruby"; }
+        { mod = "ruby"; }
       ]
       ++ namedModulesNixpkgs "python" [
-        { name = "python2"; }
-        { name = "python37"; }
-        { name = "python39"; }
-        { name = "python311"; }
+        { mod = "python2"; }
+        { mod = "python37"; }
+        { mod = "python39"; }
+        { mod = "python311"; }
       ];
     };
 
     _modules = prev.buildEnv {
       name = "modules";
       paths = defaultModules [
-        { name = "nix-stdenv"; }
-        { name = "julia_1_9_0"; }
-        { name = "julia_1_8_5"; }
-        { name = "osu-micro-benchmarks_5_6_2"; }
-        { name = "osu-micro-benchmarks_6_1"; }
+        { mod = "nix-stdenv"; }
+        { mod = "julia_1_9_0"; }
+        { mod = "julia_1_8_5"; }
+        { mod = "osu-micro-benchmarks_5_6_2"; }
+        { mod = "osu-micro-benchmarks_6_1"; }
       ]
       ++ namedModules "openmpi" [
-        { name = "openmpi_4_1_4_gcc11"; extra = { cc = "gcc11"; }; }
-        { name = "openmpi_4_1_5_gcc11"; extra = { cc = "gcc11"; }; }
+        { mod = "openmpi_4_1_4_gcc11"; cc = "gcc11"; }
+        { mod = "openmpi_4_1_5_gcc11"; cc = "gcc11"; }
       ]
       ++ namedModules "fftw" [
-        { name = "fftw_3_3_10_gcc11_ompi_4_1_5"; extra = { cc = "gcc11"; }; }
-        { name = "fftw_3_3_10_gcc12_ompi_4_1_5_openmp"; extra = { cc = "gcc12"; }; }
-        { name = "fftw_3_3_10_intel21"; extra = { cc = "intel21"; }; }
+        { mod = "fftw_3_3_10_gcc11_ompi_4_1_5"; cc = "gcc11"; }
+        { mod = "fftw_3_3_10_gcc12_ompi_4_1_5_openmp"; cc = "gcc12"; }
+        { mod = "fftw_3_3_10_intel21"; cc = "intel21"; }
       ]
       ++ namedModules "intel/oneapi-compilers" [
-        { name = "intel-compilers_2022_1_0"; }
+        { mod = "intel-compilers_2022_1_0"; }
       ]
       ++ namedModules "intel/oneapi-tbb" [
-        { name = "intel-tbb_2021_6_0"; }
+        { mod = "intel-tbb_2021_6_0"; }
       ]
       ++ namedModules "intel/oneapi-mpi" [
-        { name = "intel-oneapi-mpi_2021_6_0_gcc11"; extra = { cc = "gcc11"; }; }
+        { mod = "intel-oneapi-mpi_2021_6_0_gcc11"; cc = "gcc11"; }
       ]
       ++ namedModules "intel/oneapi-mpi" [
-        { name = "intel-oneapi-mpi_2021_6_0_intel21"; extra = { cc = "intel21"; }; }
+        { mod = "intel-oneapi-mpi_2021_6_0_intel21"; cc = "intel21"; }
       ];
     };
 
