@@ -10,11 +10,22 @@ def exit_err(msg: str, context):
 
 NIX_WITH_MODUES_FLAKE = "github:kilzm/nix-with-modules"
 
+COMPILERS = {
+    'gcc7': ['gcc7', 'gfortran7'],
+    'gcc8': ['gcc8', 'gfortran8'],
+    'gcc9': ['gcc9', 'gfortran9'],
+    'gcc10': ['gcc10', 'gfortran10'],
+    'gcc11': ['gcc11', 'gfortran11'],
+    'gcc12': ['gcc12', 'gfortran12'],
+    'intel21': ['nwm-pkgs.intel-compilers_2022_1_0']
+}
+
 @click.command()
 @click.pass_context
 @click.argument("directory", required=True)
+@click.option("-c", "--compiler", type=click.Choice(list(COMPILERS)))
 @click.option("-b", "--build-tools", multiple=True, type=click.Choice(['pkg-config', 'cmake', 'autotools']))
-def modules_to_flake(ctx, directory, build_tools):
+def modules_to_flake(ctx, directory, compiler, build_tools):
     """Generate a nix flake with a devShell derived from loaded modules"""
     path = Path(directory)
     flake_path = Path(directory) / "flake.nix"
@@ -46,7 +57,7 @@ def modules_to_flake(ctx, directory, build_tools):
     with flake_path.open(mode='r') as flake:
         flake_lines = list(map (str.strip, flake.read().splitlines()))
         ds_idx = next(i for i, l in enumerate(flake_lines) if l.startswith(DEVSHELL_LINE)) + 1
-        flake_lines[ds_idx:ds_idx] = get_build_inputs() + get_native_build_inputs(build_tools)
+        flake_lines[ds_idx:ds_idx] = build_inputs(compiler) + native_build_inputs(build_tools) + env_variables(compiler)
         
     with flake_path.open(mode='w') as flake:
         flake.write('\n'.join(flake_lines))
@@ -67,18 +78,20 @@ def modules_to_flake(ctx, directory, build_tools):
 
 
 NIX_MODULES_PATH = "/opt/modulefiles/modules-nix/modules"
-def get_build_inputs():
+COMPILER_MODULES = ["gcc", "intel-oneapi-compilers"]
+def build_inputs(compiler):
     spider = Spider(NIX_MODULES_PATH)
     modules = [module for module in spider.get_names() if module != 'nix-stdenv']
-    inputs = [ "buildInputs = with pkgs; [" ]
+    inputs = [ "buildInputs = with pkgs; [", "# compiler "] + COMPILERS[compiler] + [ "# other" ]
     for module in modules:
-        env_var = f"NIXWM_ATTRNAME_{module.upper().replace('-','_')}"
+        if module in COMPILER_MODULES: continue
+        env_var = f"NIXWM_ATTRNAME_{module.replace('-','_').upper()}"
         if env_var in os.environ:
             inputs.append(os.environ[env_var])
     inputs.append("];")
     return inputs
 
-def get_native_build_inputs(build_tools: tuple):
+def native_build_inputs(build_tools: tuple):
     if build_tools == (): return []
     inputs = [ "nativeBuildInputs = with pkgs; [" ]
     for tool in list(build_tools):
@@ -92,3 +105,13 @@ def get_native_build_inputs(build_tools: tuple):
             case _: pass
     inputs.append("];")
     return inputs
+
+def env_variables(compiler):
+    CC, CXX, FC = ('"gcc"', '"g++"', '"gfortran"') if compiler.startswith("gcc") else (
+                  ('"icc"', '"icpc"', '"ifort"') if compiler.startswith("intel") else (
+                  ("", "", "")))
+    return [
+        f"CC = {CC};",
+        f"CXX = {CXX};",
+        f"FC = {FC};",
+    ]
