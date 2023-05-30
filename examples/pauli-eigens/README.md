@@ -2,7 +2,7 @@
 
 ## pauli-eigens
 
-A simple program to calculate the eigenvectors and eigevalues of the pauli matrices with the eigen C++ template library. The Makefile uses pkg-config for the cflags.
+A simple program to calculate the eigenvectors and eigenvalues of the pauli matrices with the eigen C++ template library. The Makefile uses pkg-config for the cflags.
 
 ## Flake generation
 
