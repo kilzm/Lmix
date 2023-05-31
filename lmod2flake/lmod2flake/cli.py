@@ -24,7 +24,7 @@ COMPILERS = {
 @click.pass_context
 @click.argument("directory", required=True)
 @click.option("-c", "--compiler", type=click.Choice(list(COMPILERS)))
-@click.option("-b", "--build-tools", multiple=True, type=click.Choice(['pkg-config', 'cmake', 'autotools']))
+@click.option("-b", "--build-tools", multiple=True, type=click.Choice(['pkg-config', 'cmake', 'autotools', 'bear']))
 def modules_to_flake(ctx, directory, compiler, build_tools):
     """Generate a nix flake with a devShell derived from loaded modules"""
     path = Path(directory)
@@ -102,7 +102,8 @@ def native_build_inputs(build_tools: tuple):
                 inputs.append("pkg-config")
             case "autotools":
                 inputs.extend(["autoconf", "automake", "libtool"])
-            case _: pass
+            case "bear":
+                inputs.append("bear")
     inputs.append("];")
     return inputs
 

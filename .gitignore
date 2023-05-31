@@ -5,3 +5,7 @@ result
 __pycache__/
 dist/
 build/
+
+# cpp
+compile_commands.json
+.cache/

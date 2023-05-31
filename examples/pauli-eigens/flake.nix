@@ -19,6 +19,7 @@
         ];
         nativeBuildInputs = with pkgs; [
           pkg-config
+          bear
         ];
         CC = "gcc";
         CXX = "g++";

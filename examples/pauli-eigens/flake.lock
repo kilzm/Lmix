@@ -7,11 +7,11 @@
         "utils": "utils"
       },
       "locked": {
-        "lastModified": 1685393841,
-        "narHash": "sha256-QNlkv2KWr6N0m0fAS5cR2pq3orkxA+ualKXFPw9ff6Q=",
+        "lastModified": 1685487985,
+        "narHash": "sha256-wqkj8J4/WREJKE0DtjXXSz1Tz0szDeLZJz2t/0jCXSc=",
         "owner": "kilzm",
         "repo": "nix-with-modules",
-        "rev": "061ad26429c8b844ff5c8abd1d9fd49a0e401440",
+        "rev": "10088dd0a032c8a48d46316663c5c7b7c0a0a4d7",
         "type": "github"
       },
       "original": {
