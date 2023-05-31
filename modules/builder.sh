@@ -56,7 +56,7 @@ addPkgVariables () {
   fi
   # PAC_SHLIB - setting for dynamic linking
   if [[ -f "$LIBSHARED" && " $excludes " != *" LIB "* ]] ; then
-    modSetEnv "${pacName}_SHLIB" "-L$LIBSHARED -l$libName"
+    modSetEnv "${pacName}_SHLIB" "-L$LIBDIR -l$libName"
   fi
   # PAC_INC - include directory
   if [[ -d "$INCDIR" && " $excludes " != *" INC "* ]] ; then
