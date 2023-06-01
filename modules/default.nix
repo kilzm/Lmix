@@ -3,7 +3,7 @@
 , buildEnv
 , attrName
 , pkg
-, pkgName ? if builtins.hasAttr "pname" pkg then pkg.pname else pkg.name
+, pkgName ? pkg.pname or pkg.name
 
   # this will be set in the overlay if the specific compiler and its version are relevant to the module like in fftw
 , cc ? ""
@@ -80,16 +80,16 @@ stdenv.mkDerivation rec {
   inherit dependencies excludes addLDLibPath;
 
   pname = "module-${pkgName}";
-  version = if builtins.hasAttr "version" pkg then pkg.version else "";
+  version = pkg.version or "";
 
   buildInputs = [ monoPkg ];
 
   nativeBuildInputs = [ jq ];
-
-  hasMpi = builtins.hasAttr "mpi" pkg && pkg.mpi != null;
+  
+  hasMpi = (pkg.mpi or null) != null;
   ompi = hasMpi && pkg.mpi.pname == "openmpi";
   impi = hasMpi && pkg.mpi.pname == "intelmpi";
-  withOpenMP = builtins.hasAttr "withOpenMP" pkg && pkg.withOpenMP;
+  withOpenMP = pkg.withOpenMP or false;
 
   modName =
     if
