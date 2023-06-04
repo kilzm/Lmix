@@ -2,7 +2,7 @@
   description = "a nix overlay with builtin support for environment modules from lmod";
 
   inputs = {
-    nixpkgs.url = github:nixos/nixpkgs?ref=nixos-22.11;
+    nixpkgs.url = github:nixos/nixpkgs?ref=nixos-23.05;
     nurl.url = github:nix-community/nurl;
     utils.url = github:numtide/flake-utils;
   };
@@ -15,6 +15,7 @@
         allowUnfree = true;
         permittedInsecurePackages = [
           "qtwebkit-5.212.0-alpha4"
+          "python-2.7.18.6"
         ];
       };
       pkgs = import nixpkgs {

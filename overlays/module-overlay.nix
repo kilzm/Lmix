@@ -46,7 +46,9 @@ in
         { mod = "libxc"; libName = "xc"; }
         { mod = "libint"; libName = "int2"; }
         { mod = "blas"; }
+        { mod = "openblas"; libName = "blas"; }
         { mod = "lapack"; }
+        { mod = "mkl"; }
         { mod = "gfortran7"; pkgName = "gfortran"; }
         { mod = "gfortran8"; pkgName = "gfortran"; }
         { mod = "gfortran9"; pkgName = "gfortran"; }
@@ -67,7 +69,7 @@ in
       ]
       ++ namedModulesNixpkgs "python" [
         { mod = "python2"; }
-        { mod = "python37"; }
+        { mod = "python38"; }
         { mod = "python39"; }
         { mod = "python311"; }
       ];
