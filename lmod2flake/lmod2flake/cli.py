@@ -33,7 +33,7 @@ def modules_to_flake(ctx, directory, compiler, build_tools):
     if flake_path.exists():
         exit_err("directory is already a flake (remove flake.nix to override)", ctx)
 
-    flake_new_cmd = ['nix', 'flake', 'new', '--template',  f'{NIX_WITH_MODUES_FLAKE}#no-build-inputs', path]
+    flake_new_cmd = ['nix', 'flake', 'new', '--template',  f'{NIX_WITH_MODUES_FLAKE}#lmod2flake', path]
     
     try:
         subprocess.run(

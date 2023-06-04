@@ -59,7 +59,7 @@
           description = "Flake that uses nix-with-modules overlay";
         };
 
-        no-build-inputs = {
+        lmod2flake = {
           path = ./template/lmod2flake;
           description = "Used by the lmod2flake program";
         };
