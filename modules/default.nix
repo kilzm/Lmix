@@ -4,6 +4,7 @@
 , attrName
 , pkg
 , pkgName ? pkg.pname or pkg.name
+, version ? pkg.version or ""
 
   # this will be set in the overlay if the specific compiler and its version are relevant to the module like in fftw
 , cc ? ""
@@ -80,7 +81,7 @@ stdenv.mkDerivation rec {
   inherit dependencies excludes addLDLibPath;
 
   pname = "module-${pkgName}";
-  version = pkg.version or "";
+  inherit version;
 
   buildInputs = [ monoPkg ];
 
@@ -88,7 +89,7 @@ stdenv.mkDerivation rec {
   
   hasMpi = (pkg.mpi or null) != null;
   ompi = hasMpi && pkg.mpi.pname == "openmpi";
-  impi = hasMpi && pkg.mpi.pname == "intelmpi";
+  impi = hasMpi && pkg.mpi.pname == "intel-mpi";
   withOpenMP = pkg.withOpenMP or false;
 
   modName =

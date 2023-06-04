@@ -1,6 +1,6 @@
 final: prev:
 let
-  modulesFunc = recSet: cc: name: mods:
+  modulesFunc = recSet: name: mods:
     let
       inherit (prev.lib.attrsets) optionalAttrs;
       inherit (prev.lib.strings) optionalString;
@@ -12,23 +12,23 @@ let
           configAttrs = optionalAttrs (name != null)
             (import ../modules/${name} {
               lib = prev.lib;
-              inherit pkg cc;
+              inherit pkg;
+              cc = m.cc or "";
             });
           extraAttrs = removeAttrs m [ "mod" ];
           modAttrs = {
             attrName = optionalString (recSet != null) "${recSet}." + attrName;
-            inherit pkg cc;
+            inherit pkg;
           } // extraAttrs // configAttrs;
         in
         prev.callPackage ../modules modAttrs;
     in
     map callModule mods;
 
-  defaultModulesNixpkgs = modulesFunc null "" null;
-  defaultModules = modulesFunc "nwm-pkgs" "" null;
-  namedModulesNixpkgs = modulesFunc null "";
-  namedModules = modulesFunc "nwm-pkgs" "";
-  namedCCModules = modulesFunc "nwm-pkgs";
+  defaultModulesNixpkgs = modulesFunc null null;
+  defaultModules = modulesFunc "nwm-pkgs" null;
+  namedModulesNixpkgs = modulesFunc null;
+  namedModules = modulesFunc "nwm-pkgs";
 in
 {
 
@@ -77,10 +77,19 @@ in
       name = "modules";
       paths = defaultModules [
         { mod = "nix-stdenv"; }
+        { mod = "hello_2_12_1_intel21"; cc = "intel21"; }
+        { mod = "hello_2_12_1_intel23"; cc = "intel23"; }
         { mod = "julia_1_9_0"; }
         { mod = "julia_1_8_5"; }
         { mod = "osu-micro-benchmarks_5_6_2"; }
         { mod = "osu-micro-benchmarks_6_1"; }
+        { mod = "intel-oneapi-compilers_2023_1_0"; pkgName = "intel-oneapi-compilers"; }
+        { mod = "intel-oneapi-classic-compilers_2021_9_0"; pkgName = "intel-oneapi-compilers"; version = "2021.9.0"; }
+        { mod = "intel-oneapi-tbb_2021_9_0"; libName = "tbb"; }   
+      ]
+      ++ namedModules "intel/oneapi-mpi" [
+        { mod = "intel-mpi_2019"; pkgName = "intel-mpi"; cc = "intel21"; }
+        { mod = "intel-oneapi-mpi_2021_9_0"; pkgName = "intel-mpi"; cc = "intel21"; }
       ]
       ++ namedModules "openmpi" [
         { mod = "openmpi_4_1_4_gcc11"; cc = "gcc11"; }
@@ -90,18 +99,7 @@ in
         { mod = "fftw_3_3_10_gcc11_ompi_4_1_5"; cc = "gcc11"; }
         { mod = "fftw_3_3_10_gcc12_ompi_4_1_5_openmp"; cc = "gcc12"; }
         { mod = "fftw_3_3_10_intel21"; cc = "intel21"; }
-      ]
-      ++ namedModules "intel/oneapi-compilers" [
-        { mod = "intel-compilers_2022_1_0"; }
-      ]
-      ++ namedModules "intel/oneapi-tbb" [
-        { mod = "intel-tbb_2021_6_0"; }
-      ]
-      ++ namedModules "intel/oneapi-mpi" [
-        { mod = "intel-oneapi-mpi_2021_6_0_gcc11"; cc = "gcc11"; }
-      ]
-      ++ namedModules "intel/oneapi-mpi" [
-        { mod = "intel-oneapi-mpi_2021_6_0_intel21"; cc = "intel21"; }
+        { mod = "fftw_3_3_10_intel21_impi_2019"; cc = "intel21"; }
       ];
     };
 

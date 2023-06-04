@@ -1,32 +1,26 @@
 final: prev:
 let
-  wrapICCWith =
-    { cc
-    , bintools ? prev.bintools
-    , libc ? bintools.libc
-    , ...
-    } @extraArgs:
-    prev.callPackage ../pkgs/intel/build-support/cc-wrapper (
-      let
-        self = {
-          nativeTools = prev.targetPlatform == prev.hostPlatform && prev.stdenv.cc.nativeTools or false;
-          nativeLibc = prev.targetPlatform == prev.hostPlatform && prev.stdenv.cc.nativeLibc or false;
-          nativePrefix = prev.stdenv.cc.nativePrefix or "";
-          noLibc = !self.nativeLibc && (self.libc == null);
-
-          isGNU = false;
-          isClang = false;
-          isIntel = true;
-
-          inherit cc bintools libc;
-        } // extraArgs;
-      in
-      self
-    );
+    intel-oneapi_2023_1_0 = prev.callPackage ../pkgs/intel/oneapi {
+      libffi = prev.libffi_3_3;
+      versions = import ../pkgs/intel/oneapi/2023.nix;
+    };
 
 in
 {
   nwm-pkgs = with prev.lib; rec {
+    # intel
+    intel-oneapi-compilers_2023_1_0 = intel-oneapi_2023_1_0.icx;
+    intel-oneapi-classic-compilers_2021_9_0 = intel-oneapi_2023_1_0.icc;
+    intel-oneapi-ifort_2021_9_0 = intel-oneapi_2023_1_0.ifort;
+    intel-oneapi-tbb_2021_9_0 = intel-oneapi_2023_1_0.tbb;
+    intel-oneapi-mpi_2021_9_0 = intel-oneapi_2023_1_0.mpi;
+
+    intel23Stdenv = intel-oneapi_2023_1_0.stdenv;
+    intel21Stdenv = intel-oneapi_2023_1_0.stdenv-icc;
+    intel21IFortStdenv = intel-oneapi_2023_1_0.stdenv-ifort;
+
+    intel-mpi_2019 = prev.callPackage ../pkgs/intel/mpi { };
+
     ## hello - mirror://gnu/hello/hello-${version}.tar.gz
     hello = prev.hello;
 
@@ -38,12 +32,14 @@ in
       };
     });
 
-    hello_2_9_intel21 = (hello.override { stdenv = intel21Stdenv; }).overrideAttrs (old: rec {
-      version = "2.9";
-      src = prev.fetchurl {
-        url = "mirror://gnu/hello/hello-${version}.tar.gz";
-        sha256 = "sha256-7Lt6IhQZbFf/k0CqcUWOFVmr049tjRaWZoRpNd8ZHqc=";
-      };
+    hello_2_12_1_intel21 = hello_2_12_1.override {
+      stdenv = intel21Stdenv;
+    };
+
+    hello_2_12_1_intel23 = (hello_2_12_1.override {
+      stdenv = intel23Stdenv;
+    }).overrideAttrs (old: {
+      doCheck = false;
     });
 
     ## julia - https://github.com/JuliaLang/julia/releases/download/v${version}/julia-${version}-full.tar.gz
@@ -112,50 +108,10 @@ in
       mpi = null;
     };
 
-    # intel
-
-    # begin oneapi-2022.2.0
-    intel-oneapi_2022_2_0 = prev.callPackage ../pkgs/intel/oneapi { };
-
-    oneapi = intel-oneapi_2022_2_0;
-
-    intel-tbb_2021_6_0 = prev.callPackage ../pkgs/intel/oneapi-tbb {
-      oneapi = intel-oneapi_2022_2_0;
-      version = "2021.6.0";
-    };
-
-    intel-compilers_2022_1_0 = prev.callPackage ../pkgs/intel/oneapi-compilers {
-      oneapi = intel-oneapi_2022_2_0;
-      tbb = intel-tbb_2021_6_0;
-      version = "2022.1.0";
-    };
-
-    intel-classic-compilers_2021_6_0 = prev.callPackage ../pkgs/intel/oneapi-classic-compilers {
-      oneapi = intel-oneapi_2022_2_0;
-    };
-
-    intel-oneapi-mpi_2021_6_0_gcc11 = prev.callPackage ../pkgs/intel/oneapi-mpi {
-      oneapi = intel-oneapi_2022_2_0;
-      version = "2021.6.0";
-      stdenv = prev.gcc11Stdenv;
-    };
-
-    intel-oneapi-mpi_2021_6_0_intel21 = prev.callPackage ../pkgs/intel/oneapi-mpi {
-      oneapi = intel-oneapi_2022_2_0;
-      version = "2021.6.0";
+    fftw_3_3_10_intel21_impi_2019 = prev.callPackage ../pkgs/fftw {
       stdenv = intel21Stdenv;
+      mpi = intel-mpi_2019;
     };
-
-    intel21Stdenv =
-      let
-        intel21-wrapped = wrapICCWith rec {
-          cc = prev.callPackage ../pkgs/intel/oneapi-classic-compilers {
-            oneapi = intel-oneapi_2022_2_0;
-          };
-        };
-      in
-      prev.overrideCC prev.stdenv intel21-wrapped;
-    # end oneapi-2022.2.0
 
     # default environment when working with nix-generated modules
     nix-stdenv = prev.buildEnv {
