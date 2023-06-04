@@ -33,6 +33,20 @@ def modules_to_flake(ctx, directory, compiler, build_tools):
     if flake_path.exists():
         exit_err("directory is already a flake (remove flake.nix to override)", ctx)
 
+    flake_update_cmd = ['nix', 'flake', 'update', f'{NIX_WITH_MODUES_FLAKE}' ]
+
+    try:
+        subprocess.run(
+            flake_update_cmd,
+            encoding='utf-8',
+            check=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+        )
+
+    except subprocess.CalledProcessError as e:
+        exit_err(f"'nix flake new' failed with code {e.returncode}: {e.stderr}", ctx)
+
     flake_new_cmd = ['nix', 'flake', 'new', '--template',  f'{NIX_WITH_MODUES_FLAKE}#lmod2flake', path]
     
     try:
@@ -53,8 +67,9 @@ def modules_to_flake(ctx, directory, compiler, build_tools):
 
     with flake_path.open(mode='r') as flake:
         flake_lines = list(map (str.strip, flake.read().splitlines()))
-        ds_idx = next(i for i, l in enumerate(flake_lines) if l.startswith(DEVSHELL_LINE)) + 1
-        flake_lines[ds_idx:ds_idx] = [ f"stdenv = pkgs.nwm-pkgs.{compiler}Stdenv;" ]
+        if compiler != None:
+            ds_idx = next(i for i, l in enumerate(flake_lines) if l.startswith(DEVSHELL_LINE)) + 1
+            flake_lines[ds_idx:ds_idx] = [ f"stdenv = pkgs.nwm-pkgs.{compiler}Stdenv;" ]
         bi_idx = next(i for i, l in enumerate(flake_lines) if l.startswith(BUILDINPUTS_LINE)) + 1
         flake_lines[bi_idx:bi_idx] = build_inputs() 
         nbi_idx = next(i for i, l in enumerate(flake_lines) if l.startswith(NATIVEBUILDINPUTS_LINE)) + 1

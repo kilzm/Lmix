@@ -9,22 +9,19 @@
       pkgs = nix-with-modules.legacyPackages.${system};
     in
     {
-      devShells.${system}.default = pkgs.mkShell.override { stdenv = pkgs.stdenvNoCC; } rec {
-        buildInputs = with pkgs; [
-          # compiler 
-          gcc12
-          gfortran12
-          # other
-          eigen
-        ];
-        nativeBuildInputs = with pkgs; [
-          pkg-config
-          bear
-        ];
-        CC = "gcc";
-        CXX = "g++";
-        FC = "gfortran";
-      };
+      devShells.${system}.default = pkgs.mkShell.override
+        {
+          stdenv = pkgs.nwm-pkgs.intel23Stdenv;
+        }
+        rec {
+          buildInputs = with pkgs; [
+            eigen
+          ];
+          nativeBuildInputs = with pkgs; [
+            bear
+            pkg-config
+          ];
+        };
     };
 
   nixConfig = {
