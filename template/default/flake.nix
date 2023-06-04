@@ -17,7 +17,7 @@
         ];
         nativeBuildInputs = with pkgs; [
           # build packages go here
-        ]
+        ];
       };
     };
 

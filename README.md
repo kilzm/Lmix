@@ -48,7 +48,7 @@ A neat feature of flakes is that you can use them as inputs in other flakes. Thi
         ];
         nativeBuildInputs = with pkgs; [
           # build packages go here
-        ]
+        ];
       };
     };
 }
