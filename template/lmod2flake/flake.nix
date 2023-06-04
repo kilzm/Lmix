@@ -9,7 +9,12 @@
       pkgs = nix-with-modules.legacyPackages.${system};
     in
     {
-      devShells.${system}.default = pkgs.mkShell.override { stdenv = pkgs.stdenvNoCC; } rec {
+      devShells.${system}.default = pkgs.mkShell.override {
+      } rec {
+        buildInputs = with pkgs; [
+        ];
+        nativeBuildInputs = with pkgs; [
+        ];
       };
     };
 

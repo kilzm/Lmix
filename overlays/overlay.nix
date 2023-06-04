@@ -8,6 +8,8 @@ let
 in
 {
   nwm-pkgs = with prev.lib; rec {
+    inherit (prev) gcc7Stdenv gcc8Stdenv gcc9Stdenv gcc10Stdenv gcc11Stdenv gcc12Stdenv;
+
     # intel
     intel-oneapi-compilers_2023_1_0 = intel-oneapi_2023_1_0.icx;
     intel-oneapi-classic-compilers_2021_9_0 = intel-oneapi_2023_1_0.icc;

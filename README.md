@@ -40,16 +40,17 @@ A neat feature of flakes is that you can use them as inputs in other flakes. Thi
       pkgs = nix-with-modules.legacyPackages.${system};
     in
     {
-      devShells.${system}.default = pkgs.mkShell rec {
+      devShells.${system}.default = pkgs.mkShell.override { 
+        # stdenv = pkgs.nwm-pkgs.<stdenv>  
+      } rec {
         buildInputs = with pkgs; [
           # required packages go here
         ];
+        nativeBuildInputs = with pkgs; [
+          # build packages go here
+        ]
       };
     };
-
-  nixConfig = {
-    bash-prompt-prefix = ''\033[0;36m\[(nix develop)\033[0m '';
-  };
 }
 ```
 All packages put inside the buildInputs list will be made availible in the devShell.

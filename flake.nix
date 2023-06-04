@@ -60,8 +60,8 @@
         };
 
         no-build-inputs = {
-          path = ./template/no-build-inputs;
-          description = "No buildInputs attribute for devShell";
+          path = ./template/lmod2flake;
+          description = "Used by the lmod2flake program";
         };
       };
     };
