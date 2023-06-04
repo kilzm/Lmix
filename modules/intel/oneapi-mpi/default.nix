@@ -16,6 +16,10 @@ in
 
   dependencies = [ module ];
 
+  conflicts = [
+    "openmpi"
+  ];
+
   extraEnvVariables = builtins.toJSON {
     I_MPI_CC = "${CC}";
     I_MPI_CXX = "${CXX}";

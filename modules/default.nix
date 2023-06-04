@@ -37,6 +37,9 @@
   # sometimes PAC_LIBDIR might be unnecessary or adding to PATH is handled by sourced script
 , excludes ? [ ]
 
+  # module will only load if these are not loaded
+, conflicts ? [ ]
+
   # false will ignore all package variables for lib
 , pkgLib ? true
 
@@ -78,7 +81,7 @@ stdenv.mkDerivation rec {
   inherit pkgName attrName libName;
   inherit extraPkgVariables extraEnvVariables;
   inherit customModfilePath customScriptPath;
-  inherit dependencies excludes addLDLibPath;
+  inherit dependencies excludes conflicts addLDLibPath;
 
   pname = "module-${pkgName}";
   inherit version;

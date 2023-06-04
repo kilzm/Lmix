@@ -100,6 +100,12 @@ if [[ -n "$dependencies" ]] ; then
   done
 fi
 
+if [[ -n "$conflicts" ]] ; then
+  for module in $conflicts ; do
+    echo -e "conflict(\"$module\")" >> $modfile
+  done
+fi
+
 for i in "$buildInputs" ; do
   addPaths $i
 done

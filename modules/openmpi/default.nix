@@ -3,6 +3,10 @@
   libName = "mpi";
   customPacName = "MPI";
 
+  conflicts = [
+    "intel-mpi"
+  ];
+
   extraPkgVariables = builtins.toJSON {
     CXX_SHLIB = "-L${pkg}/lib -lmpi_cxx";
     F90_SHLIB = "-L${pkg}/lib -lmpi_mpifh";
