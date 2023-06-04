@@ -117,7 +117,7 @@ let
 
   intel-mpi = stdenv.mkDerivation rec {
     version = v.mpi;
-    pname = "intel-mpi";
+    pname = "intel-oneapi-mpi";
 
     src = joinDebs pname [
       "intel-oneapi-mpi-devel-${version}"
@@ -154,7 +154,7 @@ let
 
   intel-tbb = stdenv.mkDerivation rec {
     version = v.tbb;
-    pname = "intel-tbb";
+    pname = "intel-oneapi-tbb";
     src = joinDebs pname [
       "intel-oneapi-tbb-${version}"
       "intel-oneapi-tbb-common-${version}"

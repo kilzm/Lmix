@@ -48,7 +48,7 @@ in
         { mod = "blas"; }
         { mod = "openblas"; libName = "blas"; }
         { mod = "lapack"; }
-        { mod = "mkl"; }
+        { mod = "mkl"; version = "2023.1.0"; pkgName = "intel-oneapi-mkl"; }
         { mod = "gfortran7"; pkgName = "gfortran"; }
         { mod = "gfortran8"; pkgName = "gfortran"; }
         { mod = "gfortran9"; pkgName = "gfortran"; }
@@ -91,7 +91,7 @@ in
       ]
       ++ namedModules "intel/oneapi-mpi" [
         { mod = "intel-mpi_2019"; pkgName = "intel-mpi"; cc = "intel21"; }
-        { mod = "intel-oneapi-mpi_2021_9_0"; pkgName = "intel-mpi"; cc = "intel21"; }
+        { mod = "intel-oneapi-mpi_2021_9_0"; cc = "intel21"; }
       ]
       ++ namedModules "openmpi" [
         { mod = "openmpi_4_1_4_gcc11"; cc = "gcc11"; }

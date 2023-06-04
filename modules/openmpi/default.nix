@@ -5,6 +5,7 @@
 
   conflicts = [
     "intel-mpi"
+    "intel-oneapi-mpi"
   ];
 
   extraPkgVariables = builtins.toJSON {
