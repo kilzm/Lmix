@@ -50,15 +50,8 @@ let
   aptPackageIndex = stdenv.mkDerivation {
     name = "intel-oneapi-packages";
     srcs = [
-      # Set the hashes to "" to fetch them
-      (fetchurl {
-        url = "https://apt.repos.intel.com/oneapi/dists/all/main/binary-amd64/Packages";
-        sha256 = "sha256-ZaXaicvmuyRB84LYK1mDYWwpdNW+ZHQCV072SuH4EFA=";
-      })
-      (fetchurl {
-        url = "https://apt.repos.intel.com/oneapi/dists/all/main/binary-all/Packages";
-        sha256 = "sha256-6vuioA0Hl34/AUuBbRYGu3lt+rccqJdpipXQWZ4Nfp8=";
-      })
+      ./apt-index/2023-06-05-amd64
+      ./apt-index/2023-06-05-all
     ];
     phases = [ "installPhase" ];
     installPhase = ''
