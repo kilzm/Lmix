@@ -46,9 +46,10 @@ in
         { mod = "libxc"; libName = "xc"; }
         { mod = "libint"; libName = "int2"; }
         { mod = "blas"; }
-        { mod = "openblas"; libName = "blas"; }
+        { mod = "openblas"; }
         { mod = "lapack"; }
         { mod = "mkl"; version = "2023.1.0"; pkgName = "intel-oneapi-mkl"; }
+        { mod = "gsl"; }
         { mod = "gfortran7"; pkgName = "gfortran"; }
         { mod = "gfortran8"; pkgName = "gfortran"; }
         { mod = "gfortran9"; pkgName = "gfortran"; }
@@ -87,6 +88,7 @@ in
         { mod = "osu-micro-benchmarks_6_1"; }
         { mod = "intel-oneapi-compilers_2023_1_0"; pkgName = "intel-oneapi-compilers"; }
         { mod = "intel-oneapi-classic-compilers_2021_9_0"; pkgName = "intel-oneapi-compilers"; version = "2021.9.0"; }
+        { mod = "intel-oneapi-ifort_2021_9_0"; pkgName = "intel-oneapi-ifort"; }
         { mod = "intel-oneapi-tbb_2021_9_0"; libName = "tbb"; }   
       ]
       ++ namedModules "intel/oneapi-mpi" [

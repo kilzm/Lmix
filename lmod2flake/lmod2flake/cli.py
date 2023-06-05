@@ -12,7 +12,7 @@ NIX_WITH_MODUES_FLAKE =  "github:kilzm/nix-with-modules"
 
 COMPILERS = [
     'gcc8', 'gcc9', 'gcc10', 'gcc11', 'gcc12',
-    'intel21', 'intel23'
+    'intel21', 'intel23', 'intel21IFort'
 ]
 
 @click.command()
@@ -32,20 +32,6 @@ def modules_to_flake(ctx, directory, compiler, build_tools):
 
     if flake_path.exists():
         exit_err("directory is already a flake (remove flake.nix to override)", ctx)
-
-    flake_update_cmd = ['nix', 'flake', 'update', f'{NIX_WITH_MODUES_FLAKE}' ]
-
-    try:
-        subprocess.run(
-            flake_update_cmd,
-            encoding='utf-8',
-            check=True,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-        )
-
-    except subprocess.CalledProcessError as e:
-        exit_err(f"'nix flake new' failed with code {e.returncode}: {e.stderr}", ctx)
 
     flake_new_cmd = ['nix', 'flake', 'new', '--template',  f'{NIX_WITH_MODUES_FLAKE}#lmod2flake', path]
     
@@ -95,7 +81,7 @@ def modules_to_flake(ctx, directory, compiler, build_tools):
 
 
 NIX_MODULES_PATH = "/opt/modulefiles/modules-nix/modules"
-COMPILER_MODULES = ["gcc", "intel-oneapi-compilers", "gfortran" ]
+COMPILER_MODULES = ["gcc", "intel-oneapi-compilers", "gfortran", "intel-oneapi-ifort" ]
 def build_inputs():
     spider = Spider(NIX_MODULES_PATH)
     modules = [module for module in spider.get_names() if module != 'nix-stdenv']
