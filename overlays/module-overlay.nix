@@ -26,13 +26,13 @@ let
     map callModule mods;
 
   defaultModulesNixpkgs = modulesFunc null null;
-  defaultModules = modulesFunc "nwm-pkgs" null;
+  defaultModules = modulesFunc "lmix-pkgs" null;
   namedModulesNixpkgs = modulesFunc null;
-  namedModules = modulesFunc "nwm-pkgs";
+  namedModules = modulesFunc "lmix-pkgs";
 in
 {
 
-  nwm-mods = {
+  lmix-mods = {
     # modules
     _modules-nixpkgs = prev.buildEnv {
       name = "modules-nixpkgs";

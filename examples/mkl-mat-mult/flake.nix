@@ -11,7 +11,7 @@
     {
       devShells.${system}.default = pkgs.mkShell.override
         {
-          stdenv = pkgs.nwm-pkgs.intel21IFortStdenv;
+          stdenv = pkgs.lmix-pkgs.intel21IFortStdenv;
         }
         rec {
           buildInputs = with pkgs; [

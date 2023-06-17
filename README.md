@@ -1,4 +1,4 @@
-# nix-with-modules
+# lmix
 A pure and reproducible nix overlay for HPC-packages. It is able to automatically generate [LMod](https://lmod.readthedocs.io) modulefiles written in Lua. The idea is to bridge the gap between the old standard of environment modules and a more sophisticated approach with the nix package manager.
 
 ## Installation
@@ -18,11 +18,11 @@ The attributes prefixed with `_modules` are environments including many packages
 This approach has worse reproducibility due to nixpkgs being dependent on your local version instead of the pinned one from `flake.lock`.
 Put this into `~/.config/nixpkgs/overlays.nix`:
 ```nix
-[ (import (builtins.fetchTarball "https://github.com/kilzm/nix-with-modules/archive/master.tar.gz")) ]
+[ (import (builtins.fetchTarball "https://github.com/kilzm/lmix/archive/master.tar.gz")) ]
 ```
 Then you can build packages defined in the overlay using
 ```
-$ nix build --impure nixpkgs#nwm-pkgs.<name>
+$ nix build --impure nixpkgs#lmix-pkgs.<name>
 ```
 
 
@@ -32,12 +32,12 @@ A neat feature of flakes is that you can use them as inputs in other flakes. Thi
 {
   description = "Flake that uses nix-with-modules overlay";
 
-  inputs.nix-with-modules.url = github:kilzm/nix-with-modules;
+  inputs.lmix.url = github:kilzm/lmix;
 
-  outputs = { self, nix-with-modules }:
+  outputs = { self, lmix }:
     let
       system = "x86_64-linux";
-      pkgs = nix-with-modules.legacyPackages.${system};
+      pkgs = lmix.legacyPackages.${system};
     in
     {
       devShells.${system}.default = pkgs.mkShell.override { 
@@ -56,7 +56,7 @@ A neat feature of flakes is that you can use them as inputs in other flakes. Thi
 All packages put inside the buildInputs list will be made availible in the devShell.
 An easy way to get started is running this command which will put the above flake template into your current directory.
 ```
-$ nix flake init --template github:kilzm/nix-with-modules
+$ nix flake init --template github:kilzm/lmix
 ```
 Once the packages are configured run `$ nix develop` to start a shell session with all the listed packages in `PATH`.
 
@@ -64,6 +64,6 @@ Once the packages are configured run `$ nix develop` to start a shell session wi
 
 Flakes like the one above can be created automatically.
 ```
-$ nix run github:kilzm/nix-with-modules -- <path>
+$ nix run github:kilzm/lmix -- <path>
 ```
 This will create a flake.nix in the specified directory. The buildInputs for mkShell will be derived from loaded modules.

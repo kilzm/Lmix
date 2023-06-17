@@ -7,7 +7,7 @@ let
 
 in
 {
-  nwm-pkgs = with prev.lib; rec {
+  lmix-pkgs = with prev.lib; rec {
     inherit (prev) gcc7Stdenv gcc8Stdenv gcc9Stdenv gcc10Stdenv gcc11Stdenv gcc12Stdenv;
 
     # intel
@@ -24,9 +24,7 @@ in
     intel-mpi_2019 = prev.callPackage ../pkgs/intel/mpi { };
 
     ## hello - mirror://gnu/hello/hello-${version}.tar.gz
-    hello = prev.hello;
-
-    hello_2_12_1 = hello.overrideAttrs (old: rec {
+    hello_2_12_1 = prev.hello.overrideAttrs (old: rec {
       version = "2.12.1";
       src = prev.fetchurl {
         url = "mirror://gnu/hello/hello-${version}.tar.gz";
@@ -45,15 +43,11 @@ in
     });
 
     ## julia - https://github.com/JuliaLang/julia/releases/download/v${version}/julia-${version}-full.tar.gz
-    julia = prev.julia_18;
-
     julia_1_8_5 = prev.julia_18;
 
     julia_1_9_0 = prev.callPackage ../pkgs/julia/1.9.0-rc2-bin.nix { };
 
     ## openmpi - https://www.open-mpi.org/software/ompi/v${major version}.${minor version}/downloads/openmpi-${version}.tar.bz2
-    openmpi = prev.callPackage ../pkgs/openmpi/default.nix { };
-
     openmpi_4_1_4_gcc11 = prev.callPackage ../pkgs/openmpi/default.nix {
       stdenv = prev.gcc11Stdenv;
     };
@@ -67,11 +61,9 @@ in
     });
 
     ## osu-micro-benchmarks - mvapich.cse.ohio-state.edu/download/mvapich/osu-micro-benchmarks-${version}.tar.gz
-    osu-micro-benchmarks = prev.callPackage ../pkgs/osu-micro-benchmarks {
+    osu-micro-benchmarks_5_6_2 = prev.callPackage ../pkgs/osu-micro-benchmarks {
       mpi = openmpi_4_1_5_gcc11;
     };
-
-    osu-micro-benchmarks_5_6_2 = osu-micro-benchmarks;
 
     osu-micro-benchmarks_5_4 = osu-micro-benchmarks.overrideAttrs (old: rec {
       version = "5.4";
@@ -90,10 +82,6 @@ in
     });
 
     ## fftw - ftp://ftp.fftw.org/pub/fftw/fftw-${version}.tar.gz
-    # fftw = prev.callPackage ../pkgs/fftw {
-    #   mpi = openmpi_4_1_5_gcc11;
-    # };
-
     fftw_3_3_10_gcc11_ompi_4_1_5 = prev.callPackage ../pkgs/fftw {
       stdenv = prev.gcc11Stdenv;
       mpi = openmpi_4_1_5_gcc11;

@@ -35,7 +35,7 @@
 
       formatter.${system} = pkgs.nixpkgs-fmt;
 
-      packages.${system} = pkgs.nwm-mods // pkgs.nwm-pkgs;
+      packages.${system} = pkgs.lmix-mods // pkgs.lmix-pkgs;
 
       apps.${system} = {
         lmod2flake = {
@@ -50,13 +50,14 @@
       devShells.${system}.default = pkgs.mkShell rec {
         buildInputs = [
           nurl.packages.${system}.default
+          self.packages.${system}.lmod2flake
         ];
       };
 
       templates = {
         default = {
           path = ./template/default;
-          description = "Flake that uses nix-with-modules overlay";
+          description = "Flake that uses lmix overlay";
         };
 
         lmod2flake = {

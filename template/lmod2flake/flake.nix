@@ -1,12 +1,12 @@
 {
-  description = "Flake that uses nix-with-modules overlay";
+  description = "Used by the lmod2flake program";
 
-  inputs.nix-with-modules.url = github:kilzm/nix-with-modules;
+  inputs.lmix.url = github:kilzm/lmix;
 
-  outputs = { self, nix-with-modules }:
+  outputs = { self, lmix }:
     let
       system = "x86_64-linux";
-      pkgs = nix-with-modules.legacyPackages.${system};
+      pkgs = lmix.legacyPackages.${system};
     in
     {
       devShells.${system}.default = pkgs.mkShell.override {

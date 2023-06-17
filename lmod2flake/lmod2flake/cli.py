@@ -8,7 +8,7 @@ def exit_err(msg: str, context):
     click.echo(click.style('error: ', fg='red') + msg, err=True)
     context.exit(1)
 
-NIX_WITH_MODUES_FLAKE =  "github:kilzm/nix-with-modules"
+LMIX_FLAKE =  "github:kilzm/nix-with-modules"
 
 COMPILERS = [
     'gcc8', 'gcc9', 'gcc10', 'gcc11', 'gcc12',
@@ -33,7 +33,7 @@ def modules_to_flake(ctx, directory, compiler, build_tools):
     if flake_path.exists():
         exit_err("directory is already a flake (remove flake.nix to override)", ctx)
 
-    flake_new_cmd = ['nix', 'flake', 'new', '--template',  f'{NIX_WITH_MODUES_FLAKE}#lmod2flake', path]
+    flake_new_cmd = ['nix', 'flake', 'new', '--template',  f'{LMIX_FLAKE}#lmod2flake', path]
     
     try:
         subprocess.run(
@@ -65,7 +65,7 @@ def modules_to_flake(ctx, directory, compiler, build_tools):
     with flake_path.open(mode='w') as flake:
         flake.write('\n'.join(flake_lines))
 
-    nixpkgs_fmt_cmd = ['nix', 'shell', f'{NIX_WITH_MODUES_FLAKE}#formatter', '-c', 'nixpkgs-fmt', f'{flake_path}']
+    nixpkgs_fmt_cmd = ['nix', 'shell', f'{LMIX_FLAKE}#formatter', '-c', 'nixpkgs-fmt', f'{flake_path}']
     
     try:
         subprocess.run(
@@ -88,7 +88,7 @@ def build_inputs():
     inputs = [ ]
     for module in modules:
         if module in COMPILER_MODULES: continue
-        env_var = f"NIXWM_ATTRNAME_{module.replace('-','_').upper()}"
+        env_var = f"LMIX_ATTRNAME_{module.replace('-','_').upper()}"
         if env_var in os.environ:
             inputs.append(os.environ[env_var])
     return inputs

@@ -11,7 +11,7 @@
     {
       devShells.${system}.default = pkgs.mkShell.override
         {
-          stdenv = pkgs.nwm-pkgs.intel23Stdenv;
+          stdenv = pkgs.lmix-pkgs.intel23Stdenv;
         }
         rec {
           buildInputs = with pkgs; [
