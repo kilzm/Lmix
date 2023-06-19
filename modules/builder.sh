@@ -24,7 +24,7 @@ addPaths () {
   modPrependPathIfExists "MANPATH" "$1/share/man"
   modPrependPathIfExists "PKG_CONFIG_PATH" "$1/lib/pkgconfig"
   modPrependPathIfExists "PKG_CONFIG_PATH" "$1/share/pkgconfig"
-  modPrependPathIfExists "CMAKE_SYSTEM_PREFIX_PATH" "$1/lib/cmake"
+  modPrependPathIfExists "CMAKE_PREFIX_PATH" "$1/lib/cmake"
   modPrependPathIfExists "PERL5LIB" "$1/lib/perl5/site_perl"
 
   libs=($1/lib/lib*.so)

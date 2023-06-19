@@ -1,22 +1,22 @@
 {
   "nodes": {
-    "nix-with-modules": {
+    "lmix": {
       "inputs": {
         "nixpkgs": "nixpkgs",
         "nurl": "nurl",
         "utils": "utils"
       },
       "locked": {
-        "lastModified": 1685994432,
-        "narHash": "sha256-2Hnd/J3ZN2gMzKSn/cC9hyyejOzMrofUm+MkISUVeYQ=",
+        "lastModified": 1686999489,
+        "narHash": "sha256-F5QPF2lPVoP0kDCyfIuAJP1UBcwjVLxzzyVz4Uzbohc=",
         "owner": "kilzm",
-        "repo": "nix-with-modules",
-        "rev": "8a75eb9268148078f667cf77eda71f699a2dc423",
+        "repo": "lmix",
+        "rev": "ac52d083b1e261acfcd3f1f11eb3f0ac953c5d8f",
         "type": "github"
       },
       "original": {
         "owner": "kilzm",
-        "repo": "nix-with-modules",
+        "repo": "lmix",
         "type": "github"
       }
     },
@@ -72,7 +72,7 @@
     },
     "root": {
       "inputs": {
-        "nix-with-modules": "nix-with-modules"
+        "lmix": "lmix"
       }
     },
     "systems": {

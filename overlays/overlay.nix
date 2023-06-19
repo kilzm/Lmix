@@ -61,6 +61,8 @@ in
     });
 
     ## osu-micro-benchmarks - mvapich.cse.ohio-state.edu/download/mvapich/osu-micro-benchmarks-${version}.tar.gz
+    osu-micro-benchmarks = osu-micro-benchmarks_5_6_2;
+
     osu-micro-benchmarks_5_6_2 = prev.callPackage ../pkgs/osu-micro-benchmarks {
       mpi = openmpi_4_1_5_gcc11;
     };

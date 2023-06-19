@@ -30,7 +30,7 @@ $ nix build --impure nixpkgs#lmix-pkgs.<name>
 A neat feature of flakes is that you can use them as inputs in other flakes. This allows you to configure a nix development shell with the dependencies for the project including packages of this overlay:
 ```nix
 {
-  description = "Flake that uses nix-with-modules overlay";
+  description = "Flake that uses lmix overlay";
 
   inputs.lmix.url = github:kilzm/lmix;
 
@@ -41,7 +41,7 @@ A neat feature of flakes is that you can use them as inputs in other flakes. Thi
     in
     {
       devShells.${system}.default = pkgs.mkShell.override { 
-        # stdenv = pkgs.nwm-pkgs.<stdenv>  
+        # stdenv = pkgs.lmix-pkgs.<stdenv>  
       } rec {
         buildInputs = with pkgs; [
           # required packages go here

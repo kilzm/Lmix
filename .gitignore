@@ -4,7 +4,7 @@ result
 # python
 __pycache__/
 dist/
-build/
+# build/
 
 # cpp
 compile_commands.json

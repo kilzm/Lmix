@@ -10,7 +10,7 @@
     in
     {
       devShells.${system}.default = pkgs.mkShell.override { 
-        # stdenv = pkgs.nwm-pkgs.<stdenv>  
+        # stdenv = pkgs.lmix-pkgs.<stdenv>  
       } rec {
         buildInputs = with pkgs; [
           # required packages go here

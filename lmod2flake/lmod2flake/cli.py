@@ -8,7 +8,7 @@ def exit_err(msg: str, context):
     click.echo(click.style('error: ', fg='red') + msg, err=True)
     context.exit(1)
 
-LMIX_FLAKE =  "github:kilzm/nix-with-modules"
+LMIX_FLAKE =  "github:kilzm/lmix"
 
 COMPILERS = [
     'gcc8', 'gcc9', 'gcc10', 'gcc11', 'gcc12',
@@ -55,7 +55,7 @@ def modules_to_flake(ctx, directory, compiler, build_tools):
         flake_lines = list(map (str.strip, flake.read().splitlines()))
         if compiler != None:
             ds_idx = next(i for i, l in enumerate(flake_lines) if l.startswith(DEVSHELL_LINE)) + 1
-            flake_lines[ds_idx:ds_idx] = [ f"stdenv = pkgs.nwm-pkgs.{compiler}Stdenv;" ]
+            flake_lines[ds_idx:ds_idx] = [ f"stdenv = pkgs.lmix-pkgs.{compiler}Stdenv;" ]
         bi_idx = next(i for i, l in enumerate(flake_lines) if l.startswith(BUILDINPUTS_LINE)) + 1
         flake_lines[bi_idx:bi_idx] = build_inputs() 
         nbi_idx = next(i for i, l in enumerate(flake_lines) if l.startswith(NATIVEBUILDINPUTS_LINE)) + 1

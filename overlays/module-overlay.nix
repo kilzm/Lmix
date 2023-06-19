@@ -39,12 +39,13 @@ in
       paths = defaultModulesNixpkgs [
         { mod = "ffmpeg"; }
         { mod = "git"; }
+        { mod = "cmake"; }
         { mod = "valgrind"; incPath = "include/valgrind"; }
         { mod = "llvm"; libName = "LLVM"; }
         { mod = "eigen"; incPath = "include/eigen3"; }
         { mod = "libmatheval"; libName = "matheval"; }
         { mod = "libxc"; libName = "xc"; }
-        { mod = "libint"; libName = "int2"; }
+        # { mod = "libint"; libName = "int2"; }
         { mod = "blas"; }
         { mod = "openblas"; }
         { mod = "lapack"; }
