@@ -114,6 +114,10 @@ stdenv.mkDerivation rec {
   pacName =
     if customPacName == "" then pkgNameUpper else customPacName;
 
+  hasMeta = (pkg.meta or null) != null;
+  WHATIS = pkg.meta.description or "";
+
+
   BASE = monoPkg;
   BINDIR = "${BASE}/${binPath}";
   INCDIR = "${BASE}/${incPath}";

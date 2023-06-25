@@ -64,6 +64,7 @@ addPkgVariables () {
     modSetEnv "${pacName}_INC" "-I$INCDIR"
   fi
 
+
   keys=$(jq -r 'keys[]' <<< "$extraPkgVariables")
   for key in $keys ; do
     val=$(jq --arg key "$key" --raw-output '.[$key]' <<< "$extraPkgVariables")
@@ -80,6 +81,10 @@ local version = myModuleVersion()
 
 depends_on("nix-stdenv")
 EOF
+
+if [[ -n "$WHATIS" ]] ; then
+  echo "whatis(\"$WHATIS\")" >> $modfile
+fi
 
 modSetEnv "LMIX_ATTRNAME_${pkgNameUpper}" "${attrName}"
 echo >> $modfile
