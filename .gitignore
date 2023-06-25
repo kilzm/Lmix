@@ -9,3 +9,18 @@ dist/
 # cpp
 compile_commands.json
 .cache/
+
+# autotools
+aclocal.m4
+.deps/
+configure
+depcomp
+install-sh
+Makefile.in
+missing
+Makefile
+autom4te.cache/
+config.log
+config.status
+configure~
+compile
