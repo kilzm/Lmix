@@ -26,6 +26,7 @@ addPaths () {
   modPrependPathIfExists "PKG_CONFIG_PATH" "$1/share/pkgconfig"
   modPrependPathIfExists "CMAKE_PREFIX_PATH" "$1/lib/cmake"
   modPrependPathIfExists "PERL5LIB" "$1/lib/perl5/site_perl"
+  modPrependPathIfExists "ACLOCAL_PATH" "$1/share/aclocal"
 
   libs=($1/lib/lib*.so)
   if [[ $addLDLibPath && -n $libs ]] ; then

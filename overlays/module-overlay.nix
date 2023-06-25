@@ -46,6 +46,11 @@ in
         { mod = "libmatheval"; libName = "matheval"; }
         { mod = "libxc"; libName = "xc"; }
         # { mod = "libint"; libName = "int2"; }
+        { mod = "pkgconfig"; pkgName = "pkgconfig"; }
+        { mod = "autoconf"; }
+        { mod = "autoconf-archive"; }
+        { mod = "automake"; }
+        { mod = "libtool"; }
         { mod = "blas"; }
         { mod = "openblas"; }
         { mod = "lapack"; }
