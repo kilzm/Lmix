@@ -18,10 +18,28 @@
             eigen
           ];
           nativeBuildInputs = with pkgs; [
-            bear
             pkg-config
           ];
         };
+
+      packages.${system}.default = pkgs.lmix-pkgs.intel23Stdenv.mkDerivation {
+        pname = "pauli-eigens";
+        version = "1.0";
+        src = ./.;
+
+        buildInputs = with pkgs; [
+          eigen
+        ];
+
+        nativeBuildInputs = with pkgs; [
+          pkg-config
+        ];
+
+        installPhase = ''
+          mkdir -p $out/bin
+          mv pauli_eigens $out/bin
+        '';
+      };
     };
 
   nixConfig = {
