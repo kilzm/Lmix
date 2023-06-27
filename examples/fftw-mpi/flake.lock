@@ -7,11 +7,11 @@
         "utils": "utils"
       },
       "locked": {
-        "lastModified": 1687172642,
-        "narHash": "sha256-Y3evbqb4booB+mCAOju+EFMS8cu2MUrweLKo9efjr5U=",
+        "lastModified": 1687730301,
+        "narHash": "sha256-kAGnIbiEKZIabwjz7YQ94y75CpAOEvNPe2+edDMGa+E=",
         "owner": "kilzm",
         "repo": "lmix",
-        "rev": "877d765baaef4b674d0456f934c02eb7913292e4",
+        "rev": "9222f5f280e832602a618796d68ea34959b8b258",
         "type": "github"
       },
       "original": {
