@@ -1,15 +1,15 @@
 final: prev:
 let
-    intel-oneapi_2023_1_0 = prev.callPackage ../pkgs/intel/oneapi {
-      libffi = prev.libffi_3_3;
-      versions = import ../pkgs/intel/oneapi/2023.nix;
-    };
+  inherit (prev) callPackage;
+
+  intel-oneapi_2023_1_0 = callPackage ../pkgs/intel/oneapi {
+    libffi = prev.libffi_3_3;
+    versions = import ../pkgs/intel/oneapi/2023.nix;
+  };
 
 in
 {
   lmix-pkgs = with prev.lib; rec {
-    inherit (prev) gcc7Stdenv gcc8Stdenv gcc9Stdenv gcc10Stdenv gcc11Stdenv gcc12Stdenv;
-
     # intel
     intel-oneapi-compilers_2023_1_0 = intel-oneapi_2023_1_0.icx;
     intel-oneapi-classic-compilers_2021_9_0 = intel-oneapi_2023_1_0.icc;
@@ -21,7 +21,7 @@ in
     intel21Stdenv = intel-oneapi_2023_1_0.stdenv-icc;
     intel21IFortStdenv = intel-oneapi_2023_1_0.stdenv-ifort;
 
-    intel-mpi_2019 = prev.callPackage ../pkgs/intel/mpi { };
+    intel-mpi_2019 = callPackage ../pkgs/intel/mpi { };
 
     ## hello - mirror://gnu/hello/hello-${version}.tar.gz
     hello_2_12_1 = prev.hello.overrideAttrs (old: rec {
@@ -45,10 +45,10 @@ in
     ## julia - https://github.com/JuliaLang/julia/releases/download/v${version}/julia-${version}-full.tar.gz
     julia_1_8_5 = prev.julia_18;
 
-    julia_1_9_0 = prev.callPackage ../pkgs/julia/1.9.0-rc2-bin.nix { };
+    julia_1_9_0 = callPackage ../pkgs/julia/1.9.0-rc2-bin.nix { };
 
     ## openmpi - https://www.open-mpi.org/software/ompi/v${major version}.${minor version}/downloads/openmpi-${version}.tar.bz2
-    openmpi_4_1_4_gcc11 = prev.callPackage ../pkgs/openmpi/default.nix {
+    openmpi_4_1_4_gcc11 = callPackage ../pkgs/openmpi/default.nix {
       stdenv = prev.gcc11Stdenv;
     };
 
@@ -63,7 +63,7 @@ in
     ## osu-micro-benchmarks - mvapich.cse.ohio-state.edu/download/mvapich/osu-micro-benchmarks-${version}.tar.gz
     osu-micro-benchmarks = osu-micro-benchmarks_5_6_2;
 
-    osu-micro-benchmarks_5_6_2 = prev.callPackage ../pkgs/osu-micro-benchmarks {
+    osu-micro-benchmarks_5_6_2 = callPackage ../pkgs/osu-micro-benchmarks {
       mpi = openmpi_4_1_5_gcc11;
     };
 
@@ -84,24 +84,49 @@ in
     });
 
     ## fftw - ftp://ftp.fftw.org/pub/fftw/fftw-${version}.tar.gz
-    fftw_3_3_10_gcc11_ompi_4_1_5 = prev.callPackage ../pkgs/fftw {
+    fftw_3_3_10_gcc11_ompi_4_1_5 = callPackage ../pkgs/fftw {
       stdenv = prev.gcc11Stdenv;
       mpi = openmpi_4_1_5_gcc11;
     };
 
-    fftw_3_3_10_gcc12_ompi_4_1_5_openmp = prev.callPackage ../pkgs/fftw {
+    fftw_3_3_10_gcc12_ompi_4_1_5_openmp = callPackage ../pkgs/fftw {
       stdenv = prev.gcc12Stdenv;
       mpi = openmpi_4_1_5_gcc11;
       withOpenMP = true;
     };
 
-    fftw_3_3_10_intel21 = prev.callPackage ../pkgs/fftw {
+    fftw_3_3_10_intel21 = callPackage ../pkgs/fftw {
       stdenv = intel21Stdenv;
       mpi = null;
     };
 
-    fftw_3_3_10_intel21_impi_2019 = prev.callPackage ../pkgs/fftw {
+    fftw_3_3_10_intel21_impi_2019 = callPackage ../pkgs/fftw {
       stdenv = intel21Stdenv;
+      mpi = intel-mpi_2019;
+    };
+
+    # LLNL
+    adept-utils_1_0_1 = callPackage ../pkgs/LLNL/adept-utils {
+      stdenv = intel21Stdenv;
+    };
+
+    callpath_1_0_4_impi_2019 = callPackage ../pkgs/LLNL/callpath { 
+      mpi = intel-mpi_2019;
+      adept-utils = adept-utils_1_0_1;
+    };
+
+    mpileaks_1_0_impi_2019 = callPackage ../pkgs/LLNL/mpileaks {
+      adept-utils = adept-utils_1_0_1;
+      mpi = intel-mpi_2019;
+      callpath = callpath_1_0_4_impi_2019;
+    };
+
+    # JSC
+    sionlib_1_7_7_intel21_impi_2019 = callPackage ../pkgs/JSC/SIONlib {
+      cctype = "intel";
+      mpitype = "intel2";
+      stdenv = intel21Stdenv;
+      fortran = intel-oneapi-ifort_2021_9_0;
       mpi = intel-mpi_2019;
     };
 
