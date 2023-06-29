@@ -2,7 +2,7 @@
 
 # requires MODULEPATH set to /opt/modulefiles/modules-nix/modules
 modpath=/opt/modulefiles
-rm -f --preserve-root $modpath/*
+rm -f $modpath/modules-nix*
 
 modSuffixes=("-nixpkgs" "")
 
