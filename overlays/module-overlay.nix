@@ -51,6 +51,7 @@ in
         { mod = "mkl"; version = "2023.1.0"; pkgName = "intel-oneapi-mkl"; }
         { mod = "gsl"; }
         { mod = "boost"; }
+        { mod = "libfabric"; libName = "fabric"; }
         { mod = "gfortran7"; pkgName = "gfortran"; }
         { mod = "gfortran8"; pkgName = "gfortran"; }
         { mod = "gfortran9"; pkgName = "gfortran"; }
@@ -96,7 +97,10 @@ in
         { mod = "osu-micro-benchmarks_5_6_2"; }
         { mod = "osu-micro-benchmarks_6_1"; }
         { mod = "hdf5_intel21_impi_2019"; pkgName = "hdf5"; cc = "intel21"; }
+        { mod = "mercury_2_3_0_intel21"; }
         { mod = "c-blosc_2_9_3_intel21"; libName = "blosc2"; cc = "intel21"; }
+        { mod = "sz_2_1_12_intel21"; libName = "SZ"; }
+        { mod = "mgard_1_5_0_intel23"; }
         { mod = "adios_2_9_0_intel21_impi_2019"; libName = "adios2_core"; cc = "intel21"; }
         { mod = "adept-utils_1_0_1"; }
         { mod = "callpath_1_0_4_impi_2019"; }

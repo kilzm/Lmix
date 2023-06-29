@@ -3,18 +3,30 @@
 , fetchFromGitHub
 , cmake
 , pkg-config
+, fortran
 , mpi
-, hdf5
 , bzip2
-, zfp
 , libfabric
+, rdma-core
+, doxygen
+, graphviz
+, bison
+, flex
 , perl
-, zeromq
 , ucx
+, zeromq
+, hdf5
+, libffi
+, libsodium
+, libpng
 , c-blosc
-, szip
+, mgard
+, protobuf
+, sz
 , python311
 , python311Packages
+, zfp
+, zstd
 }:
 
 with lib;
@@ -29,23 +41,42 @@ stdenv.mkDerivation rec {
     sha256 = "sha256-CRpmhXYa3WSaeNOc//4A6dcQrUIyWpogUggkqng0JYA=";
   };
 
+  preConfigure = ''
+    export FC=$FC_FOR_TARGET
+  '';
+
   cmakeFlags = [
     "-DPYTHON_EXECUTABLE=${python311}/bin/python3"
     "-DADIOS2_INSTALL_GENERATE_CONFIG=OFF"
+    "-DADIOS2_USE_DataSpaces=OFF"
+    "-DADIOS2_USE_IME=OFF"
+    "-DCMAKE_DISABLE_FIND_PACKAGE_CrayDRC=TRUE"
   ];
 
   buildInputs = [
+    fortran
+    rdma-core
+    doxygen
+    graphviz
+    bison
+    flex
     hdf5.mpi
     hdf5
+    mgard
+    zstd
+    protobuf
     bzip2
     perl
-    python311
     libfabric
     zfp
     ucx
+    libsodium
+    libpng
+    libffi
     zeromq
+    sz
     c-blosc
-    szip
+    python311
     python311Packages.numpy
     python311Packages.mpi4py
   ];

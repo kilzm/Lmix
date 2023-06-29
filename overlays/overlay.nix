@@ -143,11 +143,26 @@ in
       stdenv = intel21Stdenv;
     };
 
+    mercury_2_3_0_intel21 = callPackage ../pkgs/mercury {
+      stdenv = intel21Stdenv;
+    };
+
+    sz_2_1_12_intel21 = callPackage ../pkgs/SZ {
+      stdenv = intel21Stdenv;
+    };
+
+    mgard_1_5_0_intel23 = callPackage ../pkgs/MGARD {
+      stdenv = intel23Stdenv; # intel21 fails
+    };
+
     adios_2_9_0_intel21_impi_2019 = callPackage ../pkgs/ADIOS {
       stdenv = intel21Stdenv;
+      fortran = intel-oneapi-ifort_2021_9_0;
       hdf5 = hdf5_intel21_impi_2019;
       c-blosc = c-blosc_2_9_3_intel21;
-      # mpi is inherited from callpath
+      sz = sz_2_1_12_intel21;
+      mgard = mgard_1_5_0_intel23;
+      # mpi is inherited from hdf5
     };
 
     # default environment when working with nix-generated modules
