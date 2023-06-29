@@ -4,7 +4,7 @@
 , autoreconfHook
 , adept-utils
 , callpath
-, mpi
+# , mpi
 }:
 
 stdenv.mkDerivation rec {
@@ -33,7 +33,7 @@ stdenv.mkDerivation rec {
   buildInputs = [
     adept-utils
     callpath
-    mpi
+    callpath.mpi
   ];
 
   nativeBuildInputs = [
@@ -41,7 +41,7 @@ stdenv.mkDerivation rec {
   ];
 
   passthru = {
-    inherit mpi;
+    mpi = callpath.mpi;
   };
 
   meta = with lib; {

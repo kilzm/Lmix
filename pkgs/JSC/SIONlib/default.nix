@@ -17,17 +17,19 @@
 , mpitype
 }:
 
-assert enablePython -> (python != null);
-assert lib.elem cctype ["gnu" "intel"];
-assert lib.elem mpitype ["openmpi" "intel" "intel2" ];
-
 with lib;
+assert enablePython -> (python != null);
+assert enableCuda -> (cuda != null);
+assert enableSionfwd -> (sionfwd != null);
+assert elem cctype ["gnu" "intel"];
+assert elem mpitype ["openmpi" "intel" "intel2"];
+
 stdenv.mkDerivation rec {
   pname = "sionlib";
   version = "1.7.7";
 
   src = fetchurl {
-    url = "https://apps.fz-juelich.de/jsc/sionlib/download.php?file=sionlib-1.7.7.tar.gz";
+    url = "https://apps.fz-juelich.de/jsc/sionlib/download.php?file=sionlib-${version}.tar.gz";
     sha256 = "sha256-pzV0scF8AwsdJWxfDqxf9ZY5X4uCfXWa+DRzv5T3RHc=";
   };
 
@@ -35,7 +37,7 @@ stdenv.mkDerivation rec {
     "--compiler=${cctype}"
     "--mpi=${mpitype}"
   ]
-    ++ optional enablePython "--enable-python=3"
+    ++ optional enablePython "--enable-python=${versions.major python.version}"
     ++ optional disableMpi "--disable-mpi"
     ++ optional disableOmp "--disable-omp"
     ++ optional disableOmpi "--disable-ompi"
@@ -57,6 +59,7 @@ stdenv.mkDerivation rec {
 
   meta = with lib; {
     description = "Scalable I/O library for parallel access to task-local files";
+    homepage = "https://www.fz-juelich.de/en/ias/jsc/services/user-support/jsc-software-tools/sionlib";
     license = licenses.bsd3;
     platforms = platforms.unix;
   };
