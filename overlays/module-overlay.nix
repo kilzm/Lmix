@@ -35,6 +35,7 @@ in
     _modules-nixpkgs = prev.buildEnv {
       name = "modules-nixpkgs";
       paths = defaultModulesNixpkgs [
+        { mod = "R"; }
         { mod = "ffmpeg"; }
         { mod = "git"; }
         { mod = "valgrind"; }
@@ -52,13 +53,12 @@ in
         { mod = "gsl"; }
         { mod = "boost"; }
         { mod = "libfabric"; libName = "fabric"; }
-        { mod = "gfortran7"; pkgName = "gfortran"; }
-        { mod = "gfortran8"; pkgName = "gfortran"; }
-        { mod = "gfortran9"; pkgName = "gfortran"; }
-        { mod = "gfortran10"; pkgName = "gfortran"; }
-        { mod = "gfortran11"; pkgName = "gfortran"; }
-        { mod = "gfortran12"; pkgName = "gfortran"; }
-        { mod = "R"; }
+        { mod = "gfortran7"; pkgName = "gfortran"; native = true; }
+        { mod = "gfortran8"; pkgName = "gfortran"; native = true; }
+        { mod = "gfortran9"; pkgName = "gfortran"; native = true; }
+        { mod = "gfortran10"; pkgName = "gfortran"; native = true; }
+        { mod = "gfortran11"; pkgName = "gfortran"; native = true; }
+        { mod = "gfortran12"; pkgName = "gfortran"; native = true; }
         # build tools
         { mod = "cmake"; native = true; }
         { mod = "pkgconfig"; pkgName = "pkgconfig"; native = true; }
@@ -112,7 +112,7 @@ in
           mod = "intel-oneapi-classic-compilers_2021_9_0";  pkgName = "intel-oneapi-compilers"; 
           version = "2021.9.0"; ccStdenv = "lmix-pkgs.intel21Stdenv"; 
         }
-        { mod = "intel-oneapi-ifort_2021_9_0"; pkgName = "intel-oneapi-ifort"; }
+        { mod = "intel-oneapi-ifort_2021_9_0"; pkgName = "intel-oneapi-ifort"; native = true; }
         { mod = "intel-oneapi-tbb_2021_9_0"; libName = "tbb"; }   
       ]
       ++ namedModules "intel/oneapi-mpi" [

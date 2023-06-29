@@ -131,6 +131,8 @@ in
       stdenv = intel21Stdenv;
       fortran = intel-oneapi-ifort_2021_9_0;
       mpi = intel-mpi_2019;
+      enablePython = true;
+      python = prev.python311;
     };
 
     hdf5_intel21_impi_2019 = hdf5_impi_compatible.override {
