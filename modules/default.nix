@@ -52,6 +52,13 @@
 , incPath ? "include"
 , libPath ? "lib"
 
+  # short description of the module
+, whatis ? ""
+
+  # set environment variable for lmod2flake
+, native ? false  # belongs in nativeBuildInputs
+, ccStdenv ? ""   # corresponding stdenv to compiler package
+
   # specify if the libdir should be added to the LD_LIBRARY_PATH
 , addLDLibPath ? false
 
@@ -61,6 +68,8 @@
 
 with lib;
 with lib.strings;
+
+assert cc != "" -> elem cc ["intel21" "intel23" "gcc7" "gcc8" "gcc9" "gcc10" "gcc11" "gcc12"];
 
 let
   multiPackage = builtins.length pkg.outputs > 1;
@@ -108,15 +117,15 @@ stdenv.mkDerivation rec {
     else
       "${pkgName}.lua";
 
-
   pkgNameUpper = builtins.replaceStrings [ "-" ] [ "_" ] (toUpper pkgName);
 
   pacName =
     if customPacName == "" then pkgNameUpper else customPacName;
 
-  hasMeta = (pkg.meta or null) != null;
-  WHATIS = pkg.meta.description or "";
+  WHATIS = if whatis != "" then whatis else pkg.meta.description or "";
 
+  NATIVE = if native then "1" else "0";
+  CCSTDENV = ccStdenv;
 
   BASE = monoPkg;
   BINDIR = "${BASE}/${binPath}";

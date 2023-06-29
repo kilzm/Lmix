@@ -13,9 +13,9 @@ let
               inherit pkg;
               cc = m.cc or "";
             });
-          extraAttrs = builtins.removeAttrs m [ "mod" ];
+          extraAttrs = builtins.removeAttrs m [ "mod" "nixHook" ];
           modAttrs = {
-            attrName = strings.optionalString (recSet != null) "${recSet}." + attrName;
+            attrName = strings.optionalString (recSet != null) "${recSet}." + (m.nixHook or attrName);
             inherit pkg;
           } // extraAttrs // configAttrs;
         in
@@ -62,9 +62,9 @@ in
         # build tools
         { mod = "cmake"; native = true; }
         { mod = "pkgconfig"; pkgName = "pkgconfig"; native = true; }
-        { mod = "autoconf"; }
-        { mod = "automake"; }
-        { mod = "libtool"; }
+        { mod = "autoconf"; nixHook = "autoreconfHook"; native = true; }
+        { mod = "automake"; native = true; }
+        { mod = "libtool"; native = true; }
         { mod = "autoconf-archive"; native = true; }
       ]
       ++ namedModulesNixpkgs "gcc" [

@@ -86,7 +86,13 @@ if [[ -n "$WHATIS" ]] ; then
   echo "whatis(\"$WHATIS\")" >> $modfile
 fi
 
-modSetEnv "LMIX_ATTRNAME_${pkgNameUpper}" "${attrName}"
+modSetEnv "LMIX_${pkgNameUpper}_ATTRNAME" "${attrName}"
+modSetEnv "LMIX_${pkgNameUpper}_NATIVE" "${NATIVE}"
+
+if [[ -n "$CCSTDENV" ]] ; then
+  modSetEnv "LMIX_${pkgNameUpper}_STDENV" "${CCSTDENV}"
+fi
+
 echo >> $modfile
 
 if [[ -n "$customModfilePath" ]]; then

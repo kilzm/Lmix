@@ -59,11 +59,6 @@
           path = ./template/default;
           description = "Flake that uses lmix overlay";
         };
-
-        lmod2flake = {
-          path = ./template/lmod2flake;
-          description = "Used by the lmod2flake program";
-        };
       };
     };
 }

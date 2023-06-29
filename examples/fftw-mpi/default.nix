@@ -1,6 +1,7 @@
 { stdenv
 , pkgconfig
 , autoreconfHook
+, automake
 , autoconf-archive
 , fftw
 , mpi
@@ -22,6 +23,7 @@ stdenv.mkDerivation {
   nativeBuildInputs = [
     pkgconfig
     autoreconfHook
+    automake
     autoconf-archive
   ];
 }
