@@ -1,4 +1,5 @@
 final: prev:
+with prev.lib;
 let
   inherit (prev) callPackage;
 
@@ -7,9 +8,12 @@ let
     versions = import ../pkgs/intel/oneapi/2023.nix;
   };
 
+  hdf5_impi_compatible = prev.hdf5.overrideAttrs (old: {
+    preConfigure = "export I_MPI_CC=$CC";
+  });
 in
 {
-  lmix-pkgs = with prev.lib; rec {
+  lmix-pkgs = rec {
     # intel
     intel-oneapi-compilers_2023_1_0 = intel-oneapi_2023_1_0.icx;
     intel-oneapi-classic-compilers_2021_9_0 = intel-oneapi_2023_1_0.icc;
@@ -19,7 +23,6 @@ in
 
     intel23Stdenv = intel-oneapi_2023_1_0.stdenv;
     intel21Stdenv = intel-oneapi_2023_1_0.stdenv-icc;
-    intel21IFortStdenv = intel-oneapi_2023_1_0.stdenv-ifort;
 
     intel-mpi_2019 = callPackage ../pkgs/intel/mpi { };
 
@@ -117,8 +120,8 @@ in
 
     mpileaks_1_0_impi_2019 = callPackage ../pkgs/LLNL/mpileaks {
       adept-utils = adept-utils_1_0_1;
-      mpi = intel-mpi_2019;
       callpath = callpath_1_0_4_impi_2019;
+      # mpi is inherited from callpath
     };
 
     # JSC
@@ -128,6 +131,23 @@ in
       stdenv = intel21Stdenv;
       fortran = intel-oneapi-ifort_2021_9_0;
       mpi = intel-mpi_2019;
+    };
+
+    hdf5_intel21_impi_2019 = hdf5_impi_compatible.override {
+      stdenv = intel21Stdenv;
+      mpiSupport = true;
+      mpi = intel-mpi_2019;
+    };
+
+    c-blosc_2_9_3_intel21 = callPackage ../pkgs/c-blosc {
+      stdenv = intel21Stdenv;
+    };
+
+    adios_2_9_0_intel21_impi_2019 = callPackage ../pkgs/ADIOS {
+      stdenv = intel21Stdenv;
+      hdf5 = hdf5_intel21_impi_2019;
+      c-blosc = c-blosc_2_9_3_intel21;
+      # mpi is inherited from callpath
     };
 
     # default environment when working with nix-generated modules
