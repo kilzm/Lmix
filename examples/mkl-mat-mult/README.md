@@ -1,6 +1,4 @@
-# Example 1
-
-## mkl-mat-mult
+# Example 1 - "mkl-mat-mult"
 
 A useless fortran program that performs a large matrix multiplication with the dgemm subroutine from the LAPACK implementation of the Intel oneAPI Math Kernel Library.
 

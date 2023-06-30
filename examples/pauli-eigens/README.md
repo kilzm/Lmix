@@ -1,4 +1,4 @@
-# Example 1 - "pauli-eigens"
+# Example 2 - "pauli-eigens"
 
 A simple program to calculate the eigenvectors and eigenvalues of the pauli matrices with the eigen C++ template library. The Makefile uses pkg-config for the cflags.
 

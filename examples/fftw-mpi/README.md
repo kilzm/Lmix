@@ -52,7 +52,7 @@ The next step is to write the derivation in default.nix which performs these ste
 
 Building our package becomes trivial:
 
-```bash
+```
 nix build .#fftw_mpi_intel21_impi # for intel version
 nix build .#fftw_mpi_gcc11_ompi # for gcc/openmpi version
 ```
