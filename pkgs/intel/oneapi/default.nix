@@ -36,6 +36,8 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 , autoPatchelfHook
 , symlinkJoin
 , libfabric
+, rdma-core
+, ucx
 , gcc
 , gcc7
 , wrapCCWith
@@ -120,6 +122,8 @@ let
     buildInputs = [
       rsync
       libfabric
+      rdma-core
+      ucx
       zlib
       stdenv.cc.cc.lib
     ];
@@ -128,7 +132,7 @@ let
     phases = [ "installPhase" "fixupPhase" ];
     dontStrip = true;
     installPhase = ''
-      mkdir -p $out/{bin,etc,lib,include}
+      mkdir -p $out/{bin,etc,lib,include,libfabric,env}
       mkdir -p $out/share/man
 
       cd $src
@@ -139,6 +143,8 @@ let
         rsync -a etc/ $out/etc/
         rsync -a include/ $out/include/
         rsync -a lib/ $out/lib/
+        rsync -a libfabric/ $out/libfabric/
+        cp env/* $out/env
         # Broken due missing libze_loader.so.1
         rsync -a --exclude IMB-MPI1-GPU bin/ $out/bin/
       popd
