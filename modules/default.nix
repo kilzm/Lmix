@@ -30,8 +30,13 @@
   # if the compiled package provides premade script to set the env it can be sourced here
 , customScriptPath ? ""
 
+  # add extra lua code for more complicated logic
+, extraLua ? ""
+
   # specify which other modules the module depends on
 , dependencies ? [ ]
+, prerequisites ? [ ]
+, prerequisitesAny ? [ ]
 
   # exclude environment/package variables that would otherwise be automatically created
   # sometimes PAC_LIBDIR might be unnecessary or adding to PATH is handled by sourced script
@@ -69,7 +74,7 @@
 with lib;
 with lib.strings;
 
-assert cc != "" -> elem cc ["intel21" "intel23" "gcc7" "gcc8" "gcc9" "gcc10" "gcc11" "gcc12"];
+assert cc != "" -> elem cc ["intel" "gcc" "intel21" "intel23" "gcc7" "gcc8" "gcc9" "gcc10" "gcc11" "gcc12"];
 
 let
   multiPackage = builtins.length pkg.outputs > 1;
@@ -89,8 +94,9 @@ stdenv.mkDerivation rec {
 
   inherit pkgName attrName libName;
   inherit extraPkgVariables extraEnvVariables;
-  inherit customModfilePath customScriptPath;
-  inherit dependencies excludes conflicts addLDLibPath;
+  inherit customModfilePath customScriptPath extraLua;
+  inherit dependencies prerequisites prerequisitesAny conflicts;
+  inherit excludes addLDLibPath;
 
   pname = "module-${pkgName}";
   inherit version;

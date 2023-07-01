@@ -15,6 +15,10 @@ modPrependPathIfExists () {
   fi
 }
 
+modOtherFun () {
+  echo -e "$1($(echo $2 | sed 's/ /", "/g; s/^/"/; s/$/"/'))" >> $modfile
+}
+
 modSetEnv () {
   echo -e "setenv(\"$1\", \"$2\")" >> $modfile
 }
@@ -64,7 +68,6 @@ addPkgVariables () {
     modSetEnv "${pacName}_INC" "-I$INCDIR"
   fi
 
-
   keys=$(jq -r 'keys[]' <<< "$extraPkgVariables")
   for key in $keys ; do
     val=$(jq --arg key "$key" --raw-output '.[$key]' <<< "$extraPkgVariables")
@@ -106,22 +109,29 @@ if [[ -n "$customScriptPath" ]]; then
   echo -e "source_sh(\"bash\", \"$customScriptPath\")" >> $modfile
 fi
 
-if [[ -n "$dependencies" ]] ; then
-  for module in $dependencies ; do
-    echo -e "depends_on(\"$module\")" >> $modfile
-  done
+if [[  -n "$dependencies" ]] ; then
+  modOtherFun "depends_on" "$dependencies"
 fi
 
 if [[ -n "$conflicts" ]] ; then
-  for module in $conflicts ; do
-    echo -e "conflict(\"$module\")" >> $modfile
-  done
+  modOtherFun "conflict" "$conflicts"
+fi
+
+if [[ -n "$prerequisites" ]] ; then
+  modOtherFun "prereq" "$prerequisites"
+fi
+
+if [[ -n "$prerequisitesAny" ]] ; then
+  modOtherFun "prereq_any" "$prerequisitesAny"
 fi
 
 for i in "$buildInputs" ; do
   addPaths $i
 done
 
+echo >> $modfile
+
+echo "$extraLua" >> $modfile
 
 echo >> $modfile
 

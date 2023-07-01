@@ -109,15 +109,19 @@ in
         # intel
         { mod = "intel-oneapi-compilers_2023_1_0"; pkgName = "intel-oneapi-compilers"; ccStdenv = "lmix-pkgs.intel23Stdenv"; }
         { 
-          mod = "intel-oneapi-classic-compilers_2021_9_0";  pkgName = "intel-oneapi-compilers"; 
+          mod = "intel-oneapi-classic-compilers_2021_9_0";  pkgName = "intel-oneapi-classic"; 
           version = "2021.9.0"; ccStdenv = "lmix-pkgs.intel21Stdenv"; 
         }
         { mod = "intel-oneapi-ifort_2021_9_0"; pkgName = "intel-oneapi-ifort"; native = true; }
         { mod = "intel-oneapi-tbb_2021_9_0"; libName = "tbb"; }   
       ]
       ++ namedModules "intel/oneapi-mpi" [
-        { mod = "intel-mpi_2019"; pkgName = "intel-mpi"; cc = "intel21"; }
-        { mod = "intel-oneapi-mpi_2021_9_0"; cc = "intel21"; }
+        { mod = "intel-oneapi-mpi_2021_9_0"; cc = "intel"; }
+        { mod = "intel-oneapi-mpi_2021_9_0"; cc = "gcc"; }
+      ]
+      ++ namedModules "intel/mpi" [
+        { mod = "intel-mpi_2019"; pkgName = "intel-mpi"; cc = "intel"; }
+        { mod = "intel-mpi_2019"; pkgName = "intel-mpi"; cc = "gcc"; }
       ]
       ++ namedModules "openmpi" [
         { mod = "openmpi_4_1_4_gcc11"; cc = "gcc11"; }

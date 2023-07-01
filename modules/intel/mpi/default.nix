@@ -17,10 +17,8 @@ in
 
   conflicts = [
     "openmpi"
-    "intel-mpi"
+    "intel-oneapi-mpi"
   ];
-
-  customScriptPath = "${pkg}/env/vars.sh";
 
   extraEnvVariables = builtins.toJSON ({
     I_MPI_ROOT = "${pkg}";
@@ -29,7 +27,7 @@ in
     I_MPI_CXX = "g++";
   });
 
-  extraLua = if cc == "intel"  then ''
+  extraLua = strings.optionalString (cc == "intel") ''
     if ( isloaded ("intel-oneapi-compilers") ) then
       setenv("I_MPI_CC", "icx")
       setenv("I_MPI_CXX", "icpx")
@@ -37,5 +35,5 @@ in
       setenv("I_MPI_CC", "icc")
       setenv("I_MPI_CXX", "icpc")
     end
-  '' else "";
+  '';
 }
