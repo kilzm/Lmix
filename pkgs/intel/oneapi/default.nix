@@ -27,6 +27,8 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 , ncurses
 , lib
 , dpkg
+, libcxx
+, glibc
 , rsync
 , libffi
 , libelf
@@ -226,6 +228,7 @@ let
         pushd linux
           # Binaries
           rsync -a bin/ $out/bin/
+          rsync -a bin-llvm/ $out/bin/
           rsync -a --exclude libcilkrts.so.5 bin/intel64/ $out/bin/
 
           # Libraries
@@ -312,6 +315,7 @@ let
     src = joinDebs pname [
       # C/C++
       "intel-oneapi-dpcpp-cpp-${version}"
+      "intel-oneapi-dpcpp-ct-${version}"
       "intel-oneapi-compiler-dpcpp-cpp-${version}"
       "intel-oneapi-compiler-dpcpp-cpp-common-${version}"
       "intel-oneapi-compiler-dpcpp-cpp-runtime-${version}"
@@ -369,6 +373,7 @@ let
       pushd opt/intel/oneapi/compiler/${version}
         pushd linux
           # Binaries
+          rsync -a ${intel-compiler-shared}/bin/ $out/bin
           rsync -a bin/ $out/bin/
           rsync -a bin-llvm/ $out/bin/
           rsync -a bin/intel64/ $out/bin/
@@ -381,7 +386,7 @@ let
           rsync -a compiler/include/ $out/include/ # Intrinsics for icc
           rsync -a include/ $out/include/
           chmod +w $out/include
-          ln -s $out/lib/clang/16.0.0/include/ $out/include/icx # For icx
+          ln -s $out/lib/clang/16/include/ $out/include/icx # For icx
         popd
 
         # Manuals
@@ -390,14 +395,21 @@ let
     '';
   };
 
+
+  targetConfig = stdenv.targetPlatform.config;
+
   wrapIntel = { cc, mygcc, extraBuild ? "", extraInstall ? "" }:
-    let
-      targetConfig = stdenv.targetPlatform.config;
-    in (wrapCCWith {
-      cc = cc;
+    (wrapCCWith {
+      inherit cc;
+      libc = glibc;
       extraBuildCommands = ''
+        echo "-nostdinc" >> $out/nix-support/cc-cflags
         echo "-isystem ${cc}/include" >> $out/nix-support/cc-cflags
-        echo "-isystem ${cc}/include/intel64" >> $out/nix-support/cc-cflags
+
+        echo "-nostdinc++" >> $out/nix-support/libcxx-cxxflags
+        echo "-isystem ${mygcc.cc}/include/c++/${mygcc.version}" >> $out/nix-support/libcxx-cxxflags
+        echo "-isystem ${mygcc.cc}/include/c++/${mygcc.version}/${targetConfig}" >> $out/nix-support/libcxx-cxxflags
+        echo "-isystem ${mygcc.cc}/include/c++/${mygcc.version}/backward" >> $out/nix-support/libcxx-cxxflags
 
         echo "-L${mygcc.cc}/lib/gcc/${targetConfig}/${mygcc.version}" >> $out/nix-support/cc-ldflags
         echo "-L${mygcc.cc.lib}/lib" >> $out/nix-support/cc-ldflags
@@ -409,6 +421,8 @@ let
 
         # Disable hardening by default
         echo "" > $out/nix-support/add-hardening.sh
+
+
       '' + extraBuild;
     }).overrideAttrs (old: {
       installPhase = old.installPhase + extraInstall;
@@ -421,12 +435,18 @@ let
       wrap icx  $wrapper $ccPath/icx
       wrap icpx $wrapper $ccPath/icpx
       echo "-isystem ${cc}/include/icx" >> $out/nix-support/cc-cflags
+      echo "-isystem ${mygcc.cc}/lib/gcc/${targetConfig}/${mygcc.version}/include" >> $out/nix-support/cc-cflags
+      echo "-isystem ${mygcc.cc}/lib/gcc/${targetConfig}/${mygcc.version}/include-fixed" >> $out/nix-support/cc-cflags
       echo "--gcc-toolchain=${mygcc.cc}" >> $out/nix-support/cc-cflags
+
+      # Patch the wrapper script to recognize c++ compilers
+      sed -i 's/.*++ ]] && isCxx=1 || isCxx=0/isCxx=1/' $out/bin/icpx
     '';
     extraInstall = ''
       export named_cc="icx"
       export named_cxx="icpx"
     '';
+
   };
 
   # Legacy
@@ -440,6 +460,11 @@ let
       wrap icc  $wrapper $ccPath/icc
       wrap icpc $wrapper $ccPath/icpc
       echo "-isystem ${cc}/include/icc" >> $out/nix-support/cc-cflags
+      echo "-isystem ${mygcc.cc}/lib/gcc/${targetConfig}/${mygcc.version}/include" >> $out/nix-support/cc-cflags
+      echo "-isystem ${mygcc.cc}/lib/gcc/${targetConfig}/${mygcc.version}/include-fixed" >> $out/nix-support/cc-cflags
+
+      # Patch the wrapper script to recognize c++ compilers
+      sed -i 's/.*++ ]] && isCxx=1 || isCxx=0/isCxx=1/' $out/bin/icpc
     '';
     extraInstall = ''
       export named_cc="icc"
