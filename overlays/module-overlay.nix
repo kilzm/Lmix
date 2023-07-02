@@ -106,6 +106,7 @@ in
         { mod = "callpath_1_0_4_impi_2019"; }
         { mod = "mpileaks_1_0_impi_2019"; }
         { mod = "sionlib_1_7_7_intel21_impi_2019"; cc = "intel21"; }
+        { mod = "bupc_2022_10_0_intel23_impi_2021"; cc = "intel23"; }
         # intel
         { mod = "intel-oneapi-compilers_2023_1_0"; pkgName = "intel-oneapi-compilers"; ccStdenv = "lmix-pkgs.intel23Stdenv"; }
         { 

@@ -167,6 +167,11 @@ in
       # mpi is inherited from hdf5
     };
 
+    bupc_2022_10_0_intel23_impi_2021 = callPackage ../pkgs/bupc {
+      stdenv = intel23Stdenv;
+      mpi = intel-oneapi-mpi_2021_9_0;
+    };
+
     # default environment when working with nix-generated modules
     nix-stdenv = prev.buildEnv {
       name = "nix-stdenv";
