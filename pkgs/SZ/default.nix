@@ -22,7 +22,7 @@ stdenv.mkDerivation rec {
   nativeBuildInputs = [ cmake pkg-config ];
 
   meta = with lib; {
-    description = "Error-bounded Lossy Data Comporessor (fir floating-point/integer datasets)";
+    description = "Error-bounded Lossy Data Comporessor (for floating-point/integer datasets)";
     homepage = "szcompressor.org";
     license = licenses.bsd3;
     platform = platforms.unix;

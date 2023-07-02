@@ -30,6 +30,9 @@ stdenv.mkDerivation rec {
   nativeBuildInputs = [ cmake pkg-config ];
 
   meta = with lib; {
+    description = "MultiGrid Adaptive Reduction of Data";
+    homepage = "https://github.com/CODARcode/MGARD";
     license = licenses.asl20;
+    platform = platforms.unix;
   };
 }
