@@ -37,6 +37,8 @@ stdenv.mkDerivation rec {
 
   buildInputs = [ perl mpi procps ];
 
+  passthru = { inherit mpi; };
+
   meta = with lib; {
     description = "A compiler for the Berkeley Unified Parallel C language";
     homepage = "https://upc/lbl.gov";

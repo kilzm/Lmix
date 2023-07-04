@@ -27,8 +27,6 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 , ncurses
 , lib
 , dpkg
-, libcxx
-, glibc
 , rsync
 , libffi
 , libelf
@@ -477,6 +475,8 @@ let
     mygcc = gcc;
     extraBuild = ''
       wrap ifort  $wrapper $ccPath/ifort
+      echo "-isystem ${cc}/include" >> $out/nix-support/cc-cflags
+      echo "-isystem ${cc}/include/intel64" >> $out/nix-support/cc-cflags
     '';
     extraInstall = ''
       export named_fc="ifort"

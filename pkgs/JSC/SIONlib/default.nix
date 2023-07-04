@@ -47,11 +47,12 @@ stdenv.mkDerivation rec {
 
   buildInputs = [
     mpi
-    fortran
   ]
   ++ optional enablePython python
   ++ optional enableCuda cuda
   ++ optional enableSionfwd sionfwd;
+
+  nativeBuildInputs = [ fortran ];
 
   passthru = {
     inherit mpi;
