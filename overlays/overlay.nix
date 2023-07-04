@@ -2,6 +2,7 @@ final: prev:
 with prev.lib;
 let
   inherit (prev) callPackage;
+  inherit (prev) gcc7Stdenv gcc8Stdenv gcc9Stdenv gcc10Stdenv gcc11Stdenv gcc12Stdenv;
 
   intel-oneapi_2023_1_0 = callPackage ../pkgs/intel/oneapi {
     libffi = prev.libffi_3_3;
@@ -14,6 +15,7 @@ let
 in
 {
   lmix-pkgs = rec {
+
     # intel
     intel-oneapi-compilers_2023_1_0 = intel-oneapi_2023_1_0.icx;
     intel-oneapi-classic-compilers_2021_9_0 = intel-oneapi_2023_1_0.icc;
@@ -53,6 +55,7 @@ in
     ## openmpi - https://www.open-mpi.org/software/ompi/v${major version}.${minor version}/downloads/openmpi-${version}.tar.bz2
     openmpi_4_1_4_gcc11 = callPackage ../pkgs/openmpi/default.nix {
       stdenv = prev.gcc11Stdenv;
+      gfortran = prev.gfortran11;
     };
 
     openmpi_4_1_5_gcc11 = openmpi_4_1_4_gcc11.overrideAttrs (old: rec {
@@ -109,27 +112,29 @@ in
     };
 
     # LLNL
-    adept-utils_1_0_1 = callPackage ../pkgs/LLNL/adept-utils {
-      stdenv = intel21Stdenv;
+    adept-utils_1_0_1_gcc11 = callPackage ../pkgs/LLNL/adept-utils {
+      stdenv = gcc11Stdenv;
     };
 
-    callpath_1_0_4_impi_2019 = callPackage ../pkgs/LLNL/callpath { 
+    callpath_1_0_4_gcc11_impi_2019 = callPackage ../pkgs/LLNL/callpath { 
+      stdenv = gcc11Stdenv;
       mpi = intel-mpi_2019;
-      adept-utils = adept-utils_1_0_1;
+      adept-utils = adept-utils_1_0_1_gcc11;
     };
 
-    mpileaks_1_0_impi_2019 = callPackage ../pkgs/LLNL/mpileaks {
-      adept-utils = adept-utils_1_0_1;
-      callpath = callpath_1_0_4_impi_2019;
+    mpileaks_1_0_gcc11_impi_2019 = callPackage ../pkgs/LLNL/mpileaks {
+      stdenv = gcc11Stdenv;
+      adept-utils = adept-utils_1_0_1_gcc11;
+      callpath = callpath_1_0_4_gcc11_impi_2019;
       # mpi is inherited from callpath
     };
 
     # JSC
-    sionlib_1_7_7_intel21_impi_2019 = callPackage ../pkgs/JSC/SIONlib {
-      cctype = "intel";
+    sionlib_1_7_7_gcc10_impi_2019 = callPackage ../pkgs/JSC/SIONlib {
+      cctype = "gnu";
       mpitype = "intel2";
-      stdenv = intel21Stdenv;
-      fortran = intel-oneapi-ifort_2021_9_0;
+      stdenv = gcc11Stdenv;
+      fortran = prev.gfortran11;
       mpi = intel-mpi_2019;
       enablePython = true;
       python = prev.python311;
@@ -139,6 +144,15 @@ in
       stdenv = intel21Stdenv;
       mpiSupport = true;
       mpi = intel-mpi_2019;
+      zlibSupport = true;
+      szipSupport = true;
+    };
+
+    cgns_4_4_0_gcc12_impi_2019 = callPackage ../pkgs/CGNS {
+      stdenv = gcc12Stdenv;
+      hdf5 = hdf5_intel21_impi_2019;
+      fortranSupport = false;
+      fortran = prev.gfortran12;
     };
 
     c-blosc_2_9_3_intel21 = callPackage ../pkgs/c-blosc {
