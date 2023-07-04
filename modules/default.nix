@@ -107,7 +107,7 @@ stdenv.mkDerivation rec {
   
   hasMpi = (pkg.mpi or null) != null;
   ompi = hasMpi && pkg.mpi.pname == "openmpi";
-  impi = hasMpi && pkg.mpi.pname == "intel-mpi";
+  impi = hasMpi && lib.elem pkg.mpi.pname  [ "intel-mpi" "intel-oneapi-mpi" ];
   withOpenMP = pkg.withOpenMP or false;
 
   modName =

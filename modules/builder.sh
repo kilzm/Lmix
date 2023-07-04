@@ -131,9 +131,10 @@ done
 
 echo >> $modfile
 
-echo "$extraLua" >> $modfile
-
-echo >> $modfile
+if [[ -n "$extraLua" ]] ; then
+  echo "$extraLua" >> $modfile
+  echo >> $modfile
+fi
 
 addPkgVariables
 
