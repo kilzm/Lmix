@@ -32,6 +32,7 @@ stdenv.mkDerivation rec {
   '';
 
   cmakeFlags = [ 
+    "-DCMAKE_PREFIX_PATH=${hdf5}/lib/cmake"
     "-DFORTRAN_NAMING=LOWERCASE_"
   ] ++ optional fortranSupport "-DCGNS_ENABLE_FORTRAN=ON"
     ++ optional hdf5.mpiSupport "-DHDF5_NEED_MPI=ON"

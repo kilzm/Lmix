@@ -75,6 +75,9 @@ stdenv.mkDerivation rec {
   '';
 
   cmakeFlags = [ 
+    "-DHDF5_USE_GNU_DIRS=TRUE"
+    "-DCMAKE_INSTALL_INCLUDEDIR=include"
+    "-DCMAKE_INSTALL_LIBDIR=lib"
   ] ++ optional cppSupport "-DHDF5_BUILD_CPP_LIB=ON"
     ++ optional fortranSupport "-DHDF5_BUILD_FORTRAN=ON"
     ++ optional (!zlibSupport) "-DHDF5_ENABLE_ZLIB=OFF"
@@ -87,15 +90,6 @@ stdenv.mkDerivation rec {
   postInstall = ''
     find "$out" -type f -exec remove-references-to -t ${stdenv.cc} '{}' +
   '';
-
-  # postFixup = ''
-  #   for i in h5cc h5pcc h5c++; do
-  #     if [ -f $dev/bin/$i ]; then
-  #       substituteInPlace $dev/bin/$i --replace \
-  #         '-I/build/hdf5-${version}/src/H5FDsubfiling' ""
-  #     fi
-  #   done
-  # '';
 
   passthru.tests = {
     inherit (python3.pkgs) h5py;

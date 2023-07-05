@@ -140,14 +140,6 @@ in
       python = prev.python311;
     };
 
-    # hdf5_intel21_impi_2019 = hdf5_impi_compatible.override {
-    #   stdenv = intel21Stdenv;
-    #   mpiSupport = true;
-    #   mpi = intel-mpi_2019;
-    #   zlibSupport = true;
-    #   szipSupport = true;
-    # };
-
     hdf5_gcc12_impi_2021 = callPackage ../pkgs/HDF5 {
       stdenv = gcc12Stdenv;
       mpiSupport = true;
