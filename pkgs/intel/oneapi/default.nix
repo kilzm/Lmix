@@ -28,6 +28,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 , lib
 , dpkg
 , rsync
+, glibc
 , libffi
 , libelf
 , libxml2
