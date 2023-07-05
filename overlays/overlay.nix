@@ -140,17 +140,39 @@ in
       python = prev.python311;
     };
 
-    hdf5_intel21_impi_2019 = hdf5_impi_compatible.override {
+    # hdf5_intel21_impi_2019 = hdf5_impi_compatible.override {
+    #   stdenv = intel21Stdenv;
+    #   mpiSupport = true;
+    #   mpi = intel-mpi_2019;
+    #   zlibSupport = true;
+    #   szipSupport = true;
+    # };
+
+    hdf5_gcc12_impi_2021 = callPackage ../pkgs/HDF5 {
+      stdenv = gcc12Stdenv;
+      mpiSupport = true;
+      mpi = intel-oneapi-mpi_2021_9_0;
+      fortranSupport = true;
+      fortran = prev.gfortran12;
+    };
+
+    hdf5_gcc11_ompi_4_1_4 = callPackage ../pkgs/HDF5 {
+      stdenv = gcc11Stdenv;
+      mpiSupport = true;
+      mpi = openmpi_4_1_4_gcc11;
+      fortranSupport = true;
+      fortran = prev.gfortran11;
+    };
+
+    hdf5_intel21_impi_2019 = callPackage ../pkgs/HDF5 {
       stdenv = intel21Stdenv;
       mpiSupport = true;
       mpi = intel-mpi_2019;
-      zlibSupport = true;
-      szipSupport = true;
     };
 
-    cgns_4_4_0_gcc12_impi_2019 = callPackage ../pkgs/CGNS {
+    cgns_4_4_0_gcc12_impi_2021 = callPackage ../pkgs/CGNS {
       stdenv = gcc12Stdenv;
-      hdf5 = hdf5_intel21_impi_2019;
+      hdf5 = hdf5_gcc12_impi_2021;
       fortranSupport = false;
       fortran = prev.gfortran12;
     };

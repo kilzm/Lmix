@@ -95,6 +95,8 @@ in
         { mod = "osu-micro-benchmarks_5_6_2"; }
         { mod = "osu-micro-benchmarks_6_1"; }
         { mod = "hdf5_intel21_impi_2019"; pkgName = "hdf5"; cc = "intel21"; }
+        { mod = "hdf5_gcc12_impi_2021"; pkgName = "hdf5"; cc = "gcc12"; }
+        { mod = "hdf5_gcc11_ompi_4_1_4"; pkgName = "hdf5"; cc = "gcc11"; }
         { mod = "mercury_2_3_0_intel21"; cc = "intel21"; }
         { mod = "c-blosc_2_9_3_intel21"; libName = "blosc2"; cc = "intel21"; }
         { mod = "sz_2_1_12_intel21"; libName = "SZ"; cc = "intel21"; }
@@ -103,8 +105,8 @@ in
         { mod = "adept-utils_1_0_1_gcc11"; cc = "gcc11"; }
         { mod = "callpath_1_0_4_gcc11_impi_2019"; cc = "gcc11"; }
         { mod = "mpileaks_1_0_gcc11_impi_2019"; cc = "gcc11"; }
-        { mod = "sionlib_1_7_7_gcc10_impi_2019"; cc = "intel21"; }
-        { mod = "cgns_4_4_0_gcc12_impi_2019"; cc = "intel21"; }
+        { mod = "sionlib_1_7_7_gcc10_impi_2019"; cc = "gcc10"; }
+        { mod = "cgns_4_4_0_gcc12_impi_2021"; cc = "gcc12"; }
         { mod = "bupc_2022_10_0_intel23_impi_2021"; cc = "intel23"; }
         # intel
         { mod = "intel-oneapi-compilers_2023_1_0"; pkgName = "intel-oneapi-compilers"; ccStdenv = "lmix-pkgs.intel23Stdenv"; }

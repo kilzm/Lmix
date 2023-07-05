@@ -26,6 +26,10 @@ stdenv.mkDerivation rec {
 
   nativeBuildInputs = [ cmake ] ++ optional fortranSupport fortran;
 
+  preConfigure = strings.optionalString hdf5.mpiSupport ''
+    export I_MPI_CC=$CC
+    export I_MPI_ROOT=${hdf5.mpi}
+  '';
 
   cmakeFlags = [ 
     "-DFORTRAN_NAMING=LOWERCASE_"
