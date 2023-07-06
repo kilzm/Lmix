@@ -1,34 +1,14 @@
 final: prev:
-with prev.lib;
-let
-  modulesFunc = recSet: name: mods:
-    let
-      callModule = m:
-        let
-          attrName = m.mod;
-          pkg = if recSet == null then prev.${attrName} else prev.${recSet}.${attrName};
-          configAttrs = attrsets.optionalAttrs (name != null)
-            (import ../modules/${name} {
-              lib = prev.lib;
-              inherit pkg;
-              cc = m.cc or "";
-            });
-          extraAttrs = builtins.removeAttrs m [ "mod" "nixHook" ];
-          modAttrs = {
-            attrName = strings.optionalString (recSet != null) "${recSet}." + (m.nixHook or attrName);
-            inherit pkg;
-          } // extraAttrs // configAttrs;
-        in
-        prev.callPackage ../modules modAttrs;
-    in
-    map callModule mods;
+rec {
+  pkgs = final;
+  lib = prev.lib // (import ../lib/modules.nix);
 
-  defaultModulesNixpkgs = modulesFunc null null;
-  defaultModules = modulesFunc "lmix-pkgs" null;
-  namedModulesNixpkgs = modulesFunc null;
-  namedModules = modulesFunc "lmix-pkgs";
-in
-{
+  inherit (lib.modules) modulesFunc;
+
+  defaultModules = modulesFunc { recSet = "lmix-pkgs"; inherit pkgs; };
+  namedModules = name: modulesFunc { recSet = "lmix-pkgs"; inherit name pkgs; };
+  defaultModulesNixpkgs = modulesFunc { inherit pkgs; };
+  namedModulesNixpkgs = name: modulesFunc { inherit name pkgs; };
 
   lmix-mods = {
     # modules
