@@ -15,6 +15,12 @@ rec {
     _modules-nixpkgs = prev.buildEnv {
       name = "modules-nixpkgs";
       paths = defaultModulesNixpkgs [
+        { mod = "nano"; }
+        { mod = "vim"; }
+        { mod = "neovim"; pkgName = "neovim"; }
+        { mod = "emacs"; }
+        { mod = "emacs-gtk";}
+        { mod = "vscode"; }
         { mod = "R"; }
         { mod = "ffmpeg"; }
         { mod = "git"; }
@@ -22,23 +28,50 @@ rec {
         { mod = "strace"; }
         { mod = "ltrace"; }
         { mod = "heaptrack"; }
+        { mod = "charliecloud"; }
         { mod = "llvm"; libName = "LLVM"; }
         { mod = "eigen"; incPath = "include/eigen3"; }
         { mod = "libmatheval"; libName = "matheval"; }
         { mod = "libxc"; libName = "xc"; }
+        { mod = "libtirpc"; libName = "tirpc"; }
         { mod = "openblas"; }
         { mod = "lapack-reference"; pkgName = "lapack"; }
         { mod = "mkl"; version = "2023.1.0"; pkgName = "intel-oneapi-mkl"; }
         { mod = "gsl"; }
+        { mod = "gmp"; pkgName = "gmp"; }
+        { mod = "gdal"; }
+        { mod = "mercurial"; }
+        { mod = "szip"; libName = "sz"; }
+        { mod = "xz"; libName = "lzma"; }
         { mod = "boost"; }
+        { mod = "ncurses"; }
         { mod = "libfabric"; libName = "fabric"; }
+        { mod = "gnum4"; pkgName = "m4"; }
+        { mod = "doxygen"; }
+        { mod = "imagemagick"; }
+        { mod = "jdk"; pkgName = "openjdk"; }
+        { mod = "jmol"; }
+        { mod = "molden"; }
+        { mod = "clingo"; }
+        { mod = "bison"; }
+        { mod = "redis"; }
+        { mod = "flex"; }
+        { mod = "gdb"; }
+        { mod = "cgdb"; }
+        { mod = "gnuplot"; }
+        { mod = "plplot"; }
+        { mod = "clang_9"; pkgName = "clang"; }
+        { mod = "clang_10"; pkgName = "clang"; }
+        { mod = "clang_11"; pkgName = "clang"; }
         { mod = "gfortran7"; pkgName = "gfortran"; native = true; }
         { mod = "gfortran8"; pkgName = "gfortran"; native = true; }
         { mod = "gfortran9"; pkgName = "gfortran"; native = true; }
         { mod = "gfortran10"; pkgName = "gfortran"; native = true; }
         { mod = "gfortran11"; pkgName = "gfortran"; native = true; }
         { mod = "gfortran12"; pkgName = "gfortran"; native = true; }
+        { mod = "gnumake"; native = true; }
         { mod = "cmake"; native = true; }
+        { mod = "scons"; native = true; excludes = [ "LIBDIR" ]; }
         { mod = "pkgconfig"; pkgName = "pkgconfig"; native = true; }
         { mod = "autoconf"; nixHook = "autoreconfHook"; native = true; }
         { mod = "automake"; native = true; }
