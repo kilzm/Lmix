@@ -1,6 +1,8 @@
 final: prev:
-rec {
+let 
   pkgs = final;
+in
+rec {
   lib = prev.lib // (import ../lib/modules.nix);
 
   inherit (lib.modules) modulesFunc;
@@ -19,7 +21,6 @@ rec {
         { mod = "vim"; }
         { mod = "neovim"; pkgName = "neovim"; }
         { mod = "emacs"; }
-        { mod = "emacs-gtk";}
         { mod = "vscode"; }
         { mod = "R"; }
         { mod = "ffmpeg"; }
@@ -121,6 +122,7 @@ rec {
         { mod = "sionlib_1_7_7_gcc10_impi_2019"; cc = "gcc10"; }
         { mod = "cgns_4_4_0_gcc12_impi_2021"; cc = "gcc12"; }
         { mod = "bupc_2022_10_0_intel23_impi_2021"; cc = "intel23"; }
+        { mod = "scotch_7_0_3_gcc12_impi_2021"; cc = "gcc12"; }
         # intel
         { mod = "intel-oneapi-compilers_2023_1_0"; pkgName = "intel-oneapi-compilers"; ccStdenv = "lmix-pkgs.intel23Stdenv"; }
         { 

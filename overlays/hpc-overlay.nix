@@ -1,6 +1,8 @@
 final: prev:
 with prev.lib;
 let
+  lib = prev.lib // (import ../lib/misc.nix);
+
   inherit (prev) callPackage;
   inherit (prev) gcc7Stdenv gcc8Stdenv gcc9Stdenv gcc10Stdenv gcc11Stdenv gcc12Stdenv;
 
@@ -9,9 +11,6 @@ let
     versions = import ../pkgs/intel/oneapi/2023.nix;
   };
 
-  hdf5_impi_compatible = prev.hdf5.overrideAttrs (old: {
-    preConfigure = "export I_MPI_CC=$CC";
-  });
 in
 {
   lmix-pkgs = rec {
@@ -22,6 +21,7 @@ in
     intel-oneapi-ifort_2021_9_0 = intel-oneapi_2023_1_0.ifort;
     intel-oneapi-tbb_2021_9_0 = intel-oneapi_2023_1_0.tbb;
     intel-oneapi-mpi_2021_9_0 = intel-oneapi_2023_1_0.mpi;
+    intel-oneapi-shared_2023_1_0 = intel-oneapi_2023_1_0.shared;
 
     intel23Stdenv = intel-oneapi_2023_1_0.stdenv;
     intel21Stdenv = intel-oneapi_2023_1_0.stdenv-icc;
@@ -90,6 +90,12 @@ in
     });
 
     ## fftw - ftp://ftp.fftw.org/pub/fftw/fftw-${version}.tar.gz
+    fftw_impi = (lib.makeImpiCompatibleSetLD prev.fftw intel-oneapi-mpi_2021_9_0).override {
+      enableMpi = true;
+      stdenv = intel21Stdenv;
+      mpi = intel-oneapi-mpi_2021_9_0;
+    };
+
     fftw_3_3_10_gcc11_ompi_4_1_5 = callPackage ../pkgs/fftw {
       stdenv = prev.gcc11Stdenv;
       mpi = openmpi_4_1_5_gcc11;
@@ -197,6 +203,12 @@ in
 
     bupc_2022_10_0_intel23_impi_2021 = callPackage ../pkgs/bupc {
       stdenv = intel23Stdenv;
+      mpi = intel-oneapi-mpi_2021_9_0;
+    };
+
+    scotch_7_0_3_gcc12_impi_2021 = callPackage ../pkgs/scotch {
+      stdenv = gcc12Stdenv;
+      fortran = prev.gfortran12;
       mpi = intel-oneapi-mpi_2021_9_0;
     };
 
