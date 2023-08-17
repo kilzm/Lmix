@@ -128,7 +128,7 @@ stdenv.mkDerivation rec {
   pacName =
     if customPacName == "" then pkgNameUpper else customPacName;
 
-  WHATIS = if whatis != "" then whatis else pkg.meta.description or "";
+  WHATIS = if whatis != "" then whatis else builtins.replaceStrings [ "\n" ] [ " " ] pkg.meta.description or "";
 
   NATIVE = if native then "1" else "0";
   CCSTDENV = ccStdenv;
