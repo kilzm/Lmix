@@ -502,6 +502,7 @@ let
 in
   {
     inherit aptPackages aptPackageIndex;
+    shared = intel-compiler-shared;
     icx = icx-wrapper;
     icc = icc-wrapper;
     ifort = ifort-wrapper;
