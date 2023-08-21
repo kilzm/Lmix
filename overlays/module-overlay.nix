@@ -39,7 +39,10 @@ rec {
     # modules
     _modules-nixpkgs = prev.buildEnv {
       name = "modules-nixpkgs";
-      paths = defaultModulesNixpkgs [
+      paths = [
+        (prev.callPackage ../modules/user-modules.nix {})
+      ] 
+      ++ defaultModulesNixpkgs [
         { mod = "nano"; }
         { mod = "vim"; }
         { mod = "neovim"; pkgName = "neovim"; }
