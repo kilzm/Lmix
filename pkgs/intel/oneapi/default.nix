@@ -499,6 +499,12 @@ let
     allowedRequisites = null;
   };
 
+  intel-mpi-hook = intel-mpi.overrideAttrs (old :{
+    setupHooks = [
+      ../hooks/oneapi-mpi.sh
+    ];
+  });
+
 in
   {
     inherit aptPackages aptPackageIndex;
@@ -507,7 +513,7 @@ in
     icc = icc-wrapper;
     ifort = ifort-wrapper;
 
-    mpi = intel-mpi;
+    mpi = intel-mpi-hook;
     tbb = intel-tbb;
 
     stdenv = stdenv-icx;

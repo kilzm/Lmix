@@ -21,11 +21,6 @@ stdenv.mkDerivation rec {
 
   nativeBuildInputs = [ cmake ];
 
-  preConfigure = ''
-    export I_MPI_CC=$CC
-    export MPICH_CC=$CC
-  '';
-
   passthru = {
     inherit mpi;
   };

@@ -23,10 +23,7 @@ stdenv.mkDerivation rec {
     sha256 = "sha256-wrOH0+DDzJ6utJYRSZWu2td1dTWJCzgfpNs4/QoiOk8=";
   };
 
-  preConfigure = ''
-    export I_MPI_CC=$CC
-    export I_MPI_ROOT=${mpi}
-  '';
+  preConfigure = "echo $I_MPI_ROOT";
 
   nativeBuildInputs = [ cmake fortran ];
 

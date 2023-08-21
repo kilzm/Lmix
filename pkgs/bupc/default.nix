@@ -21,13 +21,7 @@ stdenv.mkDerivation rec {
   '';
 
   preConfigure = ''
-    export I_MPI_CC=$CC
-    export I_MPI_CXX=$CXX
-    export MPICH_CC=$CC
-    export MPICH_CXX=$CXX
-
     # configure checks for mpi runtime environment
-    export I_MPI_ROOT=${mpi}
     if [[ -f "${mpi}/env/vars.sh" ]]; then
       source "${mpi}/env/vars.sh"
     fi

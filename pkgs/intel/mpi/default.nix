@@ -73,6 +73,10 @@ stdenv.mkDerivation rec {
     patchelf
   ];
 
+  setupHooks = [
+    ../hooks/intel-mpi.sh
+  ];
+
   postUnpack = ''
     pushd $sourceRoot
       rpmextract rpm/intel-mpi-*.rpm

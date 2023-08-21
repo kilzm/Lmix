@@ -1,8 +1,6 @@
 final: prev:
 with prev.lib;
 let
-  lib = prev.lib // (import ../lib/misc.nix);
-
   inherit (prev) callPackage;
   inherit (prev) gcc7Stdenv gcc8Stdenv gcc9Stdenv gcc10Stdenv gcc11Stdenv gcc12Stdenv;
 
@@ -95,12 +93,6 @@ in
     });
 
     ## fftw - ftp://ftp.fftw.org/pub/fftw/fftw-${version}.tar.gz
-    fftw_impi = (lib.makeImpiCompatibleSetLD prev.fftw intel-oneapi-mpi_2021_9_0).override {
-      enableMpi = true;
-      stdenv = intel21Stdenv;
-      mpi = intel-oneapi-mpi_2021_9_0;
-    };
-
     fftw_3_3_10_gcc11_ompi_4_1_5 = callPackage ../pkgs/fftw {
       stdenv = prev.gcc11Stdenv;
       mpi = openmpi_4_1_5_gcc11;

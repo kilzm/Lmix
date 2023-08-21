@@ -26,12 +26,6 @@ stdenv.mkDerivation rec {
 
   buildInputs = [ mpi ];
 
-  preConfigure = ""
-  + optionalString (mpi != null && mpi.pname == "intel-mpi") ''
-    export NIX_LDFLAGS="$NIX_LDFLAGS -L${mpi}/lib/release"
-    export I_MPI_CC=$CC
-  '';
-
   configureFlags = [
     "--enable-static"
     "--enable-shared"

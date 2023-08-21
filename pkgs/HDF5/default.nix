@@ -69,11 +69,6 @@ stdenv.mkDerivation rec {
   ] ++ optional zlibSupport zlib
     ++ optional mpiSupport mpi;
 
-  preConfigure = ''
-    export I_MPI_CC=$CC
-    export I_MPI_ROOT=${mpi}
-  '';
-
   cmakeFlags = [ 
     "-DHDF5_USE_GNU_DIRS=TRUE"
     "-DCMAKE_INSTALL_INCLUDEDIR=include"

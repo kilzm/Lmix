@@ -18,11 +18,6 @@ stdenv.mkDerivation rec {
     sha256 = "sha256-AXkrTHeNE3HpYwUKsPQy42RoUW7cPvPGV+JKbUD/lZ4=";
   };
 
-  preConfigure = ''
-    export I_MPI_CC=$CC
-    export MPICH_CC=$CC
-  '';
-
   CXXFLAGS = "-std=c++11";
 
   configureFlags = [
