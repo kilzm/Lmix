@@ -1,6 +1,29 @@
 final: prev:
 let 
   pkgs = final;
+  # default environment when working with nix-generated modules
+  nix-stdenv = prev.buildEnv {
+    name = "nix-stdenv";
+    paths = (with final; [
+      gcc
+      glibc
+      coreutils
+      binutils
+      findutils
+      diffutils
+      gnused
+      gnugrep
+      gawk
+      gnutar
+      gzip
+      bzip2
+      gnumake
+      bashInteractive
+      patch
+      xz
+      file
+    ]);
+  };
 in
 rec {
   lib = prev.lib // (import ../lib/modules.nix);
@@ -143,6 +166,7 @@ rec {
       ++ namedModules "openmpi" [
         { mod = "openmpi_4_1_4_gcc11"; cc = "gcc11"; }
         { mod = "openmpi_4_1_5_gcc11"; cc = "gcc11"; }
+        { mod = "openmpi_4_1_5_intel23"; cc = "intel23"; }
       ]
       ++ namedModules "fftw" [
         { mod = "fftw_3_3_10_gcc11_ompi_4_1_5"; cc = "gcc11"; }

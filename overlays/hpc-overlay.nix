@@ -53,16 +53,21 @@ in
     julia_1_9_0 = callPackage ../pkgs/julia/1.9.0-rc2-bin.nix { };
 
     ## openmpi - https://www.open-mpi.org/software/ompi/v${major version}.${minor version}/downloads/openmpi-${version}.tar.bz2
-    openmpi_4_1_4_gcc11 = callPackage ../pkgs/openmpi/default.nix {
+    openmpi_4_1_5_gcc11 = prev.openmpi.override {
       stdenv = prev.gcc11Stdenv;
       gfortran = prev.gfortran11;
     };
 
-    openmpi_4_1_5_gcc11 = openmpi_4_1_4_gcc11.overrideAttrs (old: rec {
-      version = "4.1.5";
+    openmpi_4_1_5_intel23 = prev.openmpi.override {
+      stdenv = intel23Stdenv;
+      fortranSupport = false;
+    };
+
+    openmpi_4_1_4_gcc11 = openmpi_4_1_5_gcc11.overrideAttrs (old: rec {
+      version = "4.1.4";
       src = prev.fetchurl {
         url = "https://www.open-mpi.org/software/ompi/v${versions.major version}.${versions.minor version}/downloads/openmpi-${version}.tar.bz2";
-        sha256 = "sha256-pkCYa8JXOJ3TeYhv2uYmTIz6VryYtxzjrj372M5h2+M=";
+        sha256 = "sha256-kpEuF1/RI0NoyHMMA/SZb+WULnR5ux0QBZQF5/Kzkw0=";
       };
     });
 
