@@ -2,12 +2,14 @@
   description = "User defined modules";
 
   inputs.lmix.url = path:/home/kilianm/lmix;
-
   inputs.nixpkgs.follows = "lmix/nixpkgs";
-
   inputs.nixpkgs-unstable.url = github:NixOS/nixpkgs?nixos-unstable;
+  inputs.qchem = {
+    url = github:Nix-QChem/NixOS-QChem?release-23.05;
+    inputs.nixpkgs.follows = "nixpkgs";
+  };
 
-  outputs = { self, lmix, nixpkgs, nixpkgs-unstable }:
+  outputs = { self, lmix, nixpkgs, nixpkgs-unstable, qchem }:
     let
       system = "x86_64-linux";
       config = {
@@ -19,7 +21,10 @@
 
       pkgs = import nixpkgs {
         inherit system config;
-        overlays = [ lmix.overlays.mod ];
+        overlays = [ 
+          lmix.overlays.mod
+          qchem.overlays.qchem
+        ];
       };
 
       unstable = import nixpkgs-unstable {

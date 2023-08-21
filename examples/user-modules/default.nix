@@ -21,6 +21,8 @@ rec {
         { mod = "python310"; }
         { mod = "libff"; libName = "ff"; }
         { mod = "glib"; libName = "glib-2.0"; }
+        { mod = "gromacsMpi"; pkgName = "gromacs"; libName = "gromacs_mpi"; dependencies = [ "fftw-single" ]; }
+        { mod = "fftwSinglePrec"; pkgName = "fftw-single"; }
       ]
       ++ defaultModulesNixpkgs unstable [
         { mod = "slurm"; }
