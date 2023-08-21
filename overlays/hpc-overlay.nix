@@ -29,10 +29,7 @@ in
     ## hello - mirror://gnu/hello/hello-${version}.tar.gz
     hello_2_12_1 = prev.hello.overrideAttrs (old: rec {
       version = "2.12.1";
-      src = prev.fetchurl {
-        url = "mirror://gnu/hello/hello-${version}.tar.gz";
-        sha256 = "sha256-jZkUKv2SV28wsM18tCqNxoCZmLxdYH2Idh9RLibH2yA=";
-      };
+      src = old.src.overrideAttrs (_: { sha256 = "sha256-jZkUKv2SV28wsM18tCqNxoCZmLxdYH2Idh9RLibH2yA="; });
     });
 
     hello_2_12_1_intel21 = hello_2_12_1.override {
@@ -63,10 +60,7 @@ in
 
     openmpi_4_1_4_gcc11 = openmpi_4_1_5_gcc11.overrideAttrs (old: rec {
       version = "4.1.4";
-      src = prev.fetchurl {
-        url = "https://www.open-mpi.org/software/ompi/v${versions.major version}.${versions.minor version}/downloads/openmpi-${version}.tar.bz2";
-        sha256 = "sha256-kpEuF1/RI0NoyHMMA/SZb+WULnR5ux0QBZQF5/Kzkw0=";
-      };
+      src = old.src.overrideAttrs (_: { hash = "sha256-kpEuF1/RI0NoyHMMA/SZb+WULnR5ux0QBZQF5/Kzkw0="; });
     });
 
     ## osu-micro-benchmarks - mvapich.cse.ohio-state.edu/download/mvapich/osu-micro-benchmarks-${version}.tar.gz
@@ -78,18 +72,12 @@ in
 
     osu-micro-benchmarks_5_4 = osu-micro-benchmarks.overrideAttrs (old: rec {
       version = "5.4";
-      src = prev.fetchurl {
-        url = "mvapich.cse.ohio-state.edu/download/mvapich/osu-micro-benchmarks-${version}.tar.gz";
-        sha256 = "sha256-4cp2LhOgcgWlm1mthehc4Pgmtw92/VVc5VaO+x8qjzM=";
-      };
+      src = old.src.overrideAttrs (_: { sha256 = "sha256-4cp2LhOgcgWlm1mthehc4Pgmtw92/VVc5VaO+x8qjzM="; });
     });
 
     osu-micro-benchmarks_6_1 = osu-micro-benchmarks.overrideAttrs (old: rec {
       version = "6.1";
-      src = prev.fetchurl {
-        url = "mvapich.cse.ohio-state.edu/download/mvapich/osu-micro-benchmarks-${version}.tar.gz";
-        sha256 = "sha256-7MztyGgmT3XbTZUpr3kAVBmid1ETx/ro9OSoQ0Ni5Kc=";
-      };
+      src = old.src.overrideAttrs (_: { sha256 = "sha256-7MztyGgmT3XbTZUpr3kAVBmid1ETx/ro9OSoQ0Ni5Kc="; });
     });
 
     ## fftw - ftp://ftp.fftw.org/pub/fftw/fftw-${version}.tar.gz
@@ -168,7 +156,7 @@ in
     cgns_4_4_0_gcc12_impi_2021 = callPackage ../pkgs/CGNS {
       stdenv = gcc12Stdenv;
       hdf5 = hdf5_gcc12_impi_2021;
-      fortranSupport = false;
+      fortranSupport = true;
       fortran = prev.gfortran12;
     };
 
