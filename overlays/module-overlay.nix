@@ -45,7 +45,7 @@ rec {
       ++ defaultModulesNixpkgs [
         { mod = "nano"; }
         { mod = "vim"; }
-        { mod = "neovim"; pkgName = "neovim"; }
+        { mod = "neovim"; pkgName = "neovim"; version = "0.9.1"; }
         { mod = "emacs"; }
         { mod = "vscode"; }
         { mod = "R"; }

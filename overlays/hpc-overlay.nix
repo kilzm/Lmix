@@ -198,7 +198,7 @@ in
     };
 
     # default environment when working with nix-generated modules
-    nix-stdenv = prev.buildEnv {
+    nix-stdenv = (prev.buildEnv {
       name = "nix-stdenv";
       paths = (with final; [
         gcc
@@ -219,6 +219,8 @@ in
         xz
         file
       ]);
-    };
+    }).overrideAttrs (old: {
+      version = import ../pkgs-ver.nix;
+    });
   };
 }

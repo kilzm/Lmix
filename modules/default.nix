@@ -122,6 +122,9 @@ stdenv.mkDerivation rec {
       + ".lua"
     else
       "${pkgName}.lua";
+  
+  
+  modfileSuffix = "${import ../pkgs-ver.nix}/${modName}";
 
   pkgNameUpper = builtins.replaceStrings [ "-" ] [ "_" ] (toUpper pkgName);
 

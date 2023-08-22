@@ -2,7 +2,7 @@ source $stdenv/setup
 
 shopt -s nullglob
 
-modfile="$out/modules/$modName"
+modfile="$out/$modfileSuffix"
 mkdir -p `dirname "$modfile"`
 
 modPrependPath () {

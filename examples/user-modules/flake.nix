@@ -1,7 +1,7 @@
 {
   description = "User defined modules";
 
-  inputs.lmix.url = path:/home/kilianm/lmix;
+  inputs.lmix.url = github:kilzm/lmix;
   inputs.nixpkgs.follows = "lmix/nixpkgs";
   inputs.nixpkgs-unstable.url = github:NixOS/nixpkgs?nixos-unstable;
   inputs.qchem = {

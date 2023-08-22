@@ -7,8 +7,8 @@
         "utils": "utils"
       },
       "locked": {
-        "lastModified": 1692619282,
-        "narHash": "sha256-Q9VeFo+kC7FU4CI+jQPiHD4hPFl5yEwzAh0Idn4tvTU=",
+        "lastModified": 1692709670,
+        "narHash": "sha256-OajD6WVRGU6s0s2LccvQW44EZKRGbHssNYbKxEjuYE4=",
         "path": "/home/kilianm/lmix",
         "type": "path"
       },
@@ -35,11 +35,11 @@
     },
     "nixpkgs-unstable": {
       "locked": {
-        "lastModified": 1692618965,
-        "narHash": "sha256-vzG611Jx17WK52Slm1YeViTf/YYdIdLXr3AmTgHCI9I=",
+        "lastModified": 1692709019,
+        "narHash": "sha256-uE4ovDjEUPZomOhF/y7xU0/PHHObIGMNntQ3Kyf5soY=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "3eb1a985b2317be75e46305c1c6a2ac5de4e0160",
+        "rev": "ae5f80614a12799c603465f9da5f45b2b9b357d2",
         "type": "github"
       },
       "original": {
