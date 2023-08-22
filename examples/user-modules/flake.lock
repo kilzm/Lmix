@@ -7,14 +7,17 @@
         "utils": "utils"
       },
       "locked": {
-        "lastModified": 1692709670,
-        "narHash": "sha256-OajD6WVRGU6s0s2LccvQW44EZKRGbHssNYbKxEjuYE4=",
-        "path": "/home/kilianm/lmix",
-        "type": "path"
+        "lastModified": 1692710000,
+        "narHash": "sha256-kumZN8A2OPBl14I4cuA3ZONP8cC8gqLcpAs2QmFmCpY=",
+        "owner": "kilzm",
+        "repo": "lmix",
+        "rev": "d3513cd824fc8ef8e144588902133c32dd229e3e",
+        "type": "github"
       },
       "original": {
-        "path": "/home/kilianm/lmix",
-        "type": "path"
+        "owner": "kilzm",
+        "repo": "lmix",
+        "type": "github"
       }
     },
     "nixpkgs": {
@@ -35,11 +38,11 @@
     },
     "nixpkgs-unstable": {
       "locked": {
-        "lastModified": 1692709019,
-        "narHash": "sha256-uE4ovDjEUPZomOhF/y7xU0/PHHObIGMNntQ3Kyf5soY=",
+        "lastModified": 1692709938,
+        "narHash": "sha256-o5Ftp56BNCse6/WTEIBX3VIvNchDWefaTO/aheZ2QgI=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "ae5f80614a12799c603465f9da5f45b2b9b357d2",
+        "rev": "22bac19e906f69370a236657cef17578ad7a1f19",
         "type": "github"
       },
       "original": {
