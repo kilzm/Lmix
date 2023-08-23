@@ -1,6 +1,6 @@
 { stdenv
 , lib
-, buildEnv
+, symlinkJoin
 , attrName
 , pkg
 , pkgName ? pkg.pname or pkg.name
@@ -9,7 +9,7 @@
   # this will be set in the overlay if the specific compiler and its version are relevant to the module like in fftw
 , cc ? ""
 
-, mpiflv ? ""
+, mpiFlv ? ""
 , omp ? false
 
   # modify this when the library files are not called "lib<pkgName>.a"/"lib<pkgName>.so" 
@@ -78,18 +78,15 @@ with lib;
 with lib.strings;
 
 assert cc != "" -> elem cc ["intel" "gcc" "intel21" "intel23" "gcc7" "gcc8" "gcc9" "gcc10" "gcc11" "gcc12"];
-assert mpiflv != "" -> elem mpiflv ["impi" "ompi"];
+assert mpiFlv != "" -> elem mpiFlv ["impi" "ompi"];
 
 let
-  multiPackage = builtins.length pkg.outputs > 1;
   monoPkg =
-    if multiPackage
-    then
-      buildEnv
-        {
-          name = pkg.name;
-          paths = map (out: pkg.${out}) pkg.outputs;
-        }
+    if builtins.length pkg.outputs > 1
+    then symlinkJoin {
+      name = pkg.name;
+      paths = map (out: pkg.${out}) pkg.outputs;
+    } 
     else pkg;
 in
 
@@ -111,7 +108,7 @@ stdenv.mkDerivation rec {
  
   modName = let
     ccstr = if cc != "" then "-${cc}" else "";
-    mpistr = if mpiflv != "" then "-${mpiflv}"
+    mpistr = if mpiFlv != "" then "-${mpiFlv}"
       else if (pkg.mpi or null) == null then ""
       else if (hasPrefix pkg.mpi.pname "openmpi") then "-ompi"
       else if (hasPrefix pkg.mpi.pname "intel") then "-impi" else "";

@@ -2,7 +2,7 @@ final: prev:
 let 
   pkgs = final;
   # default environment when working with nix-generated modules
-  nix-stdenv = (prev.buildEnv {
+  nix-stdenv = (prev.symlinkJoin {
     name = "nix-stdenv";
     paths = (with final; [
       gcc
@@ -172,9 +172,9 @@ rec {
         { mod = "openmpi_4_1_5_intel23"; cc = "intel23"; }
       ]
       ++ namedModules "fftw" [
-        { mod = "fftw_3_3_10_gcc11_ompi_4_1_5"; cc = "gcc11"; mpiflv = "ompi"; }
-        { mod = "fftw_3_3_10_gcc12_ompi_4_1_4"; cc = "gcc12"; mpiflv = "ompi"; }
-        { mod = "fftw_3_3_10_intel21_impi_2019"; cc = "intel21"; mpiflv = "impi"; }
+        { mod = "fftw_3_3_10_gcc11_ompi_4_1_5"; cc = "gcc11"; mpiFlv = "ompi"; }
+        { mod = "fftw_3_3_10_gcc12_ompi_4_1_4"; cc = "gcc12"; mpiFlv = "ompi"; }
+        { mod = "fftw_3_3_10_intel21_impi_2019"; cc = "intel21"; mpiFlv = "impi"; }
       ];
     };
 
