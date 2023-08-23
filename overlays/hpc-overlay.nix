@@ -81,25 +81,22 @@ in
     });
 
     ## fftw - ftp://ftp.fftw.org/pub/fftw/fftw-${version}.tar.gz
-    fftw_3_3_10_gcc11_ompi_4_1_5 = callPackage ../pkgs/fftw {
-      stdenv = prev.gcc11Stdenv;
-      mpi = openmpi_4_1_5_gcc11;
-    };
-
-    fftw_3_3_10_gcc12_ompi_4_1_5_openmp = callPackage ../pkgs/fftw {
+    fftw_3_3_10_gcc11_ompi_4_1_5 = prev.fftw.override {
       stdenv = prev.gcc12Stdenv;
       mpi = openmpi_4_1_5_gcc11;
-      withOpenMP = true;
+      enableMpi = true;
     };
 
-    fftw_3_3_10_intel21 = callPackage ../pkgs/fftw {
-      stdenv = intel21Stdenv;
-      mpi = null;
+    fftw_3_3_10_gcc12_ompi_4_1_4 = prev.fftw.override {
+      stdenv = prev.gcc12Stdenv;
+      mpi = openmpi_4_1_4_gcc11;
+      enableMpi = true;
     };
 
-    fftw_3_3_10_intel21_impi_2019 = callPackage ../pkgs/fftw {
+    fftw_3_3_10_intel21_impi_2019 = prev.fftw.override {
       stdenv = intel21Stdenv;
       mpi = intel-mpi_2019;
+      enableMpi = true;
     };
 
     # LLNL

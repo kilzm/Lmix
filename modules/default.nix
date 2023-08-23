@@ -9,6 +9,9 @@
   # this will be set in the overlay if the specific compiler and its version are relevant to the module like in fftw
 , cc ? ""
 
+, mpiflv ? ""
+, omp ? false
+
   # modify this when the library files are not called "lib<pkgName>.a"/"lib<pkgName>.so" 
 , libName ? pkgName
 
@@ -116,9 +119,8 @@ stdenv.mkDerivation rec {
     then
       "${pkgName}/${version}"
       + strings.optionalString (cc != "") "-${cc}"
-      + strings.optionalString ompi "-ompi"
-      + strings.optionalString impi "-impi"
-      + strings.optionalString withOpenMP "-openmp"
+      + (if mpiflv == "" then (strings.optionalString ompi "-ompi" + strings.optionalString impi "-impi") else "-${mpiflv}")
+      + strings.optionalString (withOpenMP || omp) "-openmp"
       + ".lua"
     else
       "${pkgName}.lua";

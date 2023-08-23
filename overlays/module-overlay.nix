@@ -172,10 +172,9 @@ rec {
         { mod = "openmpi_4_1_5_intel23"; cc = "intel23"; }
       ]
       ++ namedModules "fftw" [
-        { mod = "fftw_3_3_10_gcc11_ompi_4_1_5"; cc = "gcc11"; }
-        { mod = "fftw_3_3_10_gcc12_ompi_4_1_5_openmp"; cc = "gcc12"; }
-        { mod = "fftw_3_3_10_intel21"; cc = "intel21"; }
-        { mod = "fftw_3_3_10_intel21_impi_2019"; cc = "intel21"; }
+        { mod = "fftw_3_3_10_gcc11_ompi_4_1_5"; cc = "gcc11"; mpiflv = "ompi"; }
+        { mod = "fftw_3_3_10_gcc12_ompi_4_1_4"; cc = "gcc12"; mpiflv = "ompi"; }
+        { mod = "fftw_3_3_10_intel21_impi_2019"; cc = "intel21"; mpiflv = "impi"; }
       ];
     };
 
