@@ -116,9 +116,7 @@ stdenv.mkDerivation rec {
       else if (hasPrefix pkg.mpi.pname "openmpi") then "-ompi"
       else if (hasPrefix pkg.mpi.pname "intel") then "-impi" else "";
     ompstr = if (pkg.withOpenMP or false) || omp then "-openmp" else "";
-  in if version == "" 
-    then "${pkgName}.lua" 
-    else "${pkgName}/${version}" + optionalString (cc != "") "-${cc}" + mpistr + ompstr + ".lua";
+  in "${pkgName}/${version}${ccstr}${mpistr}${ompstr}.lua";
   
   modfileSuffix = "${import ../pkgs-ver.nix}/${modName}";
 
