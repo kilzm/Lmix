@@ -45,7 +45,7 @@ in
     ## julia - https://github.com/JuliaLang/julia/releases/download/v${version}/julia-${version}-full.tar.gz
     julia_1_8_5 = prev.julia_18;
 
-    julia_1_9_0 = callPackage ../pkgs/julia/1.9.0-rc2-bin.nix { };
+    julia_1_9_0 = prev.julia;
 
     ## openmpi - https://www.open-mpi.org/software/ompi/v${major version}.${minor version}/downloads/openmpi-${version}.tar.bz2
     openmpi_4_1_5_gcc11 = prev.openmpi.override {
