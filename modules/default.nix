@@ -78,7 +78,7 @@ with lib;
 with lib.strings;
 
 assert cc != "" -> elem cc ["intel" "gcc" "intel21" "intel23" "gcc7" "gcc8" "gcc9" "gcc10" "gcc11" "gcc12"];
-assert mpiflv != "" -> elem mpiflv ["impi", "ompi"];
+assert mpiflv != "" -> elem mpiflv ["impi" "ompi"];
 
 let
   multiPackage = builtins.length pkg.outputs > 1;
