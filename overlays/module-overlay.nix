@@ -2,7 +2,7 @@ final: prev:
 let 
   pkgs = final;
   # default environment when working with nix-generated modules
-  nix-stdenv = prev.buildEnv {
+  nix-stdenv = (prev.buildEnv {
     name = "nix-stdenv";
     paths = (with final; [
       gcc
@@ -23,7 +23,7 @@ let
       xz
       file
     ]);
-  };
+  }).overrideAttrs (_: { version = import ../pkgs-ver.nix; });
 in
 rec {
   lib = prev.lib // (import ../lib/modules.nix);
@@ -41,6 +41,7 @@ rec {
       name = "modules-nixpkgs";
       paths = [
         (prev.callPackage ../modules/user-modules.nix {})
+        (prev.callPackage ../modules { pkg = nix-stdenv; attrName = "nix-stdenv"; })
       ] 
       ++ defaultModulesNixpkgs [
         { mod = "nano"; }
@@ -127,7 +128,6 @@ rec {
     _modules = prev.buildEnv {
       name = "modules";
       paths = defaultModules [
-        { mod = "nix-stdenv"; }
         { mod = "hello_2_12_1_intel21"; cc = "intel21"; }
         { mod = "hello_2_12_1_intel23"; cc = "intel23"; }
         { mod = "julia_1_9_0"; }

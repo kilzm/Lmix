@@ -196,31 +196,5 @@ in
       fortran = prev.gfortran12;
       mpi = intel-oneapi-mpi_2021_9_0;
     };
-
-    # default environment when working with nix-generated modules
-    nix-stdenv = (prev.buildEnv {
-      name = "nix-stdenv";
-      paths = (with final; [
-        gcc
-        glibc
-        coreutils
-        binutils
-        findutils
-        diffutils
-        gnused
-        gnugrep
-        gawk
-        gnutar
-        gzip
-        bzip2
-        gnumake
-        bashInteractive
-        patch
-        xz
-        file
-      ]);
-    }).overrideAttrs (old: {
-      version = import ../pkgs-ver.nix;
-    });
   };
 }
