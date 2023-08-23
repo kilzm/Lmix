@@ -78,6 +78,7 @@ with lib;
 with lib.strings;
 
 assert cc != "" -> elem cc ["intel" "gcc" "intel21" "intel23" "gcc7" "gcc8" "gcc9" "gcc10" "gcc11" "gcc12"];
+assert mpiflv != "" -> elem mpiflv ["impi", "ompi"];
 
 let
   multiPackage = builtins.length pkg.outputs > 1;
@@ -107,31 +108,23 @@ stdenv.mkDerivation rec {
   buildInputs = [ monoPkg ];
 
   nativeBuildInputs = [ jq ];
-  
-  hasMpi = (pkg.mpi or null) != null;
-  ompi = hasMpi && pkg.mpi.pname == "openmpi";
-  impi = hasMpi && lib.elem pkg.mpi.pname  [ "intel-mpi" "intel-oneapi-mpi" ];
-  withOpenMP = pkg.withOpenMP or false;
-
-  modName =
-    if
-      version != ""
-    then
-      "${pkgName}/${version}"
-      + strings.optionalString (cc != "") "-${cc}"
-      + (if mpiflv == "" then (strings.optionalString ompi "-ompi" + strings.optionalString impi "-impi") else "-${mpiflv}")
-      + strings.optionalString (withOpenMP || omp) "-openmp"
-      + ".lua"
-    else
-      "${pkgName}.lua";
-  
+ 
+  modName = let
+    ccstr = if cc != "" then "-${cc}" else "";
+    mpistr = if mpiflv != "" then "-${mpiflv}"
+      else if (pkg.mpi or null) == null then ""
+      else if (hasPrefix pkg.mpi.pname "openmpi") then "-ompi"
+      else if (hasPrefix pkg.mpi.pname "intel") then "-impi" else "";
+    ompstr = if (pkg.withOpenMP or false) || omp then "-openmp" else "";
+  in if version == "" 
+    then "${pkgName}.lua" 
+    else "${pkgName}/${version}" + optionalString (cc != "") "-${cc}" + mpistr + ompstr + ".lua";
   
   modfileSuffix = "${import ../pkgs-ver.nix}/${modName}";
 
   pkgNameUpper = builtins.replaceStrings [ "-" ] [ "_" ] (toUpper pkgName);
 
-  pacName =
-    if customPacName == "" then pkgNameUpper else customPacName;
+  pacName = if customPacName == "" then pkgNameUpper else customPacName;
 
   WHATIS = if whatis != "" then whatis else builtins.replaceStrings [ "\n" ] [ " " ] pkg.meta.description or "";
 
