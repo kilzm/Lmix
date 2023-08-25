@@ -29,6 +29,7 @@ addPaths () {
   modPrependPathIfExists "PKG_CONFIG_PATH" "$1/lib/pkgconfig"
   modPrependPathIfExists "PKG_CONFIG_PATH" "$1/share/pkgconfig"
   modPrependPathIfExists "CMAKE_PREFIX_PATH" "$1/lib/cmake"
+  modPrependPathIfExists "CMAKE_PREFIX_PATH" "$1/share/cmake"
   modPrependPathIfExists "PERL5LIB" "$1/lib/perl5/site_perl"
   modPrependPathIfExists "ACLOCAL_PATH" "$1/share/aclocal"
 
@@ -36,12 +37,6 @@ addPaths () {
   if [[ $addLDLibPath && -n $libs ]] ; then
     modPrependPath "LD_LIBRARY_PATH" "$1/lib"
   fi
-
-  keys=$(jq -r 'keys[]' <<< "$extraPaths")
-  for key in $keys ; do
-    val=$(jq --arg key "$key" --raw-output '.[$key]' <<< "$extraPaths")
-    modPrependPath "$key" "$val"
-  done
 }
 
 addPkgVariables () {
@@ -125,9 +120,7 @@ if [[ -n "$prerequisitesAny" ]] ; then
   modOtherFun "prereq_any" "$prerequisitesAny"
 fi
 
-for i in "$buildInputs" ; do
-  addPaths $i
-done
+addPaths $singleOutputPkg
 
 echo >> $modfile
 

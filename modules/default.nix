@@ -4,7 +4,7 @@
 , attrName
 , pkg
 , pkgName ? pkg.pname or pkg.name
-, version ? pkg.version or ""
+, version ? pkg.version
 
   # this will be set in the overlay if the specific compiler and its version are relevant to the module like in fftw
 , cc ? ""
@@ -76,19 +76,10 @@
 
 with lib;
 with lib.strings;
+with lib.lists;
 
 assert cc != "" -> elem cc ["intel" "gcc" "intel21" "intel23" "gcc7" "gcc8" "gcc9" "gcc10" "gcc11" "gcc12"];
 assert mpiFlv != "" -> elem mpiFlv ["impi" "ompi"];
-
-let
-  monoPkg =
-    if builtins.length pkg.outputs > 1
-    then symlinkJoin {
-      name = pkg.name;
-      paths = map (out: pkg.${out}) pkg.outputs;
-    } 
-    else pkg;
-in
 
 stdenv.mkDerivation rec {
   builder = ./builder.sh;
@@ -102,8 +93,12 @@ stdenv.mkDerivation rec {
   pname = "module-${pkgName}";
   inherit version;
 
-  buildInputs = [ monoPkg ];
-
+  singleOutputPkg = if length pkg.outputs > 1
+    then symlinkJoin {
+      name = pkg.name;
+      paths = map (out: pkg.${out}) pkg.outputs;
+    } else pkg;
+  
   nativeBuildInputs = [ jq ];
  
   modName = let
@@ -117,16 +112,16 @@ stdenv.mkDerivation rec {
   
   modfileSuffix = "${import ../pkgs-ver.nix}/${modName}";
 
-  pkgNameUpper = builtins.replaceStrings [ "-" ] [ "_" ] (toUpper pkgName);
+  pkgNameUpper = replaceStrings [ "-" ] [ "_" ] (toUpper pkgName);
 
   pacName = if customPacName == "" then pkgNameUpper else customPacName;
 
-  WHATIS = if whatis != "" then whatis else builtins.replaceStrings [ "\n" ] [ " " ] pkg.meta.description or "";
+  WHATIS = if whatis != "" then whatis else replaceStrings [ "\n" ] [ " " ] pkg.meta.description or "";
 
   NATIVE = if native then "1" else "0";
   CCSTDENV = ccStdenv;
 
-  BASE = monoPkg;
+  BASE = singleOutputPkg;
   BINDIR = "${BASE}/${binPath}";
   INCDIR = "${BASE}/${incPath}";
   LIBDIR = "${BASE}/${libPath}";
