@@ -1,8 +1,8 @@
 let
-  modulesFunc = { pkgs, recSet ? "", set ? "", name ? "" }: mods:
+  modulesFunc = { pkgs, recSet ? "", set ? null, name ? "" }: mods:
     let
       callModule = m: let
-        pkg = if set != "" then set.${m.mod} 
+        pkg = if set != null then set.${m.mod} 
           else if recSet == "" then pkgs.${m.mod} 
           else pkgs.${recSet}.${m.mod};
         attrName = "${if recSet != "" then "${recSet}." else ""}${m.nixHook or m.mod}";

@@ -10,6 +10,7 @@ let
   };
 
   myModules = modulesFunc { set = packages; inherit pkgs; };
+  qchemModules = modulesFunc { inherit pkgs; recSet = "qchem"; };
 in
 rec { 
   inherit packages;
@@ -18,11 +19,9 @@ rec {
     my-modules = pkgs.buildEnv {
       name = "myMods";
       paths = defaultModulesNixpkgs pkgs [
-        { mod = "python310"; }
+        { mod = "clang"; }
         { mod = "libff"; libName = "ff"; }
         { mod = "glib"; libName = "glib-2.0"; }
-        { mod = "gromacsMpi"; pkgName = "gromacs"; libName = "gromacs_mpi"; dependencies = [ "fftw-single" ]; }
-        { mod = "fftwSinglePrec"; pkgName = "fftw-single"; }
       ]
       ++ defaultModulesNixpkgs unstable [
         { mod = "slurm"; }
@@ -32,6 +31,10 @@ rec {
       ]
       ++ myModules [
         { mod = "my-hello"; }
+      ]
+      ++ qchemModules [
+        { mod = "gromacs"; }
+        { mod = "fftwSinglePrec"; pkgName = "fftw-single"; }
       ];
     };
   };

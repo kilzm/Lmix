@@ -35,5 +35,7 @@
     in
     {
       packages.${system} = my.packages // my.modules;
+
+      legacyPackages.${system} = pkgs;
     };
 }

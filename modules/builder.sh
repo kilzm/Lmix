@@ -77,7 +77,7 @@ cat > $modfile << EOF
 local pkgName = myModuleName()
 local version = myModuleVersion()
 
-depends_on("nix-stdenv")
+depends_on("nix-stdenv/${pkgsver}")
 EOF
 
 if [[ -n "$WHATIS" ]] ; then

@@ -110,7 +110,8 @@ stdenv.mkDerivation rec {
     ompstr = if (pkg.withOpenMP or false) || omp then "-openmp" else "";
   in "${pkgName}/${version}${ccstr}${mpistr}${ompstr}.lua";
   
-  modfileSuffix = "${import ../pkgs-ver.nix}/${modName}";
+  pkgsver = import ../pkgs-ver.nix;
+  modfileSuffix = "lmix_${pkgsver}/${modName}";
 
   pkgNameUpper = replaceStrings [ "-" ] [ "_" ] (toUpper pkgName);
 
