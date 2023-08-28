@@ -18,7 +18,7 @@ stdenv.mkDerivation rec {
     owner = "mercury-hpc";
     repo = "mercury";
     rev = "v${version}";
-    sha256 = "sha256-o1fgn43waYobWsnnOPeiyP7p90+Hozk64I2OeNB3ax0=";
+    sha256 = "sha256-SfER1ousSaOF8o5++qs+UVlUuFOQZVhhRNK2XeG/VDg=";
     fetchSubmodules = true;
   };
 
