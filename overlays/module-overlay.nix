@@ -24,9 +24,8 @@ let
       file
     ]);
   }).overrideAttrs (_: { version = import ../pkgs-ver.nix; });
-in
-rec {
-  lib = prev.lib // (import ../lib/modules.nix);
+in rec {
+  lib = prev.lib.extend (_: _: import ../lib/modules.nix);
 
   inherit (lib.modules) modulesFunc;
 
@@ -64,7 +63,7 @@ rec {
         { mod = "libtirpc"; libName = "tirpc"; }
         { mod = "openblas"; }
         { mod = "lapack-reference"; pkgName = "lapack"; }
-        { mod = "mkl"; version = "2023.1.0"; pkgName = "intel-oneapi-mkl"; }
+        { mod = "mkl"; version = "2023.1.0"; pkgName = "intel-oneapi-mkl"; customPacName = "MKL"; }
         { mod = "gsl"; }
         { mod = "gmp"; pkgName = "gmp"; }
         { mod = "gdal"; }
