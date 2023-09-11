@@ -12,12 +12,6 @@ stdenv.mkDerivation {
   version = "1.0";
   src = ./.;
 
-  # support intel-mpi mpicc
-  preConfigure = ''
-    export MPICH_CC=$CC
-    export I_MPI_CC=$CC
-  '';
-  
   buildInputs = [ fftw mpi ];
 
   nativeBuildInputs = [
