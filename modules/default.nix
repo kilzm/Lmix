@@ -105,8 +105,8 @@ stdenv.mkDerivation rec {
     ccstr = if cc != "" then "-${cc}" else "";
     mpistr = if mpiFlv != "" then "-${mpiFlv}"
       else if (pkg.mpi or null) == null then ""
-      else if (hasPrefix pkg.mpi.pname "openmpi") then "-ompi"
-      else if (hasPrefix pkg.mpi.pname "intel") then "-impi" else "";
+      else if (hasPrefix "openmpi" pkg.mpi.pname) then "-ompi"
+      else if (hasPrefix "intel" pkg.mpi.pname) then "-impi" else "";
     ompstr = if (pkg.withOpenMP or false) || omp then "-openmp" else "";
   in "${pkgName}/${version}${ccstr}${mpistr}${ompstr}.lua";
   
