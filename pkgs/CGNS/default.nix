@@ -20,9 +20,7 @@ stdenv.mkDerivation rec {
   };
 
   buildInputs = [ hdf5 ]
-    ++ optional hdf5.mpiSupport hdf5.mpi
-    ++ optional hdf5.zlibSupport hdf5.zlib
-    ++ optional hdf5.szipSupport hdf5.szip;
+    ++ optional hdf5.mpiSupport hdf5.mpi;
 
   nativeBuildInputs = [ cmake ] ++ optional fortranSupport fortran;
 
