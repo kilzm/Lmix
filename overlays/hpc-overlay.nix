@@ -12,7 +12,6 @@ let
 in
 {
   lmix-pkgs = rec {
-
     # intel
     intel-oneapi-compilers_2023_1_0 = intel-oneapi_2023_1_0.icx;
     intel-oneapi-classic-compilers_2021_9_0 = intel-oneapi_2023_1_0.icc;
@@ -100,17 +99,17 @@ in
     };
 
     # LLNL
-    adept-utils_1_0_1_gcc11 = callPackage ../pkgs/LLNL/adept-utils {
+    adept-utils_1_0_1_gcc11 = callPackage ../pkgs/llnl/adept-utils {
       stdenv = gcc11Stdenv;
     };
 
-    callpath_1_0_4_gcc11_impi_2019 = callPackage ../pkgs/LLNL/callpath { 
+    callpath_1_0_4_gcc11_impi_2019 = callPackage ../pkgs/llnl/callpath { 
       stdenv = gcc11Stdenv;
       mpi = intel-mpi_2019;
       adept-utils = adept-utils_1_0_1_gcc11;
     };
 
-    mpileaks_1_0_gcc11_impi_2019 = callPackage ../pkgs/LLNL/mpileaks {
+    mpileaks_1_0_gcc11_impi_2019 = callPackage ../pkgs/llnl/mpileaks {
       stdenv = gcc11Stdenv;
       adept-utils = adept-utils_1_0_1_gcc11;
       callpath = callpath_1_0_4_gcc11_impi_2019;
@@ -118,7 +117,7 @@ in
     };
 
     # JSC
-    sionlib_1_7_7_gcc10_impi_2019 = callPackage ../pkgs/JSC/SIONlib {
+    sionlib_1_7_7_gcc10_impi_2019 = callPackage ../pkgs/jsc/sionlib {
       cctype = "gnu";
       mpitype = "intel2";
       stdenv = gcc11Stdenv;
@@ -128,7 +127,7 @@ in
       python = prev.python311;
     };
 
-    hdf5_gcc12_impi_2021 = callPackage ../pkgs/HDF5 {
+    hdf5_gcc12_impi_2021 = callPackage ../pkgs/hdf5 {
       stdenv = gcc12Stdenv;
       mpiSupport = true;
       mpi = intel-oneapi-mpi_2021_9_0;
@@ -136,7 +135,7 @@ in
       fortran = prev.gfortran12;
     };
 
-    hdf5_gcc11_ompi_4_1_4 = callPackage ../pkgs/HDF5 {
+    hdf5_gcc11_ompi_4_1_4 = callPackage ../pkgs/hdf5 {
       stdenv = gcc11Stdenv;
       mpiSupport = true;
       mpi = openmpi_4_1_4_gcc11;
@@ -144,13 +143,13 @@ in
       fortran = prev.gfortran11;
     };
 
-    hdf5_intel21_impi_2019 = callPackage ../pkgs/HDF5 {
+    hdf5_intel21_impi_2019 = callPackage ../pkgs/hdf5 {
       stdenv = intel21Stdenv;
       mpiSupport = true;
       mpi = intel-mpi_2019;
     };
 
-    cgns_4_4_0_gcc12_impi_2021 = callPackage ../pkgs/CGNS {
+    cgns_4_4_0_gcc12_impi_2021 = callPackage ../pkgs/cgns {
       stdenv = gcc12Stdenv;
       hdf5 = hdf5_gcc12_impi_2021;
       fortranSupport = true;
@@ -165,15 +164,15 @@ in
       stdenv = intel21Stdenv;
     };
 
-    sz_2_1_12_intel21 = callPackage ../pkgs/SZ {
+    sz_2_1_12_intel21 = callPackage ../pkgs/sz {
       stdenv = intel21Stdenv;
     };
 
-    mgard_1_5_0_intel23 = callPackage ../pkgs/MGARD {
+    mgard_1_5_0_intel23 = callPackage ../pkgs/mgard {
       stdenv = intel23Stdenv; # intel21 fails
     };
 
-    adios_2_9_0_intel21_impi_2019 = callPackage ../pkgs/ADIOS {
+    adios_2_9_0_intel21_impi_2019 = callPackage ../pkgs/adios {
       stdenv = intel21Stdenv;
       fortran = intel-oneapi-ifort_2021_9_0;
       hdf5 = hdf5_intel21_impi_2019;
