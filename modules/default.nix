@@ -75,8 +75,6 @@
 }:
 
 with lib;
-with lib.strings;
-with lib.lists;
 
 assert cc != "" -> elem cc ["intel" "gcc" "intel21" "intel23" "gcc7" "gcc8" "gcc9" "gcc10" "gcc11" "gcc12"];
 assert mpiFlv != "" -> elem mpiFlv ["impi" "ompi"];

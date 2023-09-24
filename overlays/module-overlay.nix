@@ -176,7 +176,5 @@ in rec {
         { mod = "fftw_3_3_10_intel21_impi_2019"; cc = "intel21"; mpiFlv = "impi"; }
       ];
     };
-
-    lmod2flake = prev.callPackage ../lmod2flake { };
   };
 }
