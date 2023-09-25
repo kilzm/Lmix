@@ -46,20 +46,11 @@
 
       packages.${system} = pkgs.lmix-mods // pkgs.lmix-pkgs;
 
-      apps.${system} = {
-        lmod2flake = {
-          type = "app";
-          program = "${self.packages.${system}.lmod2flake}/bin/lmod2flake";
-        };
-        default = self.apps.${system}.lmod2flake;
-      };
-
       legacyPackages.${system} = pkgs;
 
       devShells.${system}.default = pkgs.mkShell rec {
-        buildInputs = [
+        packages = [
           nurl.packages.${system}.default
-          self.packages.${system}.lmod2flake
         ];
       };
 

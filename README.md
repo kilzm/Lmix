@@ -25,7 +25,6 @@ Then you can build packages defined in the overlay using
 $ nix build --impure nixpkgs#lmix-pkgs.<name>
 ```
 
-
 ### Usage in a flake
 A neat feature of flakes is that you can use them as inputs in other flakes. This allows you to configure a nix development shell with the dependencies for the project including packages of this overlay:
 ```nix
@@ -59,11 +58,3 @@ An easy way to get started is running this command which will put the above flak
 $ nix flake init --template github:kilzm/lmix
 ```
 Once the packages are configured run `$ nix develop` to start a shell session with all the listed packages in `PATH`.
-
-## lmod2flake
-
-Flakes like the one above can be created automatically.
-```
-$ nix run github:kilzm/lmix -- <path>
-```
-This will create a flake.nix in the specified directory. The buildInputs for mkShell will be derived from loaded modules.
